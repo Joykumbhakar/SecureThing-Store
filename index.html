@@ -88,12 +88,15 @@
             <div class="hidden md:flex items-center space-x-6">
                 <!-- Customer Links -->
                 <button onclick="app.router('home')" class="hover:text-gray-200 font-medium transition">Shop</button>
-                <button onclick="app.router('orders')" class="hover:text-gray-200 font-medium transition" id="nav-orders">My Orders</button>
+                <button onclick="app.router('orders')" class="hover:text-gray-200 font-medium transition" id="nav-orders">Orders</button>
                 
                 <!-- Role Specific Links -->
                 <button onclick="app.router('seller-dashboard')" class="hover:text-gray-200 font-medium transition hide" id="nav-seller">Seller Portal</button>
                 <button onclick="app.router('admin-dashboard')" class="hover:text-gray-200 font-medium transition hide" id="nav-admin">Admin Panel</button>
                 <button onclick="app.router('service-dashboard')" class="hover:text-gray-200 font-medium transition hide" id="nav-service">Service Desk</button>
+                
+                <!-- Profile Link -->
+                <button onclick="app.router('profile')" class="hover:text-gray-200 font-medium transition hide" id="nav-profile">Profile</button>
 
                 <!-- Cart -->
                 <button onclick="app.toggleCart()" class="relative hover:text-gray-200 transition">
@@ -115,7 +118,8 @@
         <!-- Mobile Menu -->
         <div id="mobile-menu" class="hide md:hidden bg-accent px-4 py-2 space-y-2 shadow-inner">
             <button onclick="app.router('home')" class="block w-full text-left py-2 hover:bg-white/10 rounded px-2">Shop</button>
-            <button onclick="app.router('orders')" class="block w-full text-left py-2 hover:bg-white/10 rounded px-2">My Orders</button>
+            <button onclick="app.router('orders')" class="block w-full text-left py-2 hover:bg-white/10 rounded px-2">Orders</button>
+            <button onclick="app.router('profile')" class="block w-full text-left py-2 hover:bg-white/10 rounded px-2 hide" id="mobile-nav-profile">Profile</button>
             <button onclick="app.toggleCart()" class="block w-full text-left py-2 hover:bg-white/10 rounded px-2">Cart</button>
             <div id="mobile-auth-section"></div>
         </div>
@@ -134,7 +138,6 @@
 
         <!-- 1. HOME / SHOP VIEW -->
         <section id="view-home" class="view-section">
-            <!-- Hero / Search Section -->
             <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
                 <div>
                     <h2 class="text-3xl font-bold text-gray-800">Featured Products</h2>
@@ -160,13 +163,46 @@
                 </div>
             </div>
 
-            <!-- Product Grid -->
             <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 <!-- Products injected here -->
             </div>
         </section>
 
-        <!-- 2. LOGIN / REGISTER VIEW (Customer) -->
+        <!-- 1.1 PRODUCT DETAILS VIEW -->
+        <section id="view-product-details" class="view-section hide">
+            <button onclick="app.router('home')" class="mb-4 text-gray-500 hover:text-primary"><i class="fas fa-arrow-left mr-2"></i>Back to Shop</button>
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden grid grid-cols-1 md:grid-cols-2">
+                <div class="bg-gray-100 p-8 flex items-center justify-center">
+                    <img id="detail-img" src="" class="max-h-96 object-contain">
+                </div>
+                <div class="p-8 flex flex-col">
+                    <div class="mb-auto">
+                        <div class="flex justify-between items-start">
+                            <h2 id="detail-name" class="text-3xl font-bold text-gray-800 mb-2"></h2>
+                            <span id="detail-cat" class="bg-blue-100 text-primary text-xs px-2 py-1 rounded-full uppercase font-bold"></span>
+                        </div>
+                        <div class="flex items-center mb-4">
+                            <i class="fas fa-star text-yellow-400 text-sm"></i>
+                            <span id="detail-rating" class="ml-1 text-gray-600 text-sm font-bold"></span>
+                        </div>
+                        <p id="detail-desc" class="text-gray-600 leading-relaxed mb-6"></p>
+                    </div>
+                    
+                    <div class="border-t pt-6 mt-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="text-gray-500 text-sm">Price</span>
+                            <span id="detail-price" class="text-3xl font-bold text-primary"></span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button onclick="app.addToCart(app.currentProductDetailId)" class="w-full bg-primary text-white py-3 rounded-lg font-bold hover:bg-blue-600 shadow-lg transition">Add to Cart</button>
+                            <button onclick="app.buyNow(app.currentProductDetailId)" class="w-full border border-primary text-primary py-3 rounded-lg font-bold hover:bg-blue-50 transition">Buy Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. LOGIN / REGISTER VIEW -->
         <section id="view-login" class="view-section hide max-w-md mx-auto mt-10 bg-white p-8 rounded-xl shadow-lg border border-gray-100">
             <h2 class="text-2xl font-bold text-center mb-2 text-primary" id="auth-title">Welcome Back</h2>
             <p class="text-center text-gray-500 mb-6 text-sm">Sign in to access your account</p>
@@ -229,6 +265,29 @@
                     <a href="#" onclick="app.router('seller-apply')" class="text-xs text-gray-400 hover:text-white transition">Apply for a Seller Account</a>
                 </div>
             </div>
+        </section>
+
+        <!-- 2.2 USER PROFILE VIEW -->
+        <section id="view-profile" class="view-section hide">
+             <h2 class="text-2xl font-bold mb-6">My Profile</h2>
+             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 max-w-2xl mx-auto">
+                 <div class="flex items-center space-x-4 mb-6">
+                     <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center text-gray-400 text-2xl">
+                         <i class="fas fa-user"></i>
+                     </div>
+                     <div>
+                         <h3 class="font-bold text-lg" id="profile-name">User Name</h3>
+                         <p class="text-gray-500 text-sm" id="profile-email">user@email.com</p>
+                         <span class="bg-blue-100 text-primary text-xs px-2 py-0.5 rounded" id="profile-role">Customer</span>
+                     </div>
+                 </div>
+
+                 <h3 class="font-bold text-gray-700 border-b pb-2 mb-4">Saved Addresses</h3>
+                 <div id="profile-address-list" class="space-y-4 mb-4">
+                     <!-- Addresses injected here -->
+                 </div>
+                 <p class="text-sm text-gray-500 italic">Add new addresses during checkout.</p>
+             </div>
         </section>
 
         <!-- 3. CHECKOUT VIEW -->
@@ -315,6 +374,25 @@
             </div>
         </section>
 
+        <!-- 5.1 CHAT VIEW (CUSTOMER) -->
+        <section id="view-customer-chat" class="view-section hide max-w-2xl mx-auto">
+             <button onclick="app.router('orders')" class="mb-4 text-gray-500 hover:text-primary"><i class="fas fa-arrow-left mr-2"></i>Back to Orders</button>
+             <div class="bg-white rounded-xl shadow-lg border border-gray-100 flex flex-col h-[600px]">
+                 <div class="p-4 border-b bg-gray-50 flex justify-between items-center">
+                     <div>
+                         <h3 class="font-bold text-gray-800">Support Chat</h3>
+                         <p class="text-xs text-gray-500" id="customer-chat-id">Ticket #...</p>
+                     </div>
+                     <span class="bg-blue-100 text-primary text-xs px-2 py-1 rounded-full">Active</span>
+                 </div>
+                 <div id="customer-chat-messages" class="flex-grow p-4 overflow-y-auto space-y-3 bg-gray-50/50"></div>
+                 <form onsubmit="app.sendCustomerMessage(event)" class="p-4 border-t bg-white flex gap-2">
+                     <input type="text" id="customer-chat-input" class="flex-grow border rounded-lg px-4 py-2 focus:outline-none focus:border-primary" placeholder="Type your message..." required>
+                     <button type="submit" class="bg-primary text-white px-6 rounded-lg hover:bg-blue-600 transition"><i class="fas fa-paper-plane"></i></button>
+                 </form>
+             </div>
+        </section>
+
         <!-- 6. SELLER APPLICATION -->
         <section id="view-seller-apply" class="view-section hide max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-lg">
             <h2 class="text-2xl font-bold text-primary mb-2">Become a Seller</h2>
@@ -351,7 +429,7 @@
         <section id="view-seller-dashboard" class="view-section hide">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-2xl font-bold text-gray-800">Seller Dashboard</h2>
-                <button onclick="document.getElementById('add-product-modal').classList.remove('hide')" class="bg-success text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-600 shadow-sm transition"><i class="fas fa-plus mr-2"></i>Add Product</button>
+                <button onclick="app.openAddProductModal()" class="bg-success text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-green-600 shadow-sm transition"><i class="fas fa-plus mr-2"></i>Add Product</button>
             </div>
             
             <!-- Seller Stats -->
@@ -401,6 +479,12 @@
                     <div class="text-2xl font-bold" id="admin-order-count">0</div>
                 </div>
             </div>
+            
+            <!-- Payment Verification Queue -->
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6">
+                <h3 class="font-bold text-lg mb-4 text-gray-700 border-b pb-2">Pending Payment Verifications</h3>
+                <div id="admin-payment-queue" class="space-y-3"></div>
+            </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <!-- Seller Requests -->
@@ -437,17 +521,17 @@
         <!-- 9. SERVICE DASHBOARD -->
         <section id="view-service-dashboard" class="view-section hide">
             <h2 class="text-2xl font-bold mb-6">Service Support Desk</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-[500px]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-[600px]">
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 md:col-span-1 overflow-y-auto">
                     <h3 class="font-bold mb-4 text-gray-700">Active Tickets</h3>
                     <div id="support-tickets-list" class="space-y-2"></div>
                 </div>
                 <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 md:col-span-2 flex flex-col">
-                    <div id="chat-header" class="border-b pb-2 mb-2 font-bold text-primary">Select a ticket</div>
-                    <div id="chat-messages" class="flex-grow bg-gray-50 p-4 rounded-lg overflow-y-auto mb-4 border border-gray-200"></div>
-                    <form onsubmit="app.sendSupportMessage(event)" class="flex gap-2">
-                        <input type="text" id="chat-input" class="flex-grow border rounded-lg px-3 py-2.5 bg-gray-50" placeholder="Type a message..." disabled>
-                        <button type="submit" id="chat-send-btn" class="bg-primary text-white px-6 py-2.5 rounded-lg disabled:opacity-50 hover:bg-blue-600 transition" disabled>Send</button>
+                    <div id="service-chat-header" class="border-b pb-2 mb-2 font-bold text-primary">Select a ticket</div>
+                    <div id="service-chat-messages" class="flex-grow bg-gray-50 p-4 rounded-lg overflow-y-auto mb-4 border border-gray-200"></div>
+                    <form onsubmit="app.sendServiceMessage(event)" class="flex gap-2">
+                        <input type="text" id="service-chat-input" class="flex-grow border rounded-lg px-3 py-2.5 bg-gray-50" placeholder="Type a message..." disabled>
+                        <button type="submit" id="service-chat-send-btn" class="bg-primary text-white px-6 py-2.5 rounded-lg disabled:opacity-50 hover:bg-blue-600 transition" disabled>Send</button>
                     </form>
                 </div>
             </div>
@@ -506,16 +590,16 @@
         </div>
     </div>
 
-    <!-- MODAL: ADD PRODUCT -->
+    <!-- MODAL: ADD/EDIT PRODUCT -->
     <div id="add-product-modal" class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm z-50 flex items-center justify-center hide">
         <div class="bg-white p-6 rounded-xl w-full max-w-md shadow-2xl transform transition-all scale-100">
-            <h3 class="text-xl font-bold mb-4 text-gray-800">Add New Product</h3>
-            <form onsubmit="app.sellerAddProduct(event)" class="space-y-4">
+            <h3 class="text-xl font-bold mb-4 text-gray-800" id="modal-title">Add New Product</h3>
+            <form onsubmit="app.sellerSaveProduct(event)" class="space-y-4">
+                <input type="hidden" name="p_id">
                 <input type="text" name="p_name" placeholder="Product Name" class="border p-2.5 w-full rounded-lg bg-gray-50" required>
                 <textarea name="p_desc" placeholder="Description" class="border p-2.5 w-full rounded-lg bg-gray-50" rows="3" required></textarea>
                 <div class="flex gap-4">
                     <input type="number" name="p_price" placeholder="Price (₹)" class="border p-2.5 w-full rounded-lg bg-gray-50" required>
-                    <!-- Category dropdown (Visual only for now as backend schema is fixed, defaulting to 'Electronics' in logic if needed or just part of name) -->
                     <select name="p_cat" class="border p-2.5 w-full rounded-lg bg-gray-50 text-sm">
                         <option value="Electronics">Electronics</option>
                         <option value="Home">Home</option>
@@ -526,8 +610,8 @@
                 
                 <div class="flex justify-end space-x-2 mt-6">
                     <button type="button" onclick="document.getElementById('add-product-modal').classList.add('hide')" class="px-4 py-2 border rounded-lg hover:bg-gray-50 transition">Cancel</button>
-                    <button type="button" onclick="app.fillMockProduct(this.form)" class="px-4 py-2 border bg-yellow-50 text-yellow-700 hover:bg-yellow-100 text-xs rounded-lg transition">Mock Data</button>
-                    <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 shadow-md transition">Add Product</button>
+                    <button type="button" onclick="app.fillMockProduct(this.form)" class="px-4 py-2 border bg-yellow-50 text-yellow-700 hover:bg-yellow-100 text-xs rounded-lg transition" id="mock-btn">Mock Data</button>
+                    <button type="submit" class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 shadow-md transition">Save Product</button>
                 </div>
             </form>
         </div>
@@ -554,10 +638,12 @@
             doc, 
             setDoc, 
             updateDoc, 
+            deleteDoc,
             onSnapshot, 
             serverTimestamp, 
             query,
-            orderBy 
+            orderBy,
+            where
         } from "firebase/firestore";
 
         // --- FIREBASE CONFIGURATION ---
@@ -590,6 +676,8 @@
             products: [],
             currentTicketId: null,
             activeCategory: 'all',
+            currentProductDetailId: null,
+            chatUnsubscribe: null,
 
             // --- UTILS: TOAST NOTIFICATIONS ---
             toast: (msg, type = 'info') => {
@@ -615,6 +703,9 @@
 
             // --- ROUTER ---
             router: (viewId) => {
+                // Clear any listeners
+                if(app.chatUnsubscribe) { app.chatUnsubscribe(); app.chatUnsubscribe = null; }
+
                 document.querySelectorAll('.view-section').forEach(el => el.classList.add('hide'));
                 document.getElementById('mobile-menu').classList.add('hide');
                 
@@ -623,6 +714,7 @@
 
                 if (viewId === 'home') app.loadProducts();
                 if (viewId === 'orders') app.loadCustomerOrders();
+                if (viewId === 'profile') app.loadProfile();
                 if (viewId === 'seller-dashboard') app.loadSellerDashboard();
                 if (viewId === 'admin-dashboard') app.loadAdminDashboard();
                 if (viewId === 'service-dashboard') app.loadServiceDashboard();
@@ -669,7 +761,6 @@
                 }
             },
             
-            // New Dedicated Seller Auth
             handleSellerAuth: async (e) => {
                 e.preventDefault();
                 app.toggleLoader(true);
@@ -677,17 +768,12 @@
                 const pass = document.getElementById('seller-auth-pass').value;
                 
                 try {
-                    // 1. Sign in
                     const userCred = await signInWithEmailAndPassword(auth, email, pass);
-                    
-                    // 2. Check Role Immediately
                     const userDoc = await getDoc(getUserRef(userCred.user.uid));
                     if(userDoc.exists() && userDoc.data().role === 'seller') {
-                        // Success - Router will handle dashboard load via auth listener or we force it here
                         app.toast("Welcome back, Seller!", "success");
                         app.router('seller-dashboard');
                     } else {
-                        // Not a seller
                         await signOut(auth);
                         app.toast("Access Denied: Authorized Sellers only.", "error");
                     }
@@ -703,8 +789,6 @@
                 try {
                     const result = await signInWithPopup(auth, provider);
                     const user = result.user;
-                    
-                    // Check if user doc exists, if not create
                     const userDoc = await getDoc(getUserRef(user.uid));
                     if (!userDoc.exists()) {
                          await setDoc(getUserRef(user.uid), {
@@ -752,14 +836,12 @@
             loadProducts: async () => {
                 app.toggleLoader(true);
                 const grid = document.getElementById('product-grid');
-                grid.innerHTML = ''; // Clear for now, skeleton could be here
+                grid.innerHTML = ''; 
                 
                 try {
-                    // Rule 2: Simple query
                     const snapshot = await getDocs(getCollectionRef('products'));
                     app.products = [];
                     snapshot.forEach(doc => app.products.push({id: doc.id, ...doc.data()}));
-                    
                     app.renderProductGrid(app.products);
                 } catch(e) {
                     console.error(e);
@@ -784,7 +866,7 @@
 
                 products.forEach(p => {
                     grid.innerHTML += `
-                        <div class="bg-white rounded-xl shadow-sm hover:shadow-xl transition duration-300 overflow-hidden group border border-gray-100 flex flex-col">
+                        <div class="bg-white rounded-xl shadow-sm hover:shadow-xl transition duration-300 overflow-hidden group border border-gray-100 flex flex-col cursor-pointer" onclick="app.loadProductDetails('${p.id}')">
                             <div class="h-48 bg-gray-100 relative overflow-hidden">
                                 <img src="${p.image || 'https://placehold.co/400x300?text=Product'}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/400x300?text=No+Image'">
                                 <div class="absolute top-2 right-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-bold shadow-sm flex items-center">
@@ -796,7 +878,7 @@
                                 <p class="text-sm text-gray-500 line-clamp-2 h-10 mb-3">${p.desc}</p>
                                 <div class="mt-auto flex justify-between items-center">
                                     <span class="text-primary font-bold text-xl">₹${p.price}</span>
-                                    <button onclick="app.addToCart('${p.id}')" class="bg-primary text-white w-10 h-10 rounded-full hover:bg-blue-600 transition shadow-md flex items-center justify-center transform active:scale-95">
+                                    <button onclick="event.stopPropagation(); app.addToCart('${p.id}')" class="bg-primary text-white w-10 h-10 rounded-full hover:bg-blue-600 transition shadow-md flex items-center justify-center transform active:scale-95">
                                         <i class="fas fa-cart-plus"></i>
                                     </button>
                                 </div>
@@ -806,10 +888,28 @@
                 });
             },
 
+            loadProductDetails: (pid) => {
+                const p = app.products.find(x => x.id === pid);
+                if(!p) return;
+                
+                app.currentProductDetailId = pid;
+                document.getElementById('detail-img').src = p.image || 'https://placehold.co/400x300';
+                document.getElementById('detail-name').innerText = p.name;
+                document.getElementById('detail-desc').innerText = p.desc;
+                document.getElementById('detail-price').innerText = '₹' + p.price;
+                document.getElementById('detail-cat').innerText = p.category || 'General';
+                document.getElementById('detail-rating').innerText = (p.rating || 4.5) + ' / 5.0';
+                
+                app.router('product-details');
+            },
+
+            buyNow: (pid) => {
+                app.addToCart(pid);
+                app.goToCheckout();
+            },
+
             filterCategory: (cat) => {
                 app.activeCategory = cat;
-                
-                // Update Chip Visuals
                 const btns = document.getElementById('category-chips').children;
                 Array.from(btns).forEach(btn => {
                     if(btn.innerText === cat || (cat === 'all' && btn.innerText === 'All')) {
@@ -820,30 +920,19 @@
                          btn.classList.remove('bg-primary', 'text-white');
                     }
                 });
-
                 app.filterProducts();
             },
 
             filterProducts: () => {
                 const term = document.getElementById('search-input').value.toLowerCase();
-                
                 const filtered = app.products.filter(p => {
                     const matchesSearch = p.name.toLowerCase().includes(term) || p.desc.toLowerCase().includes(term);
-                    
-                    // Mock Category matching (Since schema doesn't force category, we assume it's part of description or name for now, or randomly assigned for demo)
-                    // In a real app, product would have p.category. 
-                    // Let's implement a loose match: if category is All, true. Else check if p.desc/name contains category string.
                     let matchesCat = true;
                     if(app.activeCategory !== 'all') {
-                        // Assuming category was saved or just loosely matching
-                         matchesCat = (p.category === app.activeCategory) || 
-                                      (p.name.includes(app.activeCategory)) || 
-                                      (p.desc.includes(app.activeCategory));
+                         matchesCat = (p.category === app.activeCategory) || (p.name.includes(app.activeCategory));
                     }
-
                     return matchesSearch && matchesCat;
                 });
-
                 app.renderProductGrid(filtered);
             },
 
@@ -857,8 +946,6 @@
                 else app.cart.push({ ...product, qty: 1 });
                 
                 app.updateCartUI();
-                
-                // Show toast
                 app.toast(`${product.name} added to cart`, "success");
                 
                 const btn = document.querySelector('button[onclick="app.toggleCart()"]');
@@ -936,7 +1023,6 @@
             },
 
             renderCheckout: async () => {
-                // Load Addresses
                 const userDoc = await getDoc(getUserRef(app.currentUser.uid));
                 const data = userDoc.data();
                 const addrContainer = document.getElementById('saved-addresses');
@@ -963,7 +1049,6 @@
                     document.getElementById('new-address-form').classList.remove('hide');
                 }
 
-                // Load Items
                 const itemsContainer = document.getElementById('checkout-items');
                 itemsContainer.innerHTML = '';
                 app.cart.forEach(item => {
@@ -987,40 +1072,33 @@
                     pin: document.getElementById('addr-pin').value,
                     type: 'Home'
                 };
-                
                 try {
                     const userRef = getUserRef(app.currentUser.uid);
                     const userSnap = await getDoc(userRef);
                     const currentList = userSnap.data().addressList || [];
                     currentList.push(newAddr);
-                    
                     await updateDoc(userRef, { addressList: currentList });
                     document.getElementById('new-address-form').reset();
                     document.getElementById('new-address-form').classList.add('hide');
                     app.toast("Address saved", "success");
-                    app.renderCheckout(); // Reload
+                    app.renderCheckout(); 
                 } catch (e) {
-                    console.error(e);
                     app.toast("Failed to save address", "error");
                 }
             },
 
             placeOrder: async () => {
                 const selectedAddrInput = document.querySelector('input[name="selected-address"]:checked');
-                
-                // If no address selected and user has no addresses
                 const userDoc = await getDoc(getUserRef(app.currentUser.uid));
                 const addresses = userDoc.data().addressList || [];
                 
                 if (!selectedAddrInput && addresses.length === 0) {
                      return app.toast("Please add and select an address.", "warning");
                 }
-
                 let addressToUse;
                 if (selectedAddrInput) {
                     addressToUse = addresses[selectedAddrInput.value];
                 } else {
-                    // Fallback if UI not updated but data exists
                     if(addresses.length > 0) addressToUse = addresses[0];
                     else return app.toast("Address selection error.", "error");
                 }
@@ -1033,19 +1111,16 @@
                         total: app.cartTotalValue,
                         address: addressToUse,
                         paymentMethod: document.querySelector('input[name="payment"]:checked').value,
-                        status: 'Processing',
+                        status: 'Pending Verification', // New Status logic for Admin Verification
                         trackingSteps: [{ status: 'Order Placed', time: new Date().toISOString() }],
                         createdAt: serverTimestamp()
                     };
-
                     await addDoc(getCollectionRef('orders'), orderData);
-                    
                     app.cart = [];
                     app.updateCartUI();
                     app.router('success');
-                    app.toast("Order placed successfully!", "success");
+                    app.toast("Order placed! Pending Verification.", "success");
                 } catch(e) {
-                    console.error(e);
                     app.toast("Order failed: " + e.message, "error");
                 } finally {
                     app.toggleLoader(false);
@@ -1071,22 +1146,15 @@
                             myOrders.push({id: d.id, ...data});
                         }
                     });
-
-                    // Sort locally
                     myOrders.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
-                    if (myOrders.length === 0) list.innerHTML = `
-                        <div class="text-center py-10 bg-white rounded-xl shadow-sm border border-gray-100">
-                            <i class="fas fa-box-open text-4xl text-gray-300 mb-3"></i>
-                            <p class="text-gray-500">No orders yet.</p>
-                            <button onclick="app.router('home')" class="mt-4 text-primary font-bold hover:underline">Start Shopping</button>
-                        </div>`;
+                    if (myOrders.length === 0) list.innerHTML = `<p class="text-center text-gray-500 py-10">No orders yet.</p>`;
 
                     myOrders.forEach(o => {
-                        // Visual Tracker
-                        const steps = ['Order Placed', 'Packed', 'Shipped', 'Delivered'];
+                        const steps = ['Order Placed', 'Verified', 'Packed', 'Shipped', 'Delivered'];
                         let stepIdx = steps.indexOf(o.status);
-                        if(stepIdx === -1) stepIdx = 0; // Default or Cancelled handling
+                        if(o.status === 'Pending Verification') stepIdx = 0; // Special case
+                        if(stepIdx === -1 && o.status !== 'Pending Verification') stepIdx = 0; 
                         
                         let trackerHTML = `<div class="flex justify-between items-center mt-6 mb-2 text-xs relative px-2">
                             <div class="absolute top-1/2 left-0 w-full h-1 bg-gray-200 -z-10 rounded-full"></div>
@@ -1106,13 +1174,13 @@
                         list.innerHTML += `
                             <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition">
                                 <div class="flex justify-between font-bold mb-4 pb-2 border-b border-gray-100">
-                                    <span class="text-gray-700">Order <span class="text-gray-500">#${o.id.substr(0,8)}</span></span>
+                                    <span class="text-gray-700">Order #${o.id.substr(0,8)}</span>
                                     <span class="bg-blue-50 text-primary px-3 py-1 rounded-full text-xs uppercase tracking-wide">${o.status}</span>
                                 </div>
                                 <div class="space-y-2 mb-4">
                                     ${o.items.map(i => `
                                         <div class="flex justify-between text-sm text-gray-600">
-                                            <span>${i.name} <span class="text-gray-400">x${i.qty}</span></span>
+                                            <span>${i.name} x${i.qty}</span>
                                             <span class="font-medium">₹${i.price * i.qty}</span>
                                         </div>
                                     `).join('')}
@@ -1121,27 +1189,102 @@
                                     <span>Total Amount</span>
                                     <span>₹${o.total}</span>
                                 </div>
-                                <div class="mt-2 text-xs text-gray-400">Payment: ${o.paymentMethod.toUpperCase()}</div>
-                                
                                 ${o.status !== 'Cancelled' ? trackerHTML : '<div class="mt-4 text-center text-red-500 font-bold bg-red-50 p-2 rounded">Order Cancelled</div>'}
                                 
                                 ${o.status !== 'Delivered' && o.status !== 'Cancelled' 
-                                    ? `<div class="mt-4 flex justify-end"><button onclick="app.contactSupport('${o.id}')" class="text-xs text-primary font-medium hover:underline flex items-center"><i class="fas fa-headset mr-1"></i> Issue with order?</button></div>`
+                                    ? `<div class="mt-4 flex justify-end"><button onclick="app.openCustomerChat('${o.id}')" class="text-xs text-primary font-medium hover:underline flex items-center bg-blue-50 px-3 py-1 rounded-full"><i class="fas fa-headset mr-1"></i> Need Help?</button></div>`
                                     : ''}
                             </div>
                         `;
                     });
                 } catch(e) {
-                    console.error(e);
+                    app.toast("Error loading orders", "error");
                 } finally {
                     app.toggleLoader(false);
                 }
             },
 
-            contactSupport: (orderId) => {
-                app.toast("Redirecting to support...", "info");
-                // Mock ticket creation visuals
-                setTimeout(() => alert("Ticket created for " + orderId + ". Our agent will chat with you soon."), 500);
+            loadProfile: async () => {
+                if(!app.currentUser) return app.router('login');
+                const userRef = getUserRef(app.currentUser.uid);
+                const docSnap = await getDoc(userRef);
+                const data = docSnap.data();
+
+                document.getElementById('profile-name').innerText = data.name || 'User';
+                document.getElementById('profile-email').innerText = data.email;
+                document.getElementById('profile-role').innerText = (data.role || 'customer').toUpperCase();
+                
+                const list = document.getElementById('profile-address-list');
+                list.innerHTML = '';
+                if(data.addressList && data.addressList.length > 0) {
+                    data.addressList.forEach(addr => {
+                        list.innerHTML += `
+                            <div class="border p-3 rounded bg-gray-50 text-sm">
+                                <div class="font-bold">${addr.name} (${addr.type})</div>
+                                <div>${addr.line}, ${addr.area}</div>
+                                <div>${addr.city} - ${addr.pin}</div>
+                                <div class="text-xs text-gray-500 mt-1">Ph: ${addr.mobile}</div>
+                            </div>
+                        `;
+                    });
+                } else {
+                    list.innerHTML = '<p class="text-gray-400">No saved addresses.</p>';
+                }
+            },
+
+            // --- CHAT LOGIC ---
+            openCustomerChat: async (orderId) => {
+                app.currentTicketId = orderId; 
+                document.getElementById('customer-chat-id').innerText = `Ticket for Order #${orderId.substr(0,6)}`;
+                app.router('customer-chat');
+                
+                // Real-time listener
+                const chatRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'supportChats', orderId);
+                
+                // Check if exists, if not create
+                const chatSnap = await getDoc(chatRef);
+                if(!chatSnap.exists()) {
+                     await setDoc(chatRef, {
+                         customerId: app.currentUser.uid,
+                         orderId: orderId,
+                         messages: [{ sender: 'System', text: 'Ticket Created.', time: new Date().toISOString() }]
+                     });
+                }
+
+                app.chatUnsubscribe = onSnapshot(chatRef, (doc) => {
+                    if(doc.exists()) {
+                        const msgs = doc.data().messages || [];
+                        const container = document.getElementById('customer-chat-messages');
+                        container.innerHTML = '';
+                        msgs.forEach(m => {
+                            const isMe = m.sender === 'Customer';
+                            container.innerHTML += `
+                                <div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
+                                    <div class="${isMe ? 'bg-primary text-white' : 'bg-white border text-gray-800'} px-4 py-2 rounded-lg max-w-xs text-sm shadow-sm">
+                                        ${!isMe && m.sender !== 'System' ? `<div class="text-xs font-bold text-gray-400 mb-1">${m.sender}</div>` : ''}
+                                        ${m.text}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        container.scrollTop = container.scrollHeight;
+                    }
+                });
+            },
+
+            sendCustomerMessage: async (e) => {
+                e.preventDefault();
+                const input = document.getElementById('customer-chat-input');
+                const text = input.value;
+                if(!text) return;
+                
+                const chatRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'supportChats', app.currentTicketId);
+                const chatSnap = await getDoc(chatRef);
+                const messages = chatSnap.data().messages;
+                messages.push({ sender: 'Customer', text: text, time: new Date().toISOString() });
+                
+                await updateDoc(chatRef, { messages });
+                input.value = '';
             },
 
             // --- SELLER LOGIC ---
@@ -1149,7 +1292,6 @@
                 e.preventDefault();
                 app.toggleLoader(true);
                 const form = e.target;
-                
                 const data = {
                     uid: app.currentUser.uid,
                     name: form.name.value,
@@ -1163,7 +1305,6 @@
                     status: 'Pending',
                     createdAt: serverTimestamp()
                 };
-
                 try {
                     await addDoc(getCollectionRef('sellerRequests'), data);
                     app.toast("Application Submitted! Wait for Admin Approval.", "success");
@@ -1180,13 +1321,11 @@
                 const oList = document.getElementById('seller-orders-list');
                 pList.innerHTML = '';
                 oList.innerHTML = '';
-
                 let productCount = 0;
                 let pendingOrderCount = 0;
 
-                // Load My Products
+                // Products
                 app.products.forEach(p => {
-                    // Filter if needed (p.sellerId === app.currentUser.uid)
                     productCount++;
                     pList.innerHTML += `
                         <div class="flex justify-between items-center border-b border-gray-50 py-3 last:border-0 hover:bg-gray-50 p-2 rounded transition">
@@ -1197,12 +1336,15 @@
                                     <div class="text-xs text-primary font-medium">₹${p.price}</div>
                                 </div>
                             </div>
-                            <button onclick="app.toast('Edit feature coming soon', 'info')" class="text-gray-400 hover:text-blue-500 transition"><i class="fas fa-edit"></i></button>
+                            <div class="flex space-x-2">
+                                <button onclick="app.openEditProductModal('${p.id}')" class="text-gray-400 hover:text-blue-500 transition"><i class="fas fa-edit"></i></button>
+                                <button onclick="app.deleteProduct('${p.id}')" class="text-gray-400 hover:text-red-500 transition"><i class="fas fa-trash"></i></button>
+                            </div>
                         </div>
                     `;
                 });
 
-                // Load Orders (Global orders for now, realistically filter by seller items)
+                // Orders
                 const snap = await getDocs(getCollectionRef('orders'));
                 snap.forEach(d => {
                     const o = d.data();
@@ -1218,12 +1360,14 @@
                             <div class="mb-3">
                                 <span class="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-xs font-bold">${o.status}</span>
                             </div>
-                            <select onchange="app.updateOrderStatus('${oid}', this.value)" class="border p-1.5 rounded w-full text-sm bg-gray-50 focus:ring-primary focus:border-primary">
-                                <option value="">Change Status...</option>
-                                <option value="Packed" ${o.status==='Packed'?'selected':''}>Packed</option>
-                                <option value="Shipped" ${o.status==='Shipped'?'selected':''}>Shipped</option>
-                                <option value="Delivered" ${o.status==='Delivered'?'selected':''}>Delivered</option>
-                            </select>
+                            ${o.status !== 'Pending Verification' ? `
+                                <select onchange="app.updateOrderStatus('${oid}', this.value)" class="border p-1.5 rounded w-full text-sm bg-gray-50 focus:ring-primary focus:border-primary">
+                                    <option value="">Change Status...</option>
+                                    <option value="Packed" ${o.status==='Packed'?'selected':''}>Packed</option>
+                                    <option value="Shipped" ${o.status==='Shipped'?'selected':''}>Shipped</option>
+                                    <option value="Delivered" ${o.status==='Delivered'?'selected':''}>Delivered</option>
+                                </select>
+                            ` : '<div class="text-xs text-orange-500 font-bold bg-orange-50 p-1 text-center rounded">Wait for Admin Verification</div>'}
                         </div>
                     `;
                 });
@@ -1232,29 +1376,74 @@
                 document.getElementById('seller-stat-orders').innerText = pendingOrderCount;
             },
 
-            sellerAddProduct: async (e) => {
+            openAddProductModal: () => {
+                document.getElementById('modal-title').innerText = "Add New Product";
+                document.querySelector('input[name="p_id"]').value = "";
+                document.getElementById('add-product-modal').classList.remove('hide');
+                document.querySelector('form[onsubmit="app.sellerSaveProduct(event)"]').reset();
+                document.getElementById('mock-btn').classList.remove('hide');
+            },
+
+            openEditProductModal: (pid) => {
+                const p = app.products.find(x => x.id === pid);
+                if(!p) return;
+                
+                document.getElementById('modal-title').innerText = "Edit Product";
+                const form = document.querySelector('form[onsubmit="app.sellerSaveProduct(event)"]');
+                form.p_id.value = pid;
+                form.p_name.value = p.name;
+                form.p_desc.value = p.desc;
+                form.p_price.value = p.price;
+                form.p_cat.value = p.category || 'Electronics';
+                form.p_img.value = p.image;
+                
+                document.getElementById('mock-btn').classList.add('hide');
+                document.getElementById('add-product-modal').classList.remove('hide');
+            },
+
+            sellerSaveProduct: async (e) => {
                 e.preventDefault();
+                app.toggleLoader(true);
                 const f = e.target;
+                const pid = f.p_id.value;
                 const data = {
                     name: f.p_name.value,
                     desc: f.p_desc.value,
                     price: Number(f.p_price.value),
                     image: f.p_img.value || 'https://placehold.co/400x400?text=Item',
-                    category: f.p_cat.value, // Added category
+                    category: f.p_cat.value,
                     rating: 5.0,
                     sellerId: app.currentUser.uid
                 };
                 
                 try {
-                    await addDoc(getCollectionRef('products'), data);
-                    app.toast("Product Added Successfully!", "success");
+                    if (pid) {
+                        // Update
+                        await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'products', pid), data);
+                        app.toast("Product Updated!", "success");
+                    } else {
+                        // Add
+                        await addDoc(getCollectionRef('products'), data);
+                        app.toast("Product Added!", "success");
+                    }
                     document.getElementById('add-product-modal').classList.add('hide');
                     f.reset();
-                    // Reload data
-                    app.products.push({id: "temp", ...data}); // Quick optimisic update or reload
-                    app.loadSellerDashboard(); 
+                    app.loadProducts().then(() => app.loadSellerDashboard());
                 } catch(err) {
                     app.toast("Error: " + err.message, "error");
+                } finally {
+                    app.toggleLoader(false);
+                }
+            },
+
+            deleteProduct: async (pid) => {
+                if(!confirm("Are you sure you want to delete this product?")) return;
+                try {
+                    await deleteDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'products', pid));
+                    app.toast("Product Deleted", "info");
+                    app.loadProducts().then(() => app.loadSellerDashboard());
+                } catch(e) {
+                    app.toast("Delete failed: " + e.message, "error");
                 }
             },
 
@@ -1266,10 +1455,7 @@
                     const steps = snap.data().trackingSteps || [];
                     steps.push({ status: status, time: new Date().toISOString() });
                     
-                    await updateDoc(ref, { 
-                        status: status, 
-                        trackingSteps: steps 
-                    });
+                    await updateDoc(ref, { status: status, trackingSteps: steps });
                     app.toast(`Order marked as ${status}`, "success");
                 } catch(e) {
                     app.toast("Update failed", "error");
@@ -1286,18 +1472,35 @@
 
             // --- ADMIN LOGIC ---
             loadAdminDashboard: async () => {
-                // Load Stats
                 const ordersSnap = await getDocs(getCollectionRef('orders'));
                 let total = 0;
                 let count = 0;
+                const payQueue = document.getElementById('admin-payment-queue');
+                payQueue.innerHTML = '';
+
                 ordersSnap.forEach(d => {
-                    total += d.data().total;
+                    const o = d.data();
+                    total += o.total;
                     count++;
+                    
+                    if(o.status === 'Pending Verification') {
+                         payQueue.innerHTML += `
+                            <div class="flex justify-between items-center bg-gray-50 p-3 rounded border border-gray-200">
+                                <div>
+                                    <div class="font-bold">Order #${d.id.substr(0,6)}</div>
+                                    <div class="text-sm">Amount: ₹${o.total} | ${o.paymentMethod.toUpperCase()}</div>
+                                </div>
+                                <button onclick="app.adminVerifyPayment('${d.id}')" class="bg-blue-600 text-white text-xs px-3 py-1.5 rounded hover:bg-blue-700">Verify & Process</button>
+                            </div>
+                         `;
+                    }
                 });
+                
+                if(payQueue.innerHTML === '') payQueue.innerHTML = '<div class="text-gray-400 text-sm">No pending payments.</div>';
+
                 document.getElementById('admin-total-sales').innerText = '₹' + total;
                 document.getElementById('admin-order-count').innerText = count;
 
-                // Load Seller Requests
                 const reqSnap = await getDocs(getCollectionRef('sellerRequests'));
                 const reqContainer = document.getElementById('admin-seller-requests');
                 reqContainer.innerHTML = '';
@@ -1320,17 +1523,29 @@
                 if (reqContainer.innerHTML === '') reqContainer.innerHTML = '<div class="text-gray-400 text-sm text-center py-4 italic">No pending requests.</div>';
             },
 
+            adminVerifyPayment: async (oid) => {
+                try {
+                     const ref = doc(db, 'artifacts', APP_ID, 'public', 'data', 'orders', oid);
+                     const snap = await getDoc(ref);
+                     const steps = snap.data().trackingSteps || [];
+                     steps.push({ status: 'Verified', time: new Date().toISOString() });
+                     
+                     await updateDoc(ref, { status: 'Verified', trackingSteps: steps });
+                     app.toast("Payment Verified. Order Processing.", "success");
+                     app.loadAdminDashboard();
+                } catch(e) {
+                    app.toast("Error verifying: " + e.message, "error");
+                }
+            },
+
             approveSeller: async (reqId, uid) => {
                 if(!confirm("Approve this seller?")) return;
                 try {
-                    // 1. Update Request
                     await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'sellerRequests', reqId), { status: 'Approved' });
-                    // 2. Update User Role
                     await updateDoc(getUserRef(uid), { role: 'seller' });
                     app.toast("Seller Approved!", "success");
                     app.loadAdminDashboard();
                 } catch(e) {
-                    console.error(e);
                     app.toast("Error approving seller", "error");
                 }
             },
@@ -1339,70 +1554,82 @@
                 e.preventDefault();
                 const email = document.getElementById('service-email-input').value;
                 app.toast(`Service Account Created for ${email}`, "success");
-                setTimeout(() => alert(`Credentials sent to ${email} (Simulated).\nTemporary Pass: Service@123`), 500);
             },
             
-            // New Manual Seller Creation by Admin
             createSellerManual: async (e) => {
                 e.preventDefault();
                 const email = document.getElementById('manual-seller-email').value;
                 app.toast(`Seller Account Created for ${email}`, "success");
-                setTimeout(() => alert(`Seller Account Credentials:\nID: ${email}\nPassword: Seller@123\n\nShare securely.`), 500);
             },
 
             // --- SERVICE LOGIC ---
             loadServiceDashboard: async () => {
-                // Mock Chat System
                 const list = document.getElementById('support-tickets-list');
-                list.innerHTML = `
-                    <div onclick="app.loadChat('ticket_001')" class="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 rounded-lg transition">
-                        <div class="flex justify-between mb-1">
-                            <span class="font-bold text-sm text-gray-800">Customer #9283</span>
-                            <span class="text-xs text-gray-400">2m ago</span>
-                        </div>
-                        <div class="text-xs text-red-500 font-medium">Order Cancellation Request</div>
-                    </div>
-                    <div onclick="app.loadChat('ticket_002')" class="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 rounded-lg transition">
-                        <div class="flex justify-between mb-1">
-                            <span class="font-bold text-sm text-gray-800">Customer #1122</span>
-                            <span class="text-xs text-gray-400">1h ago</span>
-                        </div>
-                        <div class="text-xs text-blue-500 font-medium">Tracking Info Update</div>
-                    </div>
-                `;
-            },
-
-            loadChat: (ticketId) => {
-                app.currentTicketId = ticketId;
-                document.getElementById('chat-header').innerText = `Ticket: ${ticketId}`;
-                document.getElementById('chat-input').disabled = false;
-                document.getElementById('chat-send-btn').disabled = false;
+                list.innerHTML = '';
                 
-                const msgs = document.getElementById('chat-messages');
-                msgs.innerHTML = `
-                    <div class="mb-4 text-center"><span class="text-xs text-gray-400 bg-gray-100 px-2 py-1 rounded-full">Session started</span></div>
-                    <div class="mb-3 text-left">
-                         <div class="text-xs text-gray-500 mb-1 ml-1">Customer</div>
-                         <span class="bg-blue-100 text-blue-900 px-3 py-2 rounded-2xl rounded-tl-none text-sm inline-block shadow-sm">Hello, I need help with my order.</span>
-                    </div>
-                `;
+                try {
+                    const snap = await getDocs(getCollectionRef('supportChats'));
+                    snap.forEach(d => {
+                        const t = d.data();
+                        const lastMsg = t.messages[t.messages.length -1];
+                        list.innerHTML += `
+                             <div onclick="app.openServiceChat('${d.id}')" class="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 rounded-lg transition">
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-bold text-sm text-gray-800">Order #${t.orderId.substr(0,6)}</span>
+                                </div>
+                                <div class="text-xs text-gray-500 truncate">${lastMsg ? lastMsg.text : 'New Ticket'}</div>
+                            </div>
+                        `;
+                    });
+                    if(list.innerHTML === '') list.innerHTML = '<div class="text-gray-400 p-4">No active tickets</div>';
+                } catch(e) {
+                    console.error(e);
+                }
             },
 
-            sendSupportMessage: (e) => {
+            openServiceChat: async (ticketId) => {
+                app.currentTicketId = ticketId;
+                document.getElementById('service-chat-header').innerText = `Ticket #${ticketId.substr(0,8)}`;
+                document.getElementById('service-chat-input').disabled = false;
+                document.getElementById('service-chat-send-btn').disabled = false;
+                
+                const chatRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'supportChats', ticketId);
+                
+                if(app.chatUnsubscribe) app.chatUnsubscribe();
+                app.chatUnsubscribe = onSnapshot(chatRef, (doc) => {
+                    if(doc.exists()) {
+                        const msgs = doc.data().messages || [];
+                        const container = document.getElementById('service-chat-messages');
+                        container.innerHTML = '';
+                        msgs.forEach(m => {
+                            const isMe = m.sender !== 'Customer' && m.sender !== 'System';
+                            container.innerHTML += `
+                                <div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
+                                    <div class="${isMe ? 'bg-primary text-white' : 'bg-white border text-gray-800'} px-4 py-2 rounded-lg max-w-xs text-sm shadow-sm mb-2">
+                                        <div class="text-xs opacity-70 mb-1">${m.sender}</div>
+                                        ${m.text}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        container.scrollTop = container.scrollHeight;
+                    }
+                });
+            },
+
+            sendServiceMessage: async (e) => {
                 e.preventDefault();
-                const input = document.getElementById('chat-input');
+                const input = document.getElementById('service-chat-input');
                 const text = input.value;
                 if(!text) return;
                 
-                const msgs = document.getElementById('chat-messages');
-                msgs.innerHTML += `
-                    <div class="mb-3 text-right">
-                         <div class="text-xs text-gray-500 mb-1 mr-1">You</div>
-                         <span class="bg-gray-800 text-white px-3 py-2 rounded-2xl rounded-tr-none text-sm inline-block shadow-sm">${text}</span>
-                    </div>
-                `;
+                const chatRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'supportChats', app.currentTicketId);
+                const chatSnap = await getDoc(chatRef);
+                const messages = chatSnap.data().messages;
+                messages.push({ sender: 'Service Team', text: text, time: new Date().toISOString() });
+                
+                await updateDoc(chatRef, { messages });
                 input.value = '';
-                msgs.scrollTop = msgs.scrollHeight;
             },
 
             // --- UTILS ---
@@ -1418,7 +1645,6 @@
             if (user) {
                 app.currentUser = user;
                 
-                // Fetch Role
                 if (user.email === ADMIN_EMAIL) {
                     app.userRole = 'admin';
                 } else {
@@ -1428,26 +1654,26 @@
                     }
                 }
 
-                // Update UI based on Role
                 document.getElementById('auth-section').innerHTML = `
                     <div class="flex items-center space-x-3">
                         <span class="text-sm font-medium hidden lg:inline text-gray-100">${user.email} <span class="text-xs opacity-70">(${app.userRole})</span></span>
                         <button onclick="app.logout()" class="text-xs bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg transition shadow-sm">Logout</button>
                     </div>
                 `;
-                
-                // Mobile Auth
-                 document.getElementById('mobile-auth-section').innerHTML = `
+                document.getElementById('mobile-auth-section').innerHTML = `
                     <div class="pt-4 border-t border-white/20 mt-2">
                          <div class="text-xs text-blue-100 mb-2 px-2">${user.email}</div>
                          <button onclick="app.logout()" class="w-full text-left py-2 px-2 text-red-200 hover:bg-white/10 rounded">Logout</button>
                     </div>
                  `;
 
-                // Show Role Buttons
                 if(app.userRole === 'admin') document.getElementById('nav-admin').classList.remove('hide');
                 if(app.userRole === 'seller') document.getElementById('nav-seller').classList.remove('hide');
                 if(app.userRole === 'service') document.getElementById('nav-service').classList.remove('hide');
+                
+                // Show Profile link for logged in users
+                document.getElementById('nav-profile').classList.remove('hide');
+                document.getElementById('mobile-nav-profile').classList.remove('hide');
 
                 if (app.products.length === 0) app.loadProducts();
 
@@ -1461,10 +1687,11 @@
                     <button onclick="app.router('login')" class="block w-full text-left py-2 mt-2 border-t border-white/20 px-2 hover:bg-white/10 rounded">Login / Sign Up</button>
                 `;
                 
-                // Hide restricted
                 document.getElementById('nav-admin').classList.add('hide');
                 document.getElementById('nav-seller').classList.add('hide');
                 document.getElementById('nav-service').classList.add('hide');
+                document.getElementById('nav-profile').classList.add('hide');
+                document.getElementById('mobile-nav-profile').classList.add('hide');
                 
                 app.loadProducts();
             }
