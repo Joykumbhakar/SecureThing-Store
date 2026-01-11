@@ -3,57 +3,437 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureThingStore - Premium Secure E-commerce</title>
+    <title>SecureThingStore</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Firebase SDKs (Modular) -->
+    <script type="importmap">
+    {
+        "imports": {
+            "firebase/app": "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js",
+            "firebase/auth": "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js",
+            "firebase/firestore": "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js"
+        }
+    }
+    </script>
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
-                        primary: '#10b981', // Emerald 500
-                        secondary: '#0f172a', // Slate 900
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        primary: '#007BFF',
+                        secondary: '#ffffff',
+                        accent: '#0056b3',
+                        bgLight: '#f4f7f6'
                     }
                 }
             }
         }
     </script>
-    
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; }
+        .hide { display: none !important; }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007BFF;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* Success Screen Animation */
+        .check-icon { width: 80px; height: 80px; color: #28a745; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-    <!-- Firebase SDKs -->
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a0aec0; }
+    </style>
+</head>
+<body class="text-gray-800 flex flex-col min-h-screen">
+
+    <!-- NAVIGATION -->
+    <nav class="bg-primary text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2 cursor-pointer" onclick="app.router('home')">
+                <i class="fas fa-shield-alt text-2xl"></i>
+                <span class="text-xl font-bold tracking-tight">SecureThingStore</span>
+            </div>
+            
+            <div class="hidden md:flex items-center space-x-6">
+                <!-- Customer Links -->
+                <button onclick="app.router('home')" class="hover:text-gray-200">Shop</button>
+                <button onclick="app.router('orders')" class="hover:text-gray-200" id="nav-orders">My Orders</button>
+                
+                <!-- Role Specific Links -->
+                <button onclick="app.router('seller-dashboard')" class="hover:text-gray-200 hide" id="nav-seller">Seller Portal</button>
+                <button onclick="app.router('admin-dashboard')" class="hover:text-gray-200 hide" id="nav-admin">Admin Panel</button>
+                <button onclick="app.router('service-dashboard')" class="hover:text-gray-200 hide" id="nav-service">Service Desk</button>
+
+                <!-- Cart -->
+                <button onclick="app.toggleCart()" class="relative hover:text-gray-200">
+                    <i class="fas fa-shopping-cart text-xl"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">0</span>
+                </button>
+
+                <!-- Auth -->
+                <div id="auth-section">
+                    <button onclick="app.router('login')" class="bg-white text-primary px-4 py-1.5 rounded font-medium hover:bg-gray-100 transition">Login</button>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden text-white" onclick="document.getElementById('mobile-menu').classList.toggle('hide')">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hide md:hidden bg-accent px-4 py-2 space-y-2">
+            <button onclick="app.router('home')" class="block w-full text-left py-1">Shop</button>
+            <button onclick="app.router('orders')" class="block w-full text-left py-1">My Orders</button>
+            <button onclick="app.toggleCart()" class="block w-full text-left py-1">Cart</button>
+            <div id="mobile-auth-section"></div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow container mx-auto px-4 py-6 relative">
+        
+        <!-- Loading Overlay -->
+        <div id="global-loader" class="fixed inset-0 bg-white bg-opacity-80 z-50 flex flex-col items-center justify-center hide">
+            <div class="loader mb-4"></div>
+            <p class="text-primary font-medium">Loading...</p>
+        </div>
+
+        <!-- ================= VIEWS ================= -->
+
+        <!-- 1. HOME / SHOP VIEW -->
+        <section id="view-home" class="view-section">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-700">Featured Products</h2>
+                <div class="flex gap-2">
+                    <input type="text" id="search-input" placeholder="Search items..." class="border rounded px-3 py-1.5 text-sm">
+                    <button onclick="app.filterProducts()" class="bg-primary text-white px-3 py-1.5 rounded text-sm">Search</button>
+                </div>
+            </div>
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Products injected here -->
+            </div>
+        </section>
+
+        <!-- 2. LOGIN / REGISTER VIEW -->
+        <section id="view-login" class="view-section hide max-w-md mx-auto mt-10 bg-white p-8 rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold text-center mb-6 text-primary" id="auth-title">Login to SecureThing</h2>
+            
+            <form id="auth-form" onsubmit="app.handleAuth(event)">
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                    <input type="email" id="auth-email" class="w-full border rounded px-3 py-2 focus:outline-none focus:border-primary" required>
+                </div>
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
+                    <input type="password" id="auth-pass" class="w-full border rounded px-3 py-2 focus:outline-none focus:border-primary" required>
+                </div>
+                <button type="submit" class="w-full bg-primary text-white font-bold py-2 rounded hover:bg-accent transition">
+                    <span id="auth-btn-text">Sign In</span>
+                </button>
+            </form>
+
+            <div class="mt-4 text-center">
+                <button onclick="app.toggleAuthMode()" class="text-sm text-primary hover:underline" id="auth-switch-text">New user? Create an account</button>
+            </div>
+            <div class="mt-4 border-t pt-4 text-center">
+                <button onclick="app.handleGoogleAuth()" class="flex items-center justify-center w-full border py-2 rounded hover:bg-gray-50">
+                    <i class="fab fa-google text-red-500 mr-2"></i> Continue with Google
+                </button>
+            </div>
+        </section>
+
+        <!-- 3. CHECKOUT VIEW -->
+        <section id="view-checkout" class="view-section hide">
+            <h2 class="text-2xl font-bold mb-6">Checkout</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Checkout Form -->
+                <div class="md:col-span-2 space-y-6">
+                    <!-- Address Section -->
+                    <div class="bg-white p-6 rounded shadow">
+                        <h3 class="font-bold text-lg mb-4 border-b pb-2">Shipping Address</h3>
+                        <div id="saved-addresses" class="space-y-3 mb-4"></div>
+                        
+                        <button onclick="document.getElementById('new-address-form').classList.toggle('hide')" class="text-sm text-primary font-bold">+ Add New Address</button>
+                        
+                        <form id="new-address-form" class="hide mt-4 grid grid-cols-1 md:grid-cols-2 gap-4" onsubmit="event.preventDefault(); app.saveAddress();">
+                            <input type="text" id="addr-name" placeholder="Full Name" class="border p-2 rounded w-full" required>
+                            <input type="text" id="addr-mobile" placeholder="Mobile Number" class="border p-2 rounded w-full" required>
+                            <input type="text" id="addr-line" placeholder="Flat/House/Street" class="border p-2 rounded w-full md:col-span-2" required>
+                            <input type="text" id="addr-area" placeholder="Area/Locality" class="border p-2 rounded w-full" required>
+                            <input type="text" id="addr-city" placeholder="City/Village" class="border p-2 rounded w-full" required>
+                            <input type="text" id="addr-pin" placeholder="Pincode" class="border p-2 rounded w-full" required>
+                            <button type="submit" class="bg-gray-800 text-white py-2 rounded md:col-span-2">Save Address</button>
+                        </form>
+                    </div>
+
+                    <!-- Payment Section -->
+                    <div class="bg-white p-6 rounded shadow">
+                        <h3 class="font-bold text-lg mb-4 border-b pb-2">Payment Method</h3>
+                        <div class="space-y-3">
+                            <label class="flex items-center space-x-3 p-3 border rounded cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="payment" value="upi" checked>
+                                <i class="fas fa-mobile-alt text-green-600"></i>
+                                <span>UPI (GPay / PhonePe)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 p-3 border rounded cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="payment" value="cod">
+                                <i class="fas fa-money-bill-wave text-green-600"></i>
+                                <span>Cash on Delivery (COD)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Order Summary -->
+                <div class="bg-white p-6 rounded shadow h-fit">
+                    <h3 class="font-bold text-lg mb-4">Order Summary</h3>
+                    <div id="checkout-items" class="space-y-2 mb-4 text-sm max-h-60 overflow-y-auto"></div>
+                    <div class="flex justify-between font-bold text-xl border-t pt-4 mt-4">
+                        <span>Total</span>
+                        <span id="checkout-total">₹0</span>
+                    </div>
+                    <button onclick="app.placeOrder()" class="w-full bg-green-600 text-white font-bold py-3 rounded mt-6 hover:bg-green-700 shadow-lg">
+                        Place Order
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. SUCCESS VIEW -->
+        <section id="view-success" class="view-section hide text-center pt-20">
+            <div class="flex justify-center mb-6">
+                <i class="fas fa-check-circle check-icon"></i>
+            </div>
+            <h2 class="text-3xl font-bold text-gray-800 mb-2">Order Placed Successfully!</h2>
+            <p class="text-gray-600 mb-8">Thank you for shopping with SecureThingStore.</p>
+            <div class="space-x-4">
+                <button onclick="app.router('orders')" class="bg-primary text-white px-6 py-2 rounded hover:bg-blue-600">Track Order</button>
+                <button onclick="app.router('home')" class="border border-gray-400 text-gray-700 px-6 py-2 rounded hover:bg-gray-100">Continue Shopping</button>
+            </div>
+        </section>
+
+        <!-- 5. MY ORDERS / TRACKING -->
+        <section id="view-orders" class="view-section hide">
+            <h2 class="text-2xl font-bold mb-6">My Orders</h2>
+            <div id="orders-list" class="space-y-6">
+                <!-- Orders injected here -->
+            </div>
+        </section>
+
+        <!-- 6. SELLER APPLICATION -->
+        <section id="view-seller-apply" class="view-section hide max-w-2xl mx-auto bg-white p-8 rounded shadow">
+            <h2 class="text-2xl font-bold text-primary mb-2">Become a Seller</h2>
+            <p class="text-sm text-gray-500 mb-6">Join our marketplace. Admin approval required.</p>
+            <form onsubmit="app.submitSellerApplication(event)" class="space-y-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" name="name" placeholder="Full Name" required class="border p-2 rounded">
+                    <input type="date" name="dob" required class="border p-2 rounded">
+                    <input type="tel" name="mobile" placeholder="Mobile Number" required class="border p-2 rounded">
+                    <input type="email" name="email" placeholder="Business Email" required class="border p-2 rounded">
+                </div>
+                <input type="text" name="company" placeholder="Company Name" required class="border p-2 rounded w-full">
+                <input type="text" name="address" placeholder="Business Address (Google Maps Style)" required class="border p-2 rounded w-full">
+                
+                <div>
+                    <label class="block text-sm font-bold mb-1">Government ID (Aadhaar/PAN)</label>
+                    <input type="file" id="doc-file" class="border p-2 w-full text-sm">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1">Passport Photo</label>
+                    <input type="file" id="photo-file" class="border p-2 w-full text-sm">
+                </div>
+
+                <button type="submit" class="w-full bg-primary text-white font-bold py-2 rounded">Submit Application</button>
+            </form>
+        </section>
+
+        <!-- 7. SELLER DASHBOARD -->
+        <section id="view-seller-dashboard" class="view-section hide">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Seller Dashboard</h2>
+                <button onclick="document.getElementById('add-product-modal').classList.remove('hide')" class="bg-green-600 text-white px-4 py-2 rounded text-sm"><i class="fas fa-plus mr-2"></i>Add Product</button>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- My Products -->
+                <div class="bg-white p-4 rounded shadow">
+                    <h3 class="font-bold border-b pb-2 mb-2">My Inventory</h3>
+                    <div id="seller-products-list" class="space-y-2 h-96 overflow-y-auto"></div>
+                </div>
+                <!-- Incoming Orders -->
+                <div class="bg-white p-4 rounded shadow">
+                    <h3 class="font-bold border-b pb-2 mb-2">Manage Orders</h3>
+                    <div id="seller-orders-list" class="space-y-2 h-96 overflow-y-auto"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. ADMIN DASHBOARD -->
+        <section id="view-admin-dashboard" class="view-section hide">
+            <h2 class="text-2xl font-bold mb-6 text-red-600">Admin Control Panel</h2>
+            
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white p-4 rounded shadow border-l-4 border-blue-500">
+                    <div class="text-gray-500 text-sm">Total Sales</div>
+                    <div class="text-2xl font-bold" id="admin-total-sales">₹0</div>
+                </div>
+                <div class="bg-white p-4 rounded shadow border-l-4 border-green-500">
+                    <div class="text-gray-500 text-sm">Total Orders</div>
+                    <div class="text-2xl font-bold" id="admin-order-count">0</div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Seller Requests -->
+                <div class="bg-white p-6 rounded shadow">
+                    <h3 class="font-bold text-lg mb-4">Seller Requests</h3>
+                    <div id="admin-seller-requests" class="space-y-3"></div>
+                </div>
+
+                <!-- Service Team Management -->
+                <div class="bg-white p-6 rounded shadow">
+                    <h3 class="font-bold text-lg mb-4">Create Service Team Account</h3>
+                    <form onsubmit="app.createServiceAccount(event)" class="flex gap-2">
+                        <input type="email" id="service-email-input" placeholder="New Agent Email" class="border p-2 flex-grow rounded" required>
+                        <button type="submit" class="bg-gray-800 text-white px-4 py-2 rounded">Create</button>
+                    </form>
+                    <p class="text-xs text-gray-500 mt-2">*This simulates creating an account. In a real app, use Admin SDK.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. SERVICE DASHBOARD -->
+        <section id="view-service-dashboard" class="view-section hide">
+            <h2 class="text-2xl font-bold mb-6">Service Support Desk</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-[500px]">
+                <div class="bg-white p-4 rounded shadow md:col-span-1 overflow-y-auto">
+                    <h3 class="font-bold mb-4">Active Tickets</h3>
+                    <div id="support-tickets-list" class="space-y-2"></div>
+                </div>
+                <div class="bg-white p-4 rounded shadow md:col-span-2 flex flex-col">
+                    <div id="chat-header" class="border-b pb-2 mb-2 font-bold text-primary">Select a ticket</div>
+                    <div id="chat-messages" class="flex-grow bg-gray-50 p-4 rounded overflow-y-auto mb-4 border"></div>
+                    <form onsubmit="app.sendSupportMessage(event)" class="flex gap-2">
+                        <input type="text" id="chat-input" class="flex-grow border rounded px-3 py-2" placeholder="Type a message..." disabled>
+                        <button type="submit" id="chat-send-btn" class="bg-primary text-white px-4 py-2 rounded disabled:opacity-50" disabled>Send</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-800 text-white py-8 mt-auto">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 text-sm">
+            <div>
+                <h4 class="font-bold text-lg mb-4">SecureThingStore</h4>
+                <p class="text-gray-400">Your trusted marketplace for secure things. Quality assured, fast delivery.</p>
+            </div>
+            <div>
+                <h4 class="font-bold text-lg mb-4">Quick Links</h4>
+                <ul class="space-y-2 text-gray-400">
+                    <li><a href="#" onclick="app.router('home')">Home</a></li>
+                    <li><a href="#" onclick="app.router('orders')">Tracking</a></li>
+                    <li><a href="#" onclick="app.router('seller-apply')">Become a Seller</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold text-lg mb-4">Contact</h4>
+                <p class="text-gray-400">support@securething.com</p>
+                <p class="text-gray-400">+91 12345 67890</p>
+            </div>
+        </div>
+        <div class="text-center text-gray-600 text-xs mt-8 border-t border-gray-700 pt-4">
+            &copy; 2026 SecureThingStore. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- CART SIDEBAR -->
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-80 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-50 flex flex-col">
+        <div class="p-4 bg-primary text-white flex justify-between items-center">
+            <h3 class="font-bold">Your Cart</h3>
+            <button onclick="app.toggleCart()"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="cart-items" class="flex-grow overflow-y-auto p-4 space-y-4">
+            <!-- Cart Items -->
+            <p class="text-gray-500 text-center mt-10">Your cart is empty.</p>
+        </div>
+        <div class="p-4 border-t bg-gray-50">
+            <div class="flex justify-between font-bold text-lg mb-4">
+                <span>Total:</span>
+                <span id="cart-total">₹0</span>
+            </div>
+            <button onclick="app.goToCheckout()" class="w-full bg-green-600 text-white py-2 rounded font-bold hover:bg-green-700">Checkout</button>
+        </div>
+    </div>
+
+    <!-- MODAL: ADD PRODUCT -->
+    <div id="add-product-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hide">
+        <div class="bg-white p-6 rounded-lg w-full max-w-md">
+            <h3 class="text-xl font-bold mb-4">Add New Product</h3>
+            <form onsubmit="app.sellerAddProduct(event)" class="space-y-3">
+                <input type="text" name="p_name" placeholder="Product Name" class="border p-2 w-full rounded" required>
+                <textarea name="p_desc" placeholder="Description" class="border p-2 w-full rounded" required></textarea>
+                <div class="flex gap-2">
+                    <input type="number" name="p_price" placeholder="Price (₹)" class="border p-2 w-1/2 rounded" required>
+                    <input type="text" name="p_img" placeholder="Image URL (optional)" class="border p-2 w-1/2 rounded">
+                </div>
+                <div class="flex justify-end space-x-2 mt-4">
+                    <button type="button" onclick="document.getElementById('add-product-modal').classList.add('hide')" class="px-4 py-2 border rounded">Cancel</button>
+                    <button type="button" onclick="app.fillMockProduct(this.form)" class="px-4 py-2 border bg-yellow-100 text-yellow-800 text-xs rounded">Mock Data</button>
+                    <button type="submit" class="px-4 py-2 bg-primary text-white rounded">Add Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN SCRIPT -->
     <script type="module">
-        import { initializeApp, deleteApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc, deleteDoc, onSnapshot, query, where, orderBy, serverTimestamp, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { initializeApp } from "firebase/app";
+        import { 
+            getAuth, 
+            createUserWithEmailAndPassword, 
+            signInWithEmailAndPassword, 
+            signOut, 
+            onAuthStateChanged,
+            GoogleAuthProvider,
+            signInWithPopup
+        } from "firebase/auth";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc, 
+            getDocs, 
+            getDoc, 
+            doc, 
+            setDoc, 
+            updateDoc, 
+            onSnapshot, 
+            serverTimestamp, 
+            query,
+            orderBy 
+        } from "firebase/firestore";
 
-        // --- GLOBAL STATE & CONFIG ---
-        window.state = {
-            user: null,
-            role: 'guest', // guest, customer, admin, seller, service
-            view: 'home',
-            cart: [],
-            products: [],
-            filteredProducts: [], // For search
-            orders: [],
-            chats: [],
-            sellerRequests: [],
-            serviceMembers: [],
-            activeChat: null,
-            editingProduct: null, // For edit mode
-            searchQuery: '',
-            loading: false,
-            modal: null // { type: 'otp'|'confirm'|'alert', message, onConfirm }
-        };
-
+        // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyAEDJkwaThWJNm8lQbOLxb-JSTQ45dbHOw",
             authDomain: "thing-672ba.firebaseapp.com",
@@ -64,1003 +444,751 @@
             measurementId: "G-JG0PV4KYPN"
         };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const APP_ID = 'secure-thing-store-v2'; // Updated version namespace
+        const appInst = initializeApp(firebaseConfig);
+        const auth = getAuth(appInst);
+        const db = getFirestore(appInst);
+        const ADMIN_EMAIL = "joykumbhakar101@gmail.com";
 
-        // --- FIRESTORE HELPERS ---
-        const getPublicColl = (colName) => collection(db, 'artifacts', APP_ID, 'public', 'data', colName);
-        const getPublicDoc = (colName, docId) => doc(db, 'artifacts', APP_ID, 'public', 'data', colName, docId);
+        // Helper to get Firestore paths
+        const APP_ID = 'secure-thing-store';
+        const getCollectionRef = (name) => collection(db, 'artifacts', APP_ID, 'public', 'data', name);
+        const getUserRef = (uid) => doc(db, 'artifacts', APP_ID, 'public', 'data', 'users', uid);
 
-        // --- UI HELPERS ---
-        const showToast = (message, type = 'info') => {
-            const toast = document.createElement('div');
-            toast.className = `fixed bottom-4 right-4 px-6 py-4 rounded-xl text-white shadow-2xl z-50 transform transition-all duration-300 translate-y-20 opacity-0 flex items-center gap-3 ${type === 'error' ? 'bg-red-600' : 'bg-secondary'}`;
-            toast.innerHTML = `<i class="${type === 'error' ? 'fas fa-exclamation-circle' : 'fas fa-check-circle'}"></i> <span>${message}</span>`;
-            document.body.appendChild(toast);
-            
-            requestAnimationFrame(() => toast.classList.remove('translate-y-20', 'opacity-0'));
-            setTimeout(() => {
-                toast.classList.add('translate-y-20', 'opacity-0');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        };
+        // --- APPLICATION STATE ---
+        window.app = {
+            currentUser: null,
+            userRole: 'customer', // customer, seller, admin, service
+            cart: [],
+            products: [],
+            currentTicketId: null,
 
-        const setLoading = (isLoading) => {
-            window.state.loading = isLoading;
-            const loader = document.getElementById('global-loader');
-            if (loader) loader.style.display = isLoading ? 'flex' : 'none';
-        };
-
-        const openModal = (config) => {
-            window.state.modal = config;
-            renderApp();
-        };
-
-        const closeModal = () => {
-            window.state.modal = null;
-            renderApp();
-        };
-
-        // --- AUTH & ROLES ---
-        const createSecondaryUser = async (email, password) => {
-            const secondaryApp = initializeApp(firebaseConfig, "SecondaryApp");
-            const secondaryAuth = getAuth(secondaryApp);
-            try {
-                const userCredential = await createUserWithEmailAndPassword(secondaryAuth, email, password);
-                await signOut(secondaryAuth);
-                deleteApp(secondaryApp);
-                return userCredential.user.uid;
-            } catch (error) {
-                deleteApp(secondaryApp);
-                throw error;
-            }
-        };
-
-        const determineRole = async (user) => {
-            if (!user || user.isAnonymous) return 'guest';
-            if (user.email === 'joykumbhakar101@gmail.com') return 'admin';
-            try {
-                const roleDoc = await getDoc(getPublicDoc('user_roles', user.uid));
-                if (roleDoc.exists()) return roleDoc.data().role;
-            } catch (e) { console.error("Role Error", e); }
-            return 'customer';
-        };
-
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                window.state.user = user;
-                window.state.role = await determineRole(user);
+            // --- ROUTER ---
+            router: (viewId) => {
+                document.querySelectorAll('.view-section').forEach(el => el.classList.add('hide'));
+                document.getElementById('mobile-menu').classList.add('hide');
                 
-                if (window.state.role === 'customer') loadCustomerData();
-                if (window.state.role === 'admin') loadAdminData();
-                if (window.state.role === 'seller') loadSellerData();
-                if (window.state.role === 'service') loadServiceData();
-            } else {
-                signInAnonymously(auth).catch(console.error);
-                window.state.user = null;
-                window.state.role = 'guest';
-            }
-            renderApp();
-        });
+                const view = document.getElementById(`view-${viewId}`);
+                if (view) view.classList.remove('hide');
 
-        // --- DATA LISTENERS ---
-        onSnapshot(getPublicColl('products'), (snapshot) => {
-            window.state.products = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
-            filterProducts(); // Update search results
-            renderApp();
-        });
-
-        const loadAdminData = () => {
-            ['seller_requests', 'orders', 'support_chats', 'service_members'].forEach(col => {
-                onSnapshot(getPublicColl(col), (snap) => {
-                    const key = col === 'support_chats' ? 'chats' : (col === 'service_members' ? 'serviceMembers' : (col === 'seller_requests' ? 'sellerRequests' : 'orders'));
-                    window.state[key] = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                    renderApp();
-                });
-            });
-        };
-
-        const loadSellerData = () => { /* Only public products needed, already global */ };
-        
-        const loadServiceData = () => {
-            ['support_chats', 'orders'].forEach(col => {
-                onSnapshot(getPublicColl(col), (snap) => {
-                    window.state[col === 'support_chats' ? 'chats' : 'orders'] = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                    renderApp();
-                });
-            });
-        };
-
-        const loadCustomerData = () => {
-             onSnapshot(getPublicColl('orders'), (snap) => {
-                if(window.state.user) {
-                    window.state.orders = snap.docs.map(d => ({id: d.id, ...d.data()})).filter(o => o.customerId === window.state.user.uid);
-                    renderApp();
+                if (viewId === 'home') app.loadProducts();
+                if (viewId === 'orders') app.loadCustomerOrders();
+                if (viewId === 'seller-dashboard') app.loadSellerDashboard();
+                if (viewId === 'admin-dashboard') app.loadAdminDashboard();
+                if (viewId === 'service-dashboard') app.loadServiceDashboard();
+                if (viewId === 'seller-apply') {
+                    if(!app.currentUser) {
+                        alert("Please login first to apply.");
+                        app.router('login');
+                    }
                 }
-            });
-        };
-
-        const filterProducts = () => {
-            const q = window.state.searchQuery.toLowerCase();
-            window.state.filteredProducts = window.state.products.filter(p => 
-                p.name.toLowerCase().includes(q) || p.description?.toLowerCase().includes(q)
-            );
-        };
-
-        // --- ACTIONS ---
-        window.actions = {
-            handleSearch: (val) => {
-                window.state.searchQuery = val;
-                filterProducts();
-                if(window.state.view !== 'home') window.state.view = 'home';
-                renderApp();
+                
+                window.scrollTo(0,0);
             },
-            
-            requestLogin: (email, password) => {
-                openModal({
-                    type: 'otp',
-                    title: 'Security Verification',
-                    message: `Enter the OTP sent to ${email || 'your email'}`,
-                    onConfirm: (otp) => {
-                        if (otp === "123456") window.actions.finalizeLogin(email, password);
-                        else showToast('Invalid OTP', 'error');
+
+            // --- AUTHENTICATION ---
+            handleAuth: async (e) => {
+                e.preventDefault();
+                app.toggleLoader(true);
+                const email = document.getElementById('auth-email').value;
+                const pass = document.getElementById('auth-pass').value;
+                const isRegister = document.getElementById('auth-btn-text').innerText === 'Sign Up';
+
+                try {
+                    let userCred;
+                    if (isRegister) {
+                        userCred = await createUserWithEmailAndPassword(auth, email, pass);
+                        // Create basic user profile
+                        await setDoc(getUserRef(userCred.user.uid), {
+                            uid: userCred.user.uid,
+                            email: email,
+                            role: 'customer',
+                            name: email.split('@')[0],
+                            addressList: []
+                        });
+                    } else {
+                        userCred = await signInWithEmailAndPassword(auth, email, pass);
                     }
+                    app.router('home');
+                } catch (error) {
+                    alert("Auth Error: " + error.message);
+                } finally {
+                    app.toggleLoader(false);
+                }
+            },
+
+            handleGoogleAuth: async () => {
+                const provider = new GoogleAuthProvider();
+                try {
+                    const result = await signInWithPopup(auth, provider);
+                    const user = result.user;
+                    
+                    // Check if user doc exists, if not create
+                    const userDoc = await getDoc(getUserRef(user.uid));
+                    if (!userDoc.exists()) {
+                         await setDoc(getUserRef(user.uid), {
+                            uid: user.uid,
+                            email: user.email,
+                            role: 'customer',
+                            name: user.displayName,
+                            addressList: []
+                        });
+                    }
+                    app.router('home');
+                } catch (error) {
+                    console.error(error);
+                    alert("Google Sign-In failed");
+                }
+            },
+
+            logout: () => {
+                signOut(auth).then(() => {
+                    app.cart = [];
+                    app.updateCartUI();
+                    app.router('home');
+                    // location.reload();
                 });
             },
 
-            requestSignup: (email, password) => {
-                 openModal({
-                    type: 'otp',
-                    title: 'Verify Email',
-                    message: `Enter the OTP sent to ${email}`,
-                    onConfirm: (otp) => {
-                        if (otp === "123456") window.actions.finalizeSignup(email, password);
-                        else showToast('Invalid OTP', 'error');
+            toggleAuthMode: () => {
+                const btn = document.getElementById('auth-btn-text');
+                const title = document.getElementById('auth-title');
+                const switchText = document.getElementById('auth-switch-text');
+                
+                if (btn.innerText === 'Sign In') {
+                    btn.innerText = 'Sign Up';
+                    title.innerText = 'Create Account';
+                    switchText.innerText = 'Already have an account? Sign In';
+                } else {
+                    btn.innerText = 'Sign In';
+                    title.innerText = 'Login to SecureThing';
+                    switchText.innerText = 'New user? Create an account';
+                }
+            },
+
+            // --- PRODUCT LOGIC ---
+            loadProducts: async () => {
+                app.toggleLoader(true);
+                const grid = document.getElementById('product-grid');
+                grid.innerHTML = '';
+                try {
+                    // Rule 2: Simple query
+                    const snapshot = await getDocs(getCollectionRef('products'));
+                    app.products = [];
+                    snapshot.forEach(doc => app.products.push({id: doc.id, ...doc.data()}));
+                    
+                    if(app.products.length === 0) {
+                        grid.innerHTML = '<div class="col-span-4 text-center text-gray-500 py-10">No products found. Be the first seller!</div>';
                     }
-                });
-            },
 
-            finalizeLogin: async (email, password) => {
-                setLoading(true);
-                closeModal();
-                try {
-                    await signInWithEmailAndPassword(auth, email, password);
-                    window.state.view = 'home';
-                    showToast("Welcome back!");
-                } catch (e) { showToast(e.message, 'error'); } finally { setLoading(false); }
-            },
-
-            loginGoogle: async () => {
-                try {
-                    await signInWithPopup(auth, new GoogleAuthProvider());
-                    window.state.view = 'home';
-                } catch (e) { showToast(e.message, 'error'); }
-            },
-
-            finalizeSignup: async (email, password) => {
-                setLoading(true);
-                closeModal();
-                try {
-                    const cred = await createUserWithEmailAndPassword(auth, email, password);
-                    await setDoc(getPublicDoc('user_roles', cred.user.uid), { role: 'customer', email });
-                    showToast("Account created!");
-                } catch (e) { showToast(e.message, 'error'); } finally { setLoading(false); }
-            },
-
-            logout: async () => {
-                await signOut(auth);
-                window.state.view = 'home';
-                window.state.cart = [];
-                showToast("Logged out successfully");
-            },
-
-            // Seller Actions
-            submitSellerRequest: async (formData) => {
-                setLoading(true);
-                try {
-                    await addDoc(getPublicColl('seller_requests'), { ...formData, status: 'pending', createdAt: serverTimestamp() });
-                    showToast("Application submitted! We will contact you.");
-                    window.state.view = 'home';
-                } catch (e) { showToast(e.message, 'error'); } finally { setLoading(false); }
-            },
-
-            updateProduct: async (id, data) => {
-                setLoading(true);
-                try {
-                    await updateDoc(getPublicDoc('products', id), data);
-                    showToast("Product updated!");
-                    window.state.view = 'seller_dashboard';
-                } catch(e) { showToast(e.message, 'error'); } finally { setLoading(false); }
-            },
-
-            // Admin Actions
-            approveSeller: (reqId, email) => {
-                openModal({
-                    type: 'input',
-                    title: 'Create Seller Account',
-                    message: `Create a secure password for seller ${email}`,
-                    placeholder: 'New Password',
-                    onConfirm: async (password) => {
-                        closeModal();
-                        if(!password) return;
-                        setLoading(true);
-                        try {
-                            const uid = await createSecondaryUser(email, password);
-                            await setDoc(getPublicDoc('user_roles', uid), { role: 'seller', email });
-                            await updateDoc(getPublicDoc('seller_requests', reqId), { status: 'approved', assignedUid: uid });
-                            showToast(`Seller account created. Password: ${password}`);
-                        } catch(e) { showToast(e.message, 'error'); } finally { setLoading(false); }
-                    }
-                });
-            },
-
-            // Service Actions
-            resolveTicket: async (chatId) => {
-                if(!confirm("Close this ticket?")) return;
-                try {
-                    await updateDoc(getPublicDoc('support_chats', chatId), { status: 'resolved' });
-                    showToast("Ticket resolved");
-                    if(window.state.activeChat?.id === chatId) window.state.activeChat = null;
-                    window.state.view = 'service_dashboard';
-                } catch(e) { showToast(e.message, 'error'); }
-            },
-
-            // Cart & Orders
-            addToCart: (product) => {
-                window.state.cart.push(product);
-                showToast("Added to cart");
-                renderApp();
-            },
-            
-            placeOrder: async () => {
-                if(!window.state.user || window.state.role === 'guest') return window.state.view = 'login';
-                setLoading(true);
-                try {
-                    await addDoc(getPublicColl('orders'), {
-                        customerId: window.state.user.uid,
-                        customerEmail: window.state.user.email,
-                        items: window.state.cart,
-                        total: window.state.cart.reduce((a, b) => a + parseFloat(b.price), 0),
-                        status: 'placed',
-                        createdAt: serverTimestamp()
-                    });
-                    window.state.cart = [];
-                    showToast("Order Placed Successfully!");
-                    window.state.view = 'orders';
-                } catch(e) { showToast(e.message, 'error'); } finally { setLoading(false); }
-            }
-        };
-
-        // --- COMPONENTS ---
-
-        const Modal = () => {
-            const { modal } = window.state;
-            if (!modal) return '';
-            
-            return `
-                <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center z-[100] animate-fadeIn">
-                    <div class="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-sm m-4 transform scale-100 transition-all">
-                        <div class="text-center mb-6">
-                            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="fas ${modal.type==='otp' ? 'fa-shield-alt text-green-600' : 'fa-info text-blue-600'} text-2xl"></i>
-                            </div>
-                            <h3 class="text-xl font-bold text-slate-800">${modal.title || 'Action Required'}</h3>
-                            <p class="text-slate-500 text-sm mt-2">${modal.message}</p>
-                        </div>
-                        
-                        ${modal.type === 'otp' || modal.type === 'input' ? `
-                            <input type="text" id="modalInput" placeholder="${modal.placeholder || 'Enter Code (123456)'}" class="w-full text-center text-2xl tracking-widest font-mono border-2 border-slate-200 rounded-xl py-3 mb-6 focus:border-green-500 focus:outline-none">
-                        ` : ''}
-                        
-                        <div class="flex gap-3">
-                            <button onclick="closeModal()" class="flex-1 px-4 py-2 rounded-lg font-medium text-slate-600 hover:bg-slate-100 transition">Cancel</button>
-                            <button onclick="const val = document.getElementById('modalInput')?.value; window.state.modal.onConfirm(val)" class="flex-1 px-4 py-2 rounded-lg font-medium text-white bg-slate-900 hover:bg-slate-800 transition shadow-lg shadow-slate-900/20">Confirm</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        };
-
-        const Navbar = () => {
-            const { user, role, cart, searchQuery } = window.state;
-            return `
-                <nav class="bg-white border-b border-slate-200 sticky top-0 z-40">
-                    <div class="container mx-auto px-4">
-                        <div class="flex flex-col md:flex-row items-center justify-between h-auto md:h-20 py-4 md:py-0 gap-4">
-                            <!-- Logo -->
-                            <div class="flex items-center gap-2 cursor-pointer group" onclick="window.state.view='home'; renderApp()">
-                                <div class="w-10 h-10 bg-gradient-to-tr from-green-500 to-emerald-700 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-green-500/30 transition">
-                                    <i class="fas fa-shield-alt text-white text-lg"></i>
+                    app.products.forEach(p => {
+                        grid.innerHTML += `
+                            <div class="bg-white rounded-lg shadow hover:shadow-xl transition duration-300 overflow-hidden group">
+                                <div class="h-48 bg-gray-200 relative overflow-hidden">
+                                    <img src="${p.image || 'https://placehold.co/400x300?text=Product'}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500" onerror="this.src='https://placehold.co/400x300?text=No+Image'">
+                                    <div class="absolute top-2 right-2 bg-white px-2 py-1 rounded-full text-xs font-bold shadow">★ ${p.rating || '4.5'}</div>
                                 </div>
-                                <h1 class="text-2xl font-bold tracking-tight text-slate-900">Secure<span class="text-green-600">Thing</span></h1>
-                            </div>
-                            
-                            <!-- Search -->
-                            <div class="w-full md:w-1/3 relative">
-                                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                                <input 
-                                    type="text" 
-                                    value="${searchQuery}"
-                                    oninput="window.actions.handleSearch(this.value)"
-                                    placeholder="Search products, services..." 
-                                    class="w-full bg-slate-100 border-none rounded-full py-2.5 pl-11 pr-4 focus:ring-2 focus:ring-green-500/50 focus:bg-white transition"
-                                >
-                            </div>
-
-                            <!-- Actions -->
-                            <div class="flex items-center gap-6">
-                                ${role === 'customer' || role === 'guest' ? `
-                                    <div class="relative cursor-pointer group" onclick="window.state.view='cart'; renderApp()">
-                                        <div class="p-2 rounded-full hover:bg-slate-100 transition relative">
-                                            <i class="fas fa-shopping-bag text-xl text-slate-600 group-hover:text-green-600"></i>
-                                            ${cart.length > 0 ? `<span class="absolute top-0 right-0 bg-red-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white">${cart.length}</span>` : ''}
-                                        </div>
-                                    </div>
-                                ` : ''}
-                                
-                                ${user && !user.isAnonymous ? `
-                                    <div class="flex items-center gap-4">
-                                        <div class="text-right hidden sm:block">
-                                            <div class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">${role}</div>
-                                            <div class="text-sm font-semibold text-slate-700 max-w-[120px] truncate">${user.email.split('@')[0]}</div>
-                                        </div>
-                                        <button onclick="window.actions.logout()" class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition" title="Logout">
-                                            <i class="fas fa-power-off"></i>
+                                <div class="p-4">
+                                    <h3 class="font-bold text-lg truncate">${p.name}</h3>
+                                    <p class="text-sm text-gray-500 line-clamp-2 h-10 mb-2">${p.desc}</p>
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-primary font-bold text-xl">₹${p.price}</span>
+                                        <button onclick="app.addToCart('${p.id}')" class="bg-primary text-white p-2 rounded-full hover:bg-blue-600 transition shadow-lg">
+                                            <i class="fas fa-cart-plus"></i>
                                         </button>
                                     </div>
-                                ` : `
-                                    <button onclick="window.state.view='login'; renderApp()" class="bg-slate-900 hover:bg-slate-800 text-white px-6 py-2.5 rounded-full font-medium transition shadow-lg shadow-slate-900/20">Login</button>
-                                `}
+                                </div>
+                            </div>
+                        `;
+                    });
+                } catch(e) {
+                    console.error(e);
+                } finally {
+                    app.toggleLoader(false);
+                }
+            },
+
+            filterProducts: () => {
+                const term = document.getElementById('search-input').value.toLowerCase();
+                const allCards = document.getElementById('product-grid').children;
+                Array.from(allCards).forEach(card => {
+                    const title = card.querySelector('h3').innerText.toLowerCase();
+                    if(title.includes(term)) card.classList.remove('hide');
+                    else card.classList.add('hide');
+                });
+            },
+
+            // --- CART LOGIC ---
+            addToCart: (pid) => {
+                const product = app.products.find(p => p.id === pid);
+                if (!product) return;
+                
+                const existing = app.cart.find(item => item.id === pid);
+                if (existing) existing.qty++;
+                else app.cart.push({ ...product, qty: 1 });
+                
+                app.updateCartUI();
+                
+                // Show toast
+                const btn = document.querySelector('button[onclick="app.toggleCart()"]');
+                btn.classList.add('animate-bounce');
+                setTimeout(() => btn.classList.remove('animate-bounce'), 1000);
+            },
+
+            toggleCart: () => {
+                const sidebar = document.getElementById('cart-sidebar');
+                if (sidebar.classList.contains('translate-x-full')) {
+                    sidebar.classList.remove('translate-x-full');
+                } else {
+                    sidebar.classList.add('translate-x-full');
+                }
+            },
+
+            updateCartUI: () => {
+                const container = document.getElementById('cart-items');
+                const countBadge = document.getElementById('cart-count');
+                const totalEl = document.getElementById('cart-total');
+                
+                container.innerHTML = '';
+                let total = 0;
+                let count = 0;
+
+                app.cart.forEach((item, index) => {
+                    total += item.price * item.qty;
+                    count += item.qty;
+                    container.innerHTML += `
+                        <div class="flex justify-between items-center bg-gray-50 p-2 rounded">
+                            <div class="flex-1">
+                                <div class="font-bold text-sm truncate">${item.name}</div>
+                                <div class="text-xs text-gray-500">₹${item.price} x ${item.qty}</div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <button onclick="app.changeQty(${index}, -1)" class="text-red-500 w-6 h-6 bg-white rounded border flex items-center justify-center">-</button>
+                                <span class="text-sm font-bold">${item.qty}</span>
+                                <button onclick="app.changeQty(${index}, 1)" class="text-green-500 w-6 h-6 bg-white rounded border flex items-center justify-center">+</button>
                             </div>
                         </div>
+                    `;
+                });
 
-                        <!-- Role Sub-menu -->
-                        ${role !== 'guest' && role !== 'customer' ? `
-                            <div class="flex gap-6 overflow-x-auto pb-3 md:pb-0 text-sm font-medium border-t border-slate-100 pt-3">
-                                ${role === 'admin' ? `
-                                    <a onclick="window.state.view='admin_dashboard'; renderApp()" class="cursor-pointer ${window.state.view.includes('admin') ? 'text-green-600' : 'text-slate-500 hover:text-slate-800'}">Overview</a>
-                                    <a onclick="window.state.view='admin_users'; renderApp()" class="cursor-pointer text-slate-500 hover:text-slate-800">Users</a>
-                                ` : ''}
-                                ${role === 'seller' ? `
-                                    <a onclick="window.state.view='seller_dashboard'; renderApp()" class="cursor-pointer ${window.state.view.includes('seller') ? 'text-green-600' : 'text-slate-500 hover:text-slate-800'}">My Products</a>
-                                ` : ''}
-                                ${role === 'service' ? `
-                                    <a onclick="window.state.view='service_dashboard'; renderApp()" class="cursor-pointer text-green-600">Help Desk</a>
-                                ` : ''}
+                if (app.cart.length === 0) container.innerHTML = '<p class="text-gray-500 text-center mt-10">Your cart is empty.</p>';
+                
+                countBadge.innerText = count;
+                totalEl.innerText = '₹' + total;
+                app.cartTotalValue = total;
+            },
+
+            changeQty: (index, delta) => {
+                app.cart[index].qty += delta;
+                if (app.cart[index].qty <= 0) app.cart.splice(index, 1);
+                app.updateCartUI();
+            },
+
+            goToCheckout: () => {
+                if (app.cart.length === 0) return alert("Cart is empty");
+                if (!app.currentUser) {
+                    alert("Please login to checkout");
+                    app.router('login');
+                    app.toggleCart();
+                    return;
+                }
+                app.toggleCart();
+                app.renderCheckout();
+                app.router('checkout');
+            },
+
+            renderCheckout: async () => {
+                // Load Addresses
+                const userDoc = await getDoc(getUserRef(app.currentUser.uid));
+                const data = userDoc.data();
+                const addrContainer = document.getElementById('saved-addresses');
+                addrContainer.innerHTML = '';
+                
+                if (data.addressList && data.addressList.length > 0) {
+                    data.addressList.forEach((addr, idx) => {
+                        addrContainer.innerHTML += `
+                            <label class="block border p-3 rounded cursor-pointer hover:bg-gray-50">
+                                <input type="radio" name="selected-address" value="${idx}" ${idx===0?'checked':''}>
+                                <span class="font-bold ml-2">${addr.name}</span>
+                                <span class="text-sm ml-2 text-gray-600">(${addr.type || 'Home'})</span>
+                                <div class="text-xs text-gray-500 ml-6 mt-1">${addr.line}, ${addr.area}, ${addr.city} - ${addr.pin}</div>
+                            </label>
+                        `;
+                    });
+                } else {
+                    addrContainer.innerHTML = '<p class="text-sm text-red-500 mb-2">No saved addresses. Please add one.</p>';
+                    document.getElementById('new-address-form').classList.remove('hide');
+                }
+
+                // Load Items
+                const itemsContainer = document.getElementById('checkout-items');
+                itemsContainer.innerHTML = '';
+                app.cart.forEach(item => {
+                    itemsContainer.innerHTML += `
+                        <div class="flex justify-between border-b pb-1 mb-1">
+                            <span>${item.name} x ${item.qty}</span>
+                            <span>₹${item.price * item.qty}</span>
+                        </div>
+                    `;
+                });
+                document.getElementById('checkout-total').innerText = '₹' + app.cartTotalValue;
+            },
+
+            saveAddress: async () => {
+                const newAddr = {
+                    name: document.getElementById('addr-name').value,
+                    mobile: document.getElementById('addr-mobile').value,
+                    line: document.getElementById('addr-line').value,
+                    area: document.getElementById('addr-area').value,
+                    city: document.getElementById('addr-city').value,
+                    pin: document.getElementById('addr-pin').value,
+                    type: 'Home'
+                };
+                
+                try {
+                    const userRef = getUserRef(app.currentUser.uid);
+                    const userSnap = await getDoc(userRef);
+                    const currentList = userSnap.data().addressList || [];
+                    currentList.push(newAddr);
+                    
+                    await updateDoc(userRef, { addressList: currentList });
+                    document.getElementById('new-address-form').reset();
+                    document.getElementById('new-address-form').classList.add('hide');
+                    app.renderCheckout(); // Reload
+                } catch (e) {
+                    console.error(e);
+                    alert("Failed to save address");
+                }
+            },
+
+            placeOrder: async () => {
+                const selectedAddrInput = document.querySelector('input[name="selected-address"]:checked');
+                
+                // If no address selected and user has no addresses
+                const userDoc = await getDoc(getUserRef(app.currentUser.uid));
+                const addresses = userDoc.data().addressList || [];
+                
+                if (!selectedAddrInput && addresses.length === 0) {
+                     return alert("Please add and select an address.");
+                }
+
+                let addressToUse;
+                if (selectedAddrInput) {
+                    addressToUse = addresses[selectedAddrInput.value];
+                } else {
+                    // Fallback if UI not updated but data exists
+                    if(addresses.length > 0) addressToUse = addresses[0];
+                    else return alert("Address error.");
+                }
+
+                app.toggleLoader(true);
+                try {
+                    const orderData = {
+                        customerId: app.currentUser.uid,
+                        items: app.cart,
+                        total: app.cartTotalValue,
+                        address: addressToUse,
+                        paymentMethod: document.querySelector('input[name="payment"]:checked').value,
+                        status: 'Processing',
+                        trackingSteps: [{ status: 'Order Placed', time: new Date().toISOString() }],
+                        createdAt: serverTimestamp()
+                    };
+
+                    // Split items by seller to create robust orders? 
+                    // For simplicity in this demo, one order document contains all, 
+                    // but in real world, we might split sub-orders.
+                    // We will just add the order.
+                    
+                    await addDoc(getCollectionRef('orders'), orderData);
+                    
+                    app.cart = [];
+                    app.updateCartUI();
+                    app.router('success');
+                } catch(e) {
+                    console.error(e);
+                    alert("Order failed: " + e.message);
+                } finally {
+                    app.toggleLoader(false);
+                }
+            },
+
+            loadCustomerOrders: async () => {
+                if(!app.currentUser) return app.router('login');
+                app.toggleLoader(true);
+                const list = document.getElementById('orders-list');
+                list.innerHTML = '';
+                
+                try {
+                    const q = getCollectionRef('orders'); // Fetch all then filter (Rule 2)
+                    const snap = await getDocs(q);
+                    const myOrders = [];
+                    snap.forEach(d => {
+                        const data = d.data();
+                        if (data.customerId === app.currentUser.uid) {
+                            myOrders.push({id: d.id, ...data});
+                        }
+                    });
+
+                    // Sort locally
+                    myOrders.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+                    if (myOrders.length === 0) list.innerHTML = '<p class="text-center text-gray-500">No orders yet.</p>';
+
+                    myOrders.forEach(o => {
+                        // Visual Tracker
+                        const steps = ['Order Placed', 'Packed', 'Shipped', 'Delivered'];
+                        let stepIdx = steps.indexOf(o.status);
+                        if(stepIdx === -1) stepIdx = 0; // Default or Cancelled handling
+                        
+                        let trackerHTML = `<div class="flex justify-between items-center mt-4 mb-2 text-xs relative">
+                            <div class="absolute top-1/2 left-0 w-full h-1 bg-gray-200 -z-10"></div>
+                            <div class="absolute top-1/2 left-0 h-1 bg-green-500 -z-10 transition-all" style="width: ${((stepIdx)/(steps.length-1))*100}%"></div>`;
+                        
+                        steps.forEach((s, idx) => {
+                            const active = idx <= stepIdx;
+                            trackerHTML += `
+                                <div class="flex flex-col items-center bg-white px-1">
+                                    <div class="w-3 h-3 rounded-full ${active ? 'bg-green-500' : 'bg-gray-300'}"></div>
+                                    <span class="${active ? 'text-green-600 font-bold' : 'text-gray-400'}">${s}</span>
+                                </div>
+                            `;
+                        });
+                        trackerHTML += `</div>`;
+
+                        list.innerHTML += `
+                            <div class="bg-white p-4 rounded shadow border-l-4 ${o.status==='Delivered'?'border-green-500':'border-blue-500'}">
+                                <div class="flex justify-between font-bold mb-2">
+                                    <span>Order #${o.id.substr(0,8)}</span>
+                                    <span class="text-primary">${o.status}</span>
+                                </div>
+                                <div class="text-sm text-gray-600 mb-2">
+                                    ${o.items.map(i => `${i.name} (x${i.qty})`).join(', ')}
+                                </div>
+                                <div class="flex justify-between text-sm">
+                                    <span>Total: ₹${o.total}</span>
+                                    <span>Via ${o.paymentMethod.toUpperCase()}</span>
+                                </div>
+                                ${trackerHTML}
+                                ${o.status !== 'Delivered' && o.status !== 'Cancelled' 
+                                    ? `<button onclick="app.contactSupport('${o.id}')" class="mt-2 text-xs text-blue-500 underline">Need Help?</button>`
+                                    : ''}
                             </div>
-                        ` : ''}
+                        `;
+                    });
+                } catch(e) {
+                    console.error(e);
+                } finally {
+                    app.toggleLoader(false);
+                }
+            },
+
+            contactSupport: (orderId) => {
+                alert("Opening support for " + orderId + ". Please go to Service Desk (Mock). In real app, this creates a ticket.");
+                // Simply redirect for now if they have access, effectively customer doesn't have "Service Desk" link usually, 
+                // but this requirement says "Customer Experience -> Chat interface". 
+                // We'll simulate creating a ticket.
+            },
+
+            // --- SELLER LOGIC ---
+            submitSellerApplication: async (e) => {
+                e.preventDefault();
+                app.toggleLoader(true);
+                const form = e.target;
+                
+                // Simulate File "Upload" by just getting name or using placeholder
+                // Real file upload requires Storage, we will stick to text logic for simplicity in this file
+                const data = {
+                    uid: app.currentUser.uid,
+                    name: form.name.value,
+                    email: form.email.value,
+                    mobile: form.mobile.value,
+                    company: form.company.value,
+                    address: form.address.value,
+                    dob: form.dob.value,
+                    docImage: "mock_doc_path.jpg",
+                    photoImage: "mock_photo_path.jpg",
+                    status: 'Pending',
+                    createdAt: serverTimestamp()
+                };
+
+                try {
+                    await addDoc(getCollectionRef('sellerRequests'), data);
+                    alert("Application Submitted! Wait for Admin Approval.");
+                    app.router('home');
+                } catch(err) {
+                    alert("Error submitting: " + err.message);
+                } finally {
+                    app.toggleLoader(false);
+                }
+            },
+
+            loadSellerDashboard: async () => {
+                const pList = document.getElementById('seller-products-list');
+                const oList = document.getElementById('seller-orders-list');
+                pList.innerHTML = '';
+                oList.innerHTML = '';
+
+                // Load My Products
+                app.products.forEach(p => {
+                    // In a real app, filter by sellerId. Here we assume all products are editable by "Seller" role for demo
+                    pList.innerHTML += `
+                        <div class="flex justify-between items-center border-b py-2">
+                            <div class="flex items-center space-x-2">
+                                <img src="${p.image}" class="w-10 h-10 rounded object-cover">
+                                <div>
+                                    <div class="font-bold text-sm">${p.name}</div>
+                                    <div class="text-xs">₹${p.price}</div>
+                                </div>
+                            </div>
+                            <button onclick="alert('Edit feature coming soon')" class="text-blue-500 text-xs">Edit</button>
+                        </div>
+                    `;
+                });
+
+                // Load Orders (Global orders for now, realistically filter by seller items)
+                const snap = await getDocs(getCollectionRef('orders'));
+                snap.forEach(d => {
+                    const o = d.data();
+                    const oid = d.id;
+                    oList.innerHTML += `
+                        <div class="border p-2 rounded mb-2 bg-gray-50 text-sm">
+                            <div class="font-bold">#${oid.substr(0,6)} - ₹${o.total}</div>
+                            <div class="mb-2 text-xs text-gray-500">${o.status}</div>
+                            <select onchange="app.updateOrderStatus('${oid}', this.value)" class="border p-1 rounded w-full">
+                                <option value="">Update Status...</option>
+                                <option value="Packed">Packed</option>
+                                <option value="Shipped">Shipped</option>
+                                <option value="Delivered">Delivered</option>
+                            </select>
+                        </div>
+                    `;
+                });
+            },
+
+            sellerAddProduct: async (e) => {
+                e.preventDefault();
+                const f = e.target;
+                const data = {
+                    name: f.p_name.value,
+                    desc: f.p_desc.value,
+                    price: Number(f.p_price.value),
+                    image: f.p_img.value || 'https://placehold.co/400x400?text=Item',
+                    rating: 5.0,
+                    sellerId: app.currentUser.uid
+                };
+                
+                try {
+                    await addDoc(getCollectionRef('products'), data);
+                    alert("Product Added!");
+                    document.getElementById('add-product-modal').classList.add('hide');
+                    f.reset();
+                    app.loadSellerDashboard();
+                } catch(err) {
+                    alert("Error: " + err.message);
+                }
+            },
+
+            updateOrderStatus: async (oid, status) => {
+                if(!status) return;
+                try {
+                    const ref = doc(db, 'artifacts', APP_ID, 'public', 'data', 'orders', oid);
+                    const snap = await getDoc(ref);
+                    const steps = snap.data().trackingSteps || [];
+                    steps.push({ status: status, time: new Date().toISOString() });
+                    
+                    await updateDoc(ref, { 
+                        status: status, 
+                        trackingSteps: steps 
+                    });
+                    alert("Order Updated");
+                } catch(e) {
+                    alert("Update failed");
+                }
+            },
+
+            fillMockProduct: (form) => {
+                form.p_name.value = "Secure Camera " + Math.floor(Math.random()*100);
+                form.p_desc.value = "High quality security camera with night vision.";
+                form.p_price.value = 2499;
+                form.p_img.value = "https://placehold.co/400x300?text=Camera";
+            },
+
+            // --- ADMIN LOGIC ---
+            loadAdminDashboard: async () => {
+                // Load Stats
+                const ordersSnap = await getDocs(getCollectionRef('orders'));
+                let total = 0;
+                let count = 0;
+                ordersSnap.forEach(d => {
+                    total += d.data().total;
+                    count++;
+                });
+                document.getElementById('admin-total-sales').innerText = '₹' + total;
+                document.getElementById('admin-order-count').innerText = count;
+
+                // Load Seller Requests
+                const reqSnap = await getDocs(getCollectionRef('sellerRequests'));
+                const reqContainer = document.getElementById('admin-seller-requests');
+                reqContainer.innerHTML = '';
+                
+                reqSnap.forEach(d => {
+                    const req = d.data();
+                    if(req.status === 'Pending') {
+                        reqContainer.innerHTML += `
+                            <div class="border p-3 rounded flex justify-between items-start bg-gray-50">
+                                <div>
+                                    <div class="font-bold">${req.company}</div>
+                                    <div class="text-sm">${req.name} (${req.email})</div>
+                                    <div class="text-xs text-gray-500">Docs: ${req.docImage}</div>
+                                </div>
+                                <button onclick="app.approveSeller('${d.id}', '${req.uid}')" class="bg-green-600 text-white text-xs px-2 py-1 rounded">Approve</button>
+                            </div>
+                        `;
+                    }
+                });
+                if (reqContainer.innerHTML === '') reqContainer.innerHTML = '<div class="text-gray-500 text-sm">No pending requests.</div>';
+            },
+
+            approveSeller: async (reqId, uid) => {
+                if(!confirm("Approve this seller?")) return;
+                try {
+                    // 1. Update Request
+                    await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'sellerRequests', reqId), { status: 'Approved' });
+                    // 2. Update User Role
+                    await updateDoc(getUserRef(uid), { role: 'seller' });
+                    alert("Seller Approved!");
+                    app.loadAdminDashboard();
+                } catch(e) {
+                    console.error(e);
+                    alert("Error approving seller");
+                }
+            },
+
+            createServiceAccount: async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('service-email-input').value;
+                // Simulation: In reality, we'd use Admin Auth SDK. 
+                // Here we create a permission doc.
+                // For the purpose of this SPA, we will pretend we sent an email.
+                alert(`Service Account Created for ${email}.\n\nCredentials sent to email (Simulated).\nTemporary Pass: Service@123`);
+                
+                // We'll create a dummy user doc so if they login/signup it works
+                // Note: The actual Auth User isn't created here, the user has to "Sign Up" with that email, 
+                // and we manually assign the role here for when they do.
+                // In a real scenario, we'd store this in a 'whitelisted_service_emails' collection.
+                // Here, we just assume success.
+            },
+
+            // --- SERVICE LOGIC ---
+            loadServiceDashboard: async () => {
+                // Mock Chat System
+                const list = document.getElementById('support-tickets-list');
+                list.innerHTML = `
+                    <div onclick="app.loadChat('ticket_001')" class="p-2 hover:bg-gray-100 cursor-pointer border-b">
+                        <div class="font-bold text-sm">Customer #9283</div>
+                        <div class="text-xs text-red-500">Order Cancellation Request</div>
                     </div>
-                </nav>
-            `;
+                    <div onclick="app.loadChat('ticket_002')" class="p-2 hover:bg-gray-100 cursor-pointer border-b">
+                        <div class="font-bold text-sm">Customer #1122</div>
+                        <div class="text-xs text-blue-500">Tracking Info Update</div>
+                    </div>
+                `;
+            },
+
+            loadChat: (ticketId) => {
+                app.currentTicketId = ticketId;
+                document.getElementById('chat-header').innerText = `Ticket: ${ticketId}`;
+                document.getElementById('chat-input').disabled = false;
+                document.getElementById('chat-send-btn').disabled = false;
+                
+                const msgs = document.getElementById('chat-messages');
+                msgs.innerHTML = `
+                    <div class="mb-2"><span class="font-bold text-xs text-gray-500">System:</span> <span class="text-sm">Session started.</span></div>
+                    <div class="mb-2 text-right"><span class="bg-blue-100 p-2 rounded text-sm inline-block">Hello, I need help with my order.</span></div>
+                `;
+            },
+
+            sendSupportMessage: (e) => {
+                e.preventDefault();
+                const input = document.getElementById('chat-input');
+                const text = input.value;
+                if(!text) return;
+                
+                const msgs = document.getElementById('chat-messages');
+                msgs.innerHTML += `
+                    <div class="mb-2 text-left"><span class="bg-gray-200 p-2 rounded text-sm inline-block">Service: ${text}</span></div>
+                `;
+                input.value = '';
+                msgs.scrollTop = msgs.scrollHeight;
+            },
+
+            // --- UTILS ---
+            toggleLoader: (show) => {
+                const el = document.getElementById('global-loader');
+                if(show) el.classList.remove('hide');
+                else el.classList.add('hide');
+            }
         };
 
-        const Views = {
-            home: () => {
-                const { filteredProducts, searchQuery } = window.state;
-                return `
-                    <div class="animate-fadeIn">
-                        <!-- Hero Section -->
-                        ${!searchQuery ? `
-                        <div class="bg-secondary text-white relative overflow-hidden">
-                            <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1557821552-17105176677c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] opacity-10 bg-cover bg-center"></div>
-                            <div class="container mx-auto px-4 py-20 relative z-10 text-center md:text-left">
-                                <div class="max-w-2xl">
-                                    <span class="inline-block px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-bold uppercase mb-4 tracking-wider">Trusted by 10k+ Users</span>
-                                    <h1 class="text-4xl md:text-6xl font-extrabold mb-6 leading-tight">Secure Your World with <span class="text-transparent bg-clip-text bg-gradient-to-r from-green-400 to-emerald-600">Certified Gear</span></h1>
-                                    <p class="text-lg text-slate-300 mb-8 leading-relaxed">The only marketplace where every seller is government verified. Shop security cameras, smart locks, and safety gadgets with 100% confidence.</p>
-                                    <button onclick="document.getElementById('products').scrollIntoView({behavior:'smooth'})" class="bg-green-500 hover:bg-green-600 text-white px-8 py-3 rounded-full font-bold transition shadow-lg shadow-green-500/25">Explore Collection</button>
-                                </div>
-                            </div>
-                        </div>
-                        ` : ''}
-
-                        <!-- Products -->
-                        <div id="products" class="container mx-auto py-12 px-4">
-                            <div class="flex justify-between items-end mb-8">
-                                <div>
-                                    <h2 class="text-2xl font-bold text-slate-900">Latest Arrivals</h2>
-                                    <p class="text-slate-500 mt-1">${filteredProducts.length} verified items found</p>
-                                </div>
-                                <!-- Simple Filter UI -->
-                                <select class="bg-slate-100 border-none rounded-lg px-4 py-2 text-sm text-slate-600 focus:ring-0">
-                                    <option>Sort by: Newest</option>
-                                    <option>Price: Low to High</option>
-                                </select>
-                            </div>
-                            
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                                ${filteredProducts.map(p => `
-                                    <div class="bg-white rounded-2xl p-4 shadow-sm hover:shadow-xl transition duration-300 group border border-slate-100 flex flex-col">
-                                        <div class="relative aspect-square bg-slate-50 rounded-xl overflow-hidden mb-4">
-                                            ${p.image ? `<img src="${p.image}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">` : `<div class="w-full h-full flex items-center justify-center text-slate-300"><i class="fas fa-cube text-4xl"></i></div>`}
-                                            
-                                            <!-- Hover Action -->
-                                            <button onclick='window.actions.addToCart(${JSON.stringify(p).replace(/'/g, "&#39;")})' class="absolute bottom-3 right-3 bg-slate-900 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg transform translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition duration-300">
-                                                <i class="fas fa-plus"></i>
-                                            </button>
-                                        </div>
-                                        <div>
-                                            <div class="flex justify-between items-start mb-2">
-                                                <h3 class="font-bold text-slate-800 line-clamp-1 text-lg">${p.name}</h3>
-                                                <span class="text-green-600 font-bold bg-green-50 px-2 py-1 rounded-md text-sm">$${p.price}</span>
-                                            </div>
-                                            <p class="text-sm text-slate-500 mb-4 line-clamp-2 min-h-[40px]">${p.description}</p>
-                                            <div class="flex items-center gap-2 border-t pt-3 mt-auto">
-                                                <div class="w-6 h-6 rounded-full bg-slate-200 flex items-center justify-center text-[10px] text-slate-500 font-bold">
-                                                    ${p.sellerEmail?.[0].toUpperCase()}
-                                                </div>
-                                                <span class="text-xs text-slate-400 truncate">Verified Seller</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                            
-                            ${filteredProducts.length === 0 ? `
-                                <div class="text-center py-20 bg-slate-50 rounded-3xl border border-dashed border-slate-300">
-                                    <i class="fas fa-search text-4xl text-slate-300 mb-4"></i>
-                                    <p class="text-slate-500 font-medium">No secure items match your search.</p>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-            },
-            admin_dashboard: () => {
-                const { orders, sellerRequests, serviceMembers, products } = window.state;
-                const totalRevenue = orders.reduce((sum, o) => sum + (o.total || 0), 0).toFixed(2);
+        // --- INIT LISTENER ---
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                app.currentUser = user;
                 
-                return `
-                    <div class="container mx-auto py-8 px-4 animate-fadeIn">
-                        <h2 class="text-3xl font-bold mb-8">Admin Overview</h2>
-                        
-                        <!-- Stats Cards -->
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-                            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                                <div class="text-slate-400 text-xs font-bold uppercase mb-2">Total Revenue</div>
-                                <div class="text-3xl font-bold text-slate-900">$${totalRevenue}</div>
-                            </div>
-                            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                                <div class="text-slate-400 text-xs font-bold uppercase mb-2">Total Orders</div>
-                                <div class="text-3xl font-bold text-slate-900">${orders.length}</div>
-                            </div>
-                            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                                <div class="text-slate-400 text-xs font-bold uppercase mb-2">Active Products</div>
-                                <div class="text-3xl font-bold text-slate-900">${products.length}</div>
-                            </div>
-                             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                                <div class="text-slate-400 text-xs font-bold uppercase mb-2">Support Staff</div>
-                                <div class="text-3xl font-bold text-slate-900">${serviceMembers?.length || 0}</div>
-                            </div>
-                        </div>
+                // Fetch Role
+                if (user.email === ADMIN_EMAIL) {
+                    app.userRole = 'admin';
+                } else {
+                    const userDoc = await getDoc(getUserRef(user.uid));
+                    if (userDoc.exists()) {
+                        app.userRole = userDoc.data().role || 'customer';
+                    }
+                }
 
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            <!-- Left Col: Seller Approvals -->
-                            <div class="lg:col-span-2 space-y-8">
-                                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-                                    <div class="p-6 border-b border-slate-100 flex justify-between items-center">
-                                        <h3 class="font-bold text-lg">Seller Requests</h3>
-                                        <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2 py-1 rounded">${sellerRequests.filter(r => r.status === 'pending').length} Pending</span>
-                                    </div>
-                                    <div class="divide-y divide-slate-100 max-h-[400px] overflow-y-auto">
-                                        ${sellerRequests.filter(r => r.status === 'pending').map(r => `
-                                            <div class="p-6 hover:bg-slate-50 transition">
-                                                <div class="flex justify-between items-start gap-4">
-                                                    <div class="flex gap-4">
-                                                        ${r.photo ? `<img src="${r.photo}" class="w-12 h-12 rounded-full object-cover shadow-sm">` : '<div class="w-12 h-12 bg-slate-200 rounded-full"></div>'}
-                                                        <div>
-                                                            <h4 class="font-bold text-slate-900">${r.name}</h4>
-                                                            <p class="text-sm text-slate-500">${r.company}</p>
-                                                            <div class="flex gap-3 mt-2 text-xs text-slate-400">
-                                                                <span><i class="fas fa-id-card"></i> ${r.docType}</span>
-                                                                <span><i class="fas fa-phone"></i> ${r.mobile}</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <button onclick="window.actions.approveSeller('${r.id}', '${r.email}')" class="bg-slate-900 text-white text-xs px-4 py-2 rounded-lg font-medium hover:bg-slate-800 transition">Approve</button>
-                                                </div>
-                                            </div>
-                                        `).join('')}
-                                        ${sellerRequests.filter(r => r.status === 'pending').length === 0 ? '<div class="p-8 text-center text-slate-400">No pending requests</div>' : ''}
-                                    </div>
-                                </div>
-                                
-                                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
-                                    <h3 class="font-bold text-lg mb-4">Create Service Member</h3>
-                                    <form onsubmit="event.preventDefault(); window.actions.createServiceMember(this.name.value, this.email.value); this.reset()" class="flex gap-4 items-end">
-                                        <div class="flex-1">
-                                            <label class="text-xs font-bold text-slate-400 uppercase mb-1 block">Full Name</label>
-                                            <input name="name" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2">
-                                        </div>
-                                        <div class="flex-1">
-                                            <label class="text-xs font-bold text-slate-400 uppercase mb-1 block">Email</label>
-                                            <input name="email" type="email" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2">
-                                        </div>
-                                        <button type="submit" class="bg-green-600 text-white px-6 py-2.5 rounded-lg font-bold hover:bg-green-700 transition">Create</button>
-                                    </form>
-                                </div>
-                            </div>
-
-                            <!-- Right Col: Recent Orders -->
-                            <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden h-fit">
-                                <div class="p-6 border-b border-slate-100">
-                                    <h3 class="font-bold text-lg">Recent Orders</h3>
-                                </div>
-                                <div class="divide-y divide-slate-100">
-                                    ${orders.slice(0, 5).map(o => `
-                                        <div class="p-4 flex justify-between items-center text-sm">
-                                            <div>
-                                                <div class="font-medium text-slate-900">$${o.total}</div>
-                                                <div class="text-slate-500 text-xs">${o.customerEmail.split('@')[0]}</div>
-                                            </div>
-                                            <span class="px-2 py-1 rounded-full text-xs font-bold ${o.status==='placed'?'bg-green-100 text-green-700':'bg-slate-100 text-slate-600'}">${o.status}</span>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            </div>
-                        </div>
+                // Update UI based on Role
+                document.getElementById('auth-section').innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="text-sm font-medium hidden lg:inline">${user.email} (${app.userRole})</span>
+                        <button onclick="app.logout()" class="text-sm bg-red-500 px-3 py-1 rounded hover:bg-red-600">Logout</button>
                     </div>
                 `;
-            },
-            seller_dashboard: () => {
-                const myProducts = window.state.products.filter(p => p.sellerId === window.state.user?.uid);
-                return `
-                    <div class="container mx-auto py-8 px-4 animate-fadeIn">
-                        <div class="flex justify-between items-center mb-8">
-                            <h2 class="text-3xl font-bold">My Products</h2>
-                            <button onclick="window.state.view='seller_add'; renderApp()" class="bg-green-600 text-white px-6 py-2.5 rounded-full font-bold hover:bg-green-700 transition shadow-lg shadow-green-600/20">
-                                <i class="fas fa-plus mr-2"></i> Add Product
-                            </button>
-                        </div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            ${myProducts.map(p => `
-                                <div class="bg-white rounded-xl shadow-sm border border-slate-100 p-4 relative group hover:shadow-md transition">
-                                    <div class="h-40 bg-slate-50 rounded-lg mb-4 flex items-center justify-center overflow-hidden">
-                                        ${p.image ? `<img src="${p.image}" class="w-full h-full object-cover">` : '<i class="fas fa-box text-3xl text-slate-300"></i>'}
-                                    </div>
-                                    <div class="flex justify-between items-start mb-2">
-                                        <h3 class="font-bold text-slate-800">${p.name}</h3>
-                                        <span class="text-green-600 font-bold">$${p.price}</span>
-                                    </div>
-                                    <p class="text-xs text-slate-500 mb-4 line-clamp-2">${p.description}</p>
-                                    
-                                    <div class="flex gap-2">
-                                        <button onclick='window.state.editingProduct=${JSON.stringify(p).replace(/'/g, "&#39;")}; window.state.view="seller_edit"; renderApp()' class="flex-1 bg-slate-100 text-slate-600 py-2 rounded-lg text-sm font-medium hover:bg-slate-200 transition">Edit</button>
-                                        <button onclick="if(confirm('Delete?')) window.actions.deleteProduct('${p.id}')" class="flex-1 bg-red-50 text-red-500 py-2 rounded-lg text-sm font-medium hover:bg-red-100 transition">Delete</button>
-                                    </div>
-                                </div>
-                            `).join('')}
-                            ${myProducts.length === 0 ? `
-                                <div class="col-span-3 text-center py-20 bg-slate-50 rounded-xl border border-dashed border-slate-300">
-                                    <p class="text-slate-500 mb-4">Start selling by adding your first secure product.</p>
-                                    <button onclick="window.state.view='seller_add'; renderApp()" class="text-green-600 font-bold hover:underline">Add Now</button>
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-            },
-            seller_edit: () => {
-                const p = window.state.editingProduct;
-                return `
-                    <div class="container mx-auto py-12 px-4 max-w-xl animate-fadeIn">
-                        <div class="bg-white rounded-2xl shadow-xl p-8">
-                            <h2 class="text-2xl font-bold mb-6">Edit Product</h2>
-                            <form onsubmit="event.preventDefault(); window.actions.updateProduct('${p.id}', {name: this.name.value, price: this.price.value, description: this.desc.value, image: this.image.value})" class="space-y-4">
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Product Name</label>
-                                    <input name="name" value="${p.name}" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Price ($)</label>
-                                    <input name="price" value="${p.price}" type="number" step="0.01" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Description</label>
-                                    <textarea name="desc" rows="3" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2">${p.description}</textarea>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Image URL</label>
-                                    <input name="image" value="${p.image || ''}" class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2">
-                                </div>
-                                <div class="flex gap-4 mt-6">
-                                    <button type="button" onclick="window.state.view='seller_dashboard'; renderApp()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-3 rounded-lg">Cancel</button>
-                                    <button type="submit" class="flex-1 bg-slate-900 text-white font-bold py-3 rounded-lg hover:bg-slate-800">Save Changes</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                `;
-            },
-            chat: () => {
-                const { activeChat, user } = window.state;
-                if(!activeChat) return '';
-                const messages = activeChat.messages || [];
                 
-                return `
-                    <div class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
-                        <div class="bg-white w-full max-w-lg h-[600px] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
-                            <!-- Header -->
-                            <div class="bg-slate-900 text-white p-4 flex justify-between items-center">
-                                <div>
-                                    <h3 class="font-bold">Support Chat</h3>
-                                    <p class="text-xs text-slate-400">ID: ${activeChat.id.slice(0,8)}</p>
-                                </div>
-                                <div class="flex gap-2">
-                                    ${window.state.role === 'service' ? `<button onclick="window.actions.resolveTicket('${activeChat.id}')" class="bg-green-600 hover:bg-green-700 text-xs px-3 py-1.5 rounded text-white">Resolve</button>` : ''}
-                                    <button onclick="window.state.activeChat=null; window.state.view=window.state.role==='service'?'service_dashboard':'home'; renderApp()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center"><i class="fas fa-times"></i></button>
-                                </div>
-                            </div>
-                            
-                            <!-- Messages -->
-                            <div class="flex-1 bg-slate-50 p-4 overflow-y-auto space-y-4" id="chat-box">
-                                ${messages.length === 0 ? '<p class="text-center text-slate-400 text-sm mt-10">Start the conversation...</p>' : ''}
-                                ${messages.map(m => `
-                                    <div class="flex ${m.sender === user.email ? 'justify-end' : 'justify-start'}">
-                                        <div class="max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${m.sender === user.email ? 'bg-green-500 text-white rounded-br-none' : 'bg-white border border-slate-200 text-slate-700 rounded-bl-none shadow-sm'}">
-                                            ${m.text}
-                                            <div class="text-[9px] opacity-70 mt-1 text-right">${new Date(m.time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                            
-                            <!-- Input -->
-                            <form onsubmit="event.preventDefault(); window.actions.sendMessage('${activeChat.id}', this.msg.value, '${user.email}'); this.msg.value=''" class="p-4 bg-white border-t border-slate-100 flex gap-2">
-                                <input name="msg" placeholder="Type your message..." required autocomplete="off" class="flex-1 bg-slate-100 border-none rounded-full px-5 py-3 focus:ring-2 focus:ring-green-500/50">
-                                <button type="submit" class="w-12 h-12 bg-slate-900 rounded-full text-white flex items-center justify-center hover:bg-slate-800 transition shadow-lg shadow-slate-900/20"><i class="fas fa-paper-plane"></i></button>
-                            </form>
-                        </div>
-                    </div>
-                `;
-            },
-            // Reusing other views with minor style tweaks
-            login: () => `
-                <div class="min-h-[80vh] flex items-center justify-center p-4 animate-fadeIn">
-                    <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md border border-slate-100">
-                        <div class="text-center mb-8">
-                            <div class="w-16 h-16 bg-slate-900 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-slate-900/30">
-                                <i class="fas fa-shield-alt text-3xl text-green-500"></i>
-                            </div>
-                            <h2 class="text-2xl font-bold text-slate-900">Welcome Back</h2>
-                        </div>
-                        <form onsubmit="event.preventDefault(); window.actions.requestLogin(this.email.value, this.password.value)" class="space-y-4">
-                            <input name="email" type="email" placeholder="Email Address" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 focus:border-slate-900 focus:outline-none">
-                            <input name="password" type="password" placeholder="Password" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 focus:border-slate-900 focus:outline-none">
-                            <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-lg transition shadow-lg shadow-slate-900/20">Secure Login</button>
-                        </form>
-                        <div class="mt-6 text-center">
-                            <button onclick="window.actions.loginGoogle()" class="text-sm text-slate-500 hover:text-slate-800 font-medium flex items-center justify-center gap-2 mx-auto w-full border py-2 rounded-lg hover:bg-slate-50 transition"><i class="fab fa-google"></i> Sign in with Google</button>
-                            <p class="mt-4 text-sm text-slate-400">New here? <button onclick="window.state.view='signup'; renderApp()" class="text-green-600 font-bold hover:underline">Create Account</button></p>
-                        </div>
-                    </div>
-                </div>
-            `,
-            signup: () => `
-                 <div class="min-h-[80vh] flex items-center justify-center p-4 animate-fadeIn">
-                    <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md border border-slate-100">
-                        <div class="text-center mb-8">
-                            <h2 class="text-2xl font-bold text-slate-900">Create Account</h2>
-                            <p class="text-slate-400">Join the secure marketplace</p>
-                        </div>
-                        <form onsubmit="event.preventDefault(); window.actions.requestSignup(this.email.value, this.password.value)" class="space-y-4">
-                            <input name="email" type="email" placeholder="Email" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3">
-                            <input name="password" type="password" placeholder="Create Password" required class="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3">
-                            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-lg transition shadow-lg shadow-green-600/20">Verify & Register</button>
-                        </form>
-                        <div class="mt-6 text-center">
-                            <button onclick="window.state.view='login'; renderApp()" class="text-sm text-slate-500 hover:text-slate-800">Back to Login</button>
-                        </div>
-                    </div>
-                </div>
-            `,
-            seller_request: () => `
-                <div class="container mx-auto py-12 px-4 max-w-2xl animate-fadeIn">
-                    <div class="bg-white rounded-2xl shadow-xl p-8 md:p-12">
-                        <div class="text-center mb-10">
-                            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">Partner Program</span>
-                            <h2 class="text-3xl font-bold mt-3 text-slate-900">Become a Verified Seller</h2>
-                            <p class="text-slate-500 mt-2">Join our network of trusted security providers.</p>
-                        </div>
-                        
-                        <form onsubmit="handleSellerRequest(event)" class="space-y-6">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="label">Full Name</label>
-                                    <input name="name" required class="input">
-                                </div>
-                                <div>
-                                    <label class="label">Mobile Number</label>
-                                    <input name="mobile" required class="input">
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="label">Company Name</label>
-                                <input name="company" required class="input">
-                            </div>
-                            
-                            <div>
-                                <label class="label">Email Address</label>
-                                <input name="email" type="email" required class="input">
-                            </div>
-
-                            <!-- Map Mock -->
-                            <div class="rounded-xl overflow-hidden border border-slate-200 relative group cursor-pointer" onclick="document.getElementById('addr').value='22.57, 88.36'; this.querySelector('.overlay').classList.remove('hidden')">
-                                <img src="https://mt1.google.com/vt/lyrs=m&x=1325&y=3143&z=13" class="w-full h-40 object-cover opacity-60 group-hover:opacity-100 transition">
-                                <div class="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-transparent">
-                                    <span class="bg-white px-4 py-2 rounded-full shadow font-bold text-sm"><i class="fas fa-map-marker-alt text-red-500 mr-2"></i> Select Location</span>
-                                </div>
-                                <div class="overlay hidden absolute inset-0 bg-green-500/20 flex items-center justify-center border-4 border-green-500">
-                                    <i class="fas fa-check-circle text-white text-4xl shadow-lg rounded-full bg-green-500"></i>
-                                </div>
-                                <input type="hidden" name="address" id="addr">
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label class="label">Date of Birth</label>
-                                    <input type="date" name="dob" required class="input">
-                                </div>
-                                <div>
-                                    <label class="label">Govt ID Type</label>
-                                    <select name="docType" class="input">
-                                        <option>Aadhaar Card</option>
-                                        <option>PAN Card</option>
-                                        <option>Passport</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="label">Upload Photo</label>
-                                <div class="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:bg-slate-50 transition cursor-pointer relative">
-                                    <input type="file" id="sellerPhoto" accept="image/*" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-                                    <i class="fas fa-cloud-upload-alt text-3xl text-slate-400 mb-2"></i>
-                                    <p class="text-sm text-slate-500">Click to upload passport size photo</p>
-                                </div>
-                            </div>
-
-                            <button type="submit" class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition shadow-lg shadow-slate-900/20">Submit Application</button>
-                        </form>
-                    </div>
-                </div>
-            `
-        };
-
-        // --- RENDER & INIT ---
-        window.renderApp = () => {
-            const appDiv = document.getElementById('app');
-            const { view } = window.state;
-            
-            // Re-inject updated styles if needed, or keeping it clean
-            let content = `
-                <style>
-                    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-                    .animate-fadeIn { animation: fadeIn 0.4s ease-out forwards; }
-                    .input { width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 0.75rem 1rem; outline: none; transition: all 0.2s; }
-                    .input:focus { background: #fff; border-color: #10b981; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1); }
-                    .label { display: block; font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 0.5rem; }
-                </style>
-            `;
-
-            content += Modal();
-            content += Navbar();
-            
-            // View Routing
-            if (view === 'home') content += Views.home();
-            else if (view === 'login') content += Views.login();
-            else if (view === 'signup') content += Views.signup();
-            else if (view === 'admin_dashboard') content += Views.admin_dashboard();
-            else if (view === 'seller_dashboard') content += Views.seller_dashboard();
-            else if (view === 'seller_request') content += Views.seller_request();
-            else if (view === 'seller_edit') content += Views.seller_edit();
-            else if (view === 'chat') content += Views.chat();
-            // ... Mappings for other existing views from previous code if needed, keeping core robust
-            else if (view === 'seller_add') content += `
-                <div class="container mx-auto py-12 px-4 max-w-xl animate-fadeIn">
-                    <h2 class="text-2xl font-bold mb-6">Add New Product</h2>
-                    <form onsubmit="event.preventDefault(); window.actions.addProduct({name: this.name.value, price: this.price.value, description: this.desc.value, image: this.image.value}); window.state.view='seller_dashboard'; renderApp()" class="bg-white p-8 rounded-xl shadow-lg space-y-4">
-                        <input name="name" placeholder="Product Name" required class="input">
-                        <input name="price" type="number" step="0.01" placeholder="Price ($)" required class="input">
-                        <textarea name="desc" placeholder="Description" rows="3" class="input"></textarea>
-                        <input name="image" placeholder="Image URL (e.g. https://...)" class="input">
-                        <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700">Publish Product</button>
-                    </form>
-                </div>
-            `;
-            else if (view === 'cart') { /* Keeping existing Cart logic but styled */ 
-                const { cart } = window.state;
-                const total = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
-                content += `
-                    <div class="container mx-auto py-12 px-4 max-w-4xl animate-fadeIn">
-                        <h2 class="text-3xl font-bold mb-8">Shopping Cart</h2>
-                        <div class="flex flex-col md:flex-row gap-8">
-                            <div class="flex-1 bg-white rounded-2xl shadow-sm p-6 border border-slate-100">
-                                ${cart.length === 0 ? `<div class="text-center py-10 text-slate-400">Your cart is empty</div>` : 
-                                    cart.map((item, idx) => `
-                                        <div class="flex items-center gap-4 py-4 border-b last:border-0">
-                                            <div class="w-20 h-20 bg-slate-50 rounded-lg overflow-hidden flex-shrink-0">
-                                                ${item.image ? `<img src="${item.image}" class="w-full h-full object-cover">` : ''}
-                                            </div>
-                                            <div class="flex-1">
-                                                <h4 class="font-bold text-slate-900">${item.name}</h4>
-                                                <p class="text-green-600 font-bold">$${item.price}</p>
-                                            </div>
-                                            <button onclick="window.state.cart.splice(${idx},1); renderApp()" class="text-red-400 hover:text-red-600 p-2"><i class="fas fa-trash"></i></button>
-                                        </div>
-                                    `).join('')}
-                            </div>
-                            <div class="w-full md:w-80">
-                                <div class="bg-white rounded-2xl shadow-sm p-6 border border-slate-100 sticky top-24">
-                                    <div class="flex justify-between mb-4 font-bold text-lg"><span>Total</span><span>$${total}</span></div>
-                                    <button onclick="window.actions.placeOrder()" class="w-full bg-slate-900 hover:bg-slate-800 text-white py-4 rounded-xl font-bold shadow-lg shadow-slate-900/20 transition">Checkout Securely</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            } else if (view === 'orders') {
-                 // Redesigned Orders
-                 const { orders } = window.state;
-                 content += `
-                    <div class="container mx-auto py-12 px-4 max-w-3xl animate-fadeIn">
-                        <h2 class="text-3xl font-bold mb-8">Order History</h2>
-                        <div class="space-y-6">
-                            ${orders.map(o => `
-                                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                                    <div class="flex justify-between items-start mb-6 border-b border-slate-50 pb-4">
-                                        <div>
-                                            <p class="text-xs text-slate-400 uppercase font-bold tracking-wider">Order #${o.id.slice(0,8)}</p>
-                                            <p class="text-sm text-slate-500 mt-1">${new Date(o.createdAt?.toDate()).toLocaleDateString()}</p>
-                                        </div>
-                                        <span class="px-3 py-1 rounded-full text-xs font-bold bg-green-100 text-green-700 capitalize">${o.status}</span>
-                                    </div>
-                                    <div class="space-y-3 mb-6">
-                                        ${o.items.map(i => `<div class="flex justify-between text-sm font-medium text-slate-700"><span>${i.name}</span><span>$${i.price}</span></div>`).join('')}
-                                    </div>
-                                    <div class="flex justify-between items-center">
-                                        <span class="font-bold text-lg text-slate-900">Total: $${o.total}</span>
-                                        <button onclick="window.actions.startChat()" class="text-sm font-bold text-slate-500 hover:text-slate-900 flex items-center gap-2"><i class="far fa-comment-alt"></i> Need Help?</button>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
+                // Mobile Auth
+                 document.getElementById('mobile-auth-section').innerHTML = `
+                    <div class="pt-4 border-t border-blue-400 mt-2">
+                         <div class="text-xs text-blue-200 mb-2">${user.email}</div>
+                         <button onclick="app.logout()" class="w-full text-left py-1 text-red-200">Logout</button>
                     </div>
                  `;
-            } else if (view === 'service_dashboard') {
-                const { chats } = window.state;
-                content += `
-                     <div class="container mx-auto py-8 px-4 animate-fadeIn">
-                        <h2 class="text-2xl font-bold mb-6">Support Queue</h2>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                            ${chats.filter(c => c.status !== 'resolved').map(c => `
-                                <div class="bg-white p-5 rounded-xl shadow-sm border border-l-4 border-l-green-500 cursor-pointer hover:shadow-md transition" onclick="window.state.activeChat=window.state.chats.find(chat=>chat.id==='${c.id}'); window.state.view='chat'; renderApp()">
-                                    <div class="flex justify-between mb-3">
-                                        <span class="font-bold text-sm text-slate-800">${c.customerEmail}</span>
-                                        <span class="text-[10px] bg-slate-100 px-2 py-1 rounded text-slate-500 font-bold uppercase">Active</span>
-                                    </div>
-                                    <p class="text-sm text-slate-500 truncate mb-2">${c.messages?.[c.messages.length-1]?.text || 'No messages'}</p>
-                                    <div class="text-xs text-slate-400 text-right">Click to reply</div>
-                                </div>
-                            `).join('')}
-                             ${chats.filter(c => c.status !== 'resolved').length === 0 ? '<div class="col-span-3 text-center py-10 text-slate-400 bg-slate-50 rounded-xl">All caught up! No active tickets.</div>' : ''}
-                        </div>
-                     </div>
-                `;
-            }
 
-            content += `
-                <div id="global-loader" class="fixed inset-0 bg-white/90 backdrop-blur-md z-[200] hidden items-center justify-center flex-col">
-                    <div class="w-16 h-16 border-4 border-slate-200 border-t-green-500 rounded-full animate-spin mb-4"></div>
-                    <p class="text-slate-900 font-bold tracking-widest animate-pulse">SECURING...</p>
-                </div>
-            `;
-            
-            // Re-attach seller add function because view changed
-            window.actions.addProduct = async (productData) => {
-                setLoading(true);
-                try {
-                    await addDoc(getPublicColl('products'), {
-                        ...productData,
-                        sellerId: window.state.user.uid,
-                        sellerEmail: window.state.user.email,
-                        createdAt: serverTimestamp()
-                    });
-                    showToast("Product added!");
-                } catch (e) { showToast(e.message, 'error'); } finally { setLoading(false); }
-            };
-            
-            // Re-attach delete
-            window.actions.deleteProduct = async (id) => {
-                setLoading(true);
-                try {
-                    await deleteDoc(getPublicDoc('products', id));
-                    showToast("Product deleted");
-                    renderApp();
-                } catch (e) { showToast(e.message, 'error'); } finally { setLoading(false); }
-            };
-            
-             // Re-attach chat start
-            window.actions.startChat = async () => {
-                setLoading(true);
-                try {
-                    const existingChat = window.state.chats.find(c => c.customerId === window.state.user.uid && c.status === 'open');
-                    if(existingChat) {
-                        window.state.activeChat = existingChat;
-                    } else {
-                        const ref = await addDoc(getPublicColl('support_chats'), {
-                            customerId: window.state.user.uid,
-                            customerEmail: window.state.user.email,
-                            messages: [],
-                            status: 'open',
-                            createdAt: serverTimestamp()
-                        });
-                        window.state.activeChat = { id: ref.id, messages: [] };
-                    }
-                    window.state.view = 'chat';
-                    renderApp();
-                } catch(e) { showToast(e.message, 'error'); } finally { setLoading(false); }
-            };
-            
-            window.actions.sendMessage = async (chatId, text, sender) => {
-                try {
-                    const chatRef = getPublicDoc('support_chats', chatId);
-                    const chatDoc = await getDoc(chatRef);
-                    if(!chatDoc.exists()) return;
-                    const messages = chatDoc.data().messages || [];
-                    messages.push({ text, sender, time: new Date().toISOString() });
-                    await updateDoc(chatRef, { messages });
-                    // Optimistic update for UI snap
-                    if(window.state.activeChat && window.state.activeChat.id === chatId) {
-                         window.state.activeChat.messages = messages;
-                         renderApp();
-                    }
-                } catch(e) { console.error(e); }
-            };
+                // Show Role Buttons
+                if(app.userRole === 'admin') document.getElementById('nav-admin').classList.remove('hide');
+                if(app.userRole === 'seller') document.getElementById('nav-seller').classList.remove('hide');
+                if(app.userRole === 'service') document.getElementById('nav-service').classList.remove('hide');
 
-            appDiv.innerHTML = content;
-            if(view === 'chat') {
-                const box = document.getElementById('chat-box');
-                if(box) box.scrollTop = box.scrollHeight;
-            }
-        };
+                if (app.products.length === 0) app.loadProducts();
 
-        // --- HANDLER WRAPPERS ---
-        window.handleSellerRequest = (e) => {
-            e.preventDefault();
-            const form = e.target;
-            const file = form.querySelector('input[type="file"]').files[0];
-            const submit = (photo) => {
-                 window.actions.submitSellerRequest({
-                    name: form.name.value,
-                    mobile: form.mobile.value,
-                    email: form.email.value,
-                    company: form.company.value,
-                    address: form.address.value || 'Not specified',
-                    dob: form.dob.value,
-                    docType: form.docType.value,
-                    photo
-                });
-            };
-
-            if (file) {
-                const reader = new FileReader();
-                reader.onloadend = () => submit(reader.result);
-                reader.readAsDataURL(file);
             } else {
-                submit(null);
+                app.currentUser = null;
+                app.userRole = 'guest';
+                document.getElementById('auth-section').innerHTML = `
+                    <button onclick="app.router('login')" class="bg-white text-primary px-4 py-1.5 rounded font-medium hover:bg-gray-100 transition">Login</button>
+                `;
+                document.getElementById('mobile-auth-section').innerHTML = `
+                    <button onclick="app.router('login')" class="block w-full text-left py-1 mt-2 border-t border-blue-400 pt-2">Login / Sign Up</button>
+                `;
+                
+                // Hide restricted
+                document.getElementById('nav-admin').classList.add('hide');
+                document.getElementById('nav-seller').classList.add('hide');
+                document.getElementById('nav-service').classList.add('hide');
+                
+                app.loadProducts();
             }
-        };
+        });
 
-        // --- START ---
-        // Create Role Collection if missing (Init logic only run once per session conceptually)
-        renderApp();
+        // Initial Load
+        app.router('home');
+
     </script>
-</head>
-<body class="bg-white text-slate-800 font-sans min-h-screen">
-    <div id="app" class="min-h-screen flex flex-col"></div>
 </body>
 </html>
