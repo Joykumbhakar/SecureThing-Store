@@ -179,6 +179,41 @@
 
         <!-- 1. HOME / SHOP VIEW -->
         <section id="view-home" class="view-section">
+            
+            <!-- HERO SECTION START -->
+            <div class="relative bg-dark rounded-3xl p-8 md:p-16 mb-10 overflow-hidden shadow-2xl group">
+                <div class="relative z-10 max-w-lg">
+                    <div class="inline-flex items-center gap-2 bg-white/10 border border-white/10 rounded-full px-3 py-1 mb-6 backdrop-blur-md">
+                        <span class="flex h-2 w-2 rounded-full bg-success"></span>
+                        <span class="text-xs font-medium text-white tracking-wide">New Arrivals In Stock</span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-bold text-white mb-6 leading-tight">
+                        Secure Your World with <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Smart Tech</span>
+                    </h1>
+                    <p class="text-gray-400 text-lg mb-8 leading-relaxed">
+                        Upgrade your home safety with our premium collection of smart locks, cameras, and sensors.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button onclick="document.getElementById('product-grid').scrollIntoView({behavior: 'smooth'})" class="bg-primary text-white px-8 py-3.5 rounded-xl font-bold hover:bg-primaryDark transition shadow-lg shadow-primary/25 flex items-center justify-center">
+                            Shop Now <i data-lucide="arrow-down" class="ml-2 w-4 h-4"></i>
+                        </button>
+                        <button onclick="app.filterCategory('Security'); document.getElementById('product-grid').scrollIntoView({behavior: 'smooth'})" class="bg-white/10 text-white border border-white/10 px-8 py-3.5 rounded-xl font-bold hover:bg-white/20 transition flex items-center justify-center backdrop-blur-md">
+                            View Security
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Decorative Background -->
+                <div class="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] -mr-32 -mt-32"></div>
+                <div class="absolute bottom-0 left-0 w-[300px] h-[300px] bg-emerald-500/10 rounded-full blur-[100px] -ml-20 -mb-20"></div>
+                
+                <!-- Illustration/Icon -->
+                <div class="hidden lg:block absolute right-12 top-1/2 -translate-y-1/2 opacity-30 rotate-12 transition-transform duration-1000 group-hover:scale-110">
+                    <i data-lucide="shield-check" class="w-80 h-80 text-white"></i>
+                </div>
+            </div>
+            <!-- HERO SECTION END -->
+
             <div class="flex flex-col md:flex-row justify-between items-end md:items-center mb-8 gap-6">
                 <div>
                     <h2 class="text-3xl font-bold text-dark tracking-tight">Featured Collection</h2>
@@ -1198,7 +1233,7 @@
                 });
 
                 if (app.cart.length === 0) {
-                     container.innerHTML = `
+                      container.innerHTML = `
                         <div class="flex flex-col items-center justify-center h-64 text-gray-300">
                             <i data-lucide="shopping-bag" class="w-12 h-12 mb-3 opacity-50"></i>
                             <p class="text-sm font-medium">Your cart is empty.</p>
