@@ -44,7 +44,9 @@
                         'clay-card': '20px 20px 60px #c8cdd6, -20px -20px 60px #ffffff',
                         'clay-float': '10px 10px 30px rgba(88, 63, 188, 0.2)',
                         'clay-inner': 'inset 6px 6px 12px #b8b9be, inset -6px -6px 12px #ffffff',
-                        'clay-btn': '8px 8px 16px rgba(88, 63, 188, 0.2), -8px -8px 16px #ffffff'
+                        'clay-btn': '8px 8px 16px rgba(88, 63, 188, 0.2), -8px -8px 16px #ffffff',
+                        'clay-bubble-me': '8px 8px 16px rgba(88, 63, 188, 0.3), -4px -4px 10px rgba(255, 255, 255, 0.2)',
+                        'clay-bubble-other': '8px 8px 16px rgba(163, 177, 198, 0.2), -6px -6px 12px #ffffff'
                     },
                     padding: {
                         'safe': 'env(safe-area-inset-bottom)',
@@ -192,6 +194,11 @@
             padding: 10px 16px;
             box-shadow: var(--tw-shadow-clay-bubble-other);
         }
+        
+        /* Category Card Hover */
+        .category-card:active {
+            transform: scale(0.95);
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
@@ -201,7 +208,8 @@
     <!-- Top Bar -->
     <nav class="sticky top-0 z-40 transition-all duration-300">
         <div class="px-6 py-6 flex justify-between items-center">
-            <button onclick="document.getElementById('mobile-menu').classList.toggle('hide')" class="text-primary p-2 hover:bg-white/50 rounded-xl transition md:hidden">
+            <!-- Grid Icon -> Open Categories -->
+            <button onclick="app.router('categories')" class="text-primary p-2 hover:bg-white/50 rounded-xl transition">
                 <i data-lucide="layout-grid" class="w-7 h-7"></i>
             </button>
 
@@ -214,6 +222,7 @@
             
             <div class="hidden md:flex items-center space-x-6">
                 <button onclick="app.router('home')" class="text-textMain hover:text-primary font-bold text-sm transition">Shop</button>
+                <button onclick="app.router('categories')" class="text-textMain hover:text-primary font-bold text-sm transition">Categories</button>
                 <button onclick="app.router('orders')" class="text-textMain hover:text-primary font-bold text-sm transition">Orders</button>
                 <button onclick="app.router('profile')" class="text-textMain hover:text-primary font-bold text-sm transition">Profile</button>
                 <button onclick="app.router('service-dashboard')" class="text-textMain hover:text-primary font-bold text-sm transition hide" id="nav-service">Support</button>
@@ -234,7 +243,7 @@
 
         <div id="header-search-bar" class="px-6 pb-2">
             <div class="relative">
-                <input type="text" id="global-search-input" onkeyup="app.handleGlobalSearch(this.value)" placeholder="Search products..." class="clay-input w-full py-4 pl-12 pr-4 text-sm font-bold shadow-clay-inner">
+                <input type="text" id="global-search-input" onkeydown="if(event.key === 'Enter') app.performSearch(this.value)" placeholder="Search products & press Enter..." class="clay-input w-full py-4 pl-12 pr-4 text-sm font-bold shadow-clay-inner">
                 <i data-lucide="search" class="absolute left-4 top-4 text-primary w-5 h-5"></i>
                 <button onclick="app.toggleHeaderSearch()" class="absolute right-4 top-4 text-slate-400 hover:text-danger"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
@@ -297,6 +306,29 @@
             </div>
 
             <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12"></div>
+        </section>
+
+        <!-- VIEW: CATEGORIES -->
+        <section id="view-categories" class="view-section hide">
+             <div class="mb-8">
+                 <h2 class="text-3xl font-extrabold text-textMain">Browse Categories</h2>
+                 <p class="text-textMuted text-sm mt-1">Explore our wide range of products.</p>
+             </div>
+             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="categories-grid">
+                 <!-- Injected via JS -->
+             </div>
+        </section>
+
+        <!-- VIEW: SEARCH RESULTS -->
+        <section id="view-search-results" class="view-section hide">
+            <div class="flex items-center gap-4 mb-8">
+                 <button onclick="app.router('home')" class="clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-full"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+                 <div>
+                     <h2 class="text-2xl font-extrabold text-textMain">Search Results</h2>
+                     <p class="text-slate-500 text-sm">Showing results for "<span id="search-query-display" class="font-bold text-primary"></span>"</p>
+                 </div>
+            </div>
+            <div id="search-results-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12"></div>
         </section>
 
         <!-- VIEW: PRODUCT DETAILS -->
@@ -376,9 +408,8 @@
                 <h2 class="text-3xl font-extrabold text-textMain">Seller Dashboard</h2>
                 <button onclick="app.openAddProductModal()" class="clay-btn bg-success text-white px-6 py-3 shadow-lg flex items-center"><i data-lucide="plus" class="mr-2 w-4 h-4"></i> Add Product</button>
             </div>
-            
             <div class="clay-card p-6 mb-8">
-                <h3 class="font-bold text-lg mb-4 text-textMain">Sales Overview (Weekly)</h3>
+                <h3 class="font-bold text-lg mb-4 text-textMain">Sales Overview</h3>
                 <div class="flex items-end justify-between h-32 gap-2">
                     <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 40%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
                     <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 65%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
@@ -404,7 +435,6 @@
         <!-- VIEW: ADMIN DASHBOARD -->
         <section id="view-admin-dashboard" class="view-section hide">
             <h2 class="text-3xl font-extrabold mb-8 text-textMain">Admin Control</h2>
-            
             <div class="clay-card p-8 mb-8">
                 <h3 class="font-bold text-xl mb-6 text-textMain">Store Banners</h3>
                 <form onsubmit="app.adminSaveBanner(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -424,18 +454,15 @@
                     <div class="text-slate-400 text-xs font-bold uppercase mb-2">Total Orders</div><div class="text-5xl font-extrabold text-textMain" id="admin-order-count">0</div>
                 </div>
             </div>
-            
             <div class="clay-card p-8 mb-8">
                 <h3 class="font-bold text-lg mb-4">Payment Queue</h3>
                 <div id="admin-payment-queue" class="space-y-3"></div>
             </div>
-            
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div class="clay-card p-8 h-[500px] flex flex-col">
                     <h3 class="font-bold text-lg mb-4">Manage All Products</h3>
                     <div id="admin-all-products" class="overflow-y-auto pr-2 space-y-3 flex-grow"></div>
                 </div>
-
                 <div class="space-y-6">
                     <div class="clay-card p-8">
                         <h3 class="font-bold text-lg mb-4">Seller Requests</h3>
@@ -519,7 +546,6 @@
                     </div>
                     <div class="clay-card p-8">
                         <h3 class="font-bold text-xl mb-6 flex items-center text-primary"><i data-lucide="credit-card" class="mr-3"></i> Payment</h3>
-                        <!-- Credit Card Visual -->
                         <div class="mb-8 w-full max-w-sm mx-auto bg-gradient-to-br from-primary to-primaryLight rounded-[25px] p-6 text-white shadow-xl relative overflow-hidden h-56 flex flex-col justify-between">
                             <div class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
                             <div class="flex justify-between items-start z-10">
@@ -690,10 +716,48 @@
         const getCollectionRef = (name) => collection(db, 'artifacts', APP_ID, 'public', 'data', name);
         const getUserRef = (uid) => doc(db, 'artifacts', APP_ID, 'public', 'data', 'users', uid);
 
+        // Standard function to create consistent product cards
+        function createProductCardHTML(p, isLiked) {
+             const discount = p.discount ? parseInt(p.discount) : 0;
+             const price = parseInt(p.price);
+             const finalPrice = discount > 0 ? Math.round(price - (price * discount / 100)) : price;
+             
+             return `
+                <div class="clay-card overflow-hidden group cursor-pointer hover:-translate-y-2 category-card" onclick="app.loadProductDetails('${p.id}')">
+                    <div class="h-64 bg-white/50 relative p-6 flex items-center justify-center">
+                        ${discount > 0 ? `<div class="sale-badge">SALE -${discount}%</div>` : ''}
+                        <div class="absolute top-4 right-4 flex gap-2">
+                            <button onclick="event.stopPropagation(); app.toggleWishlist('${p.id}')" class="bg-white px-2 py-2 rounded-lg text-xs font-bold ${isLiked ? 'text-danger' : 'text-slate-300'} shadow-sm hover:scale-110 transition"><i data-lucide="heart" class="w-4 h-4 ${isLiked ? 'fill-current' : ''}"></i></button>
+                        </div>
+                        <img src="${p.image}" class="w-full h-full object-contain group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/300?text=Item'">
+                    </div>
+                    <div class="p-6">
+                        <span class="text-[10px] font-bold text-primaryLight uppercase tracking-widest">${p.category||'Item'}</span>
+                        <h3 class="font-bold text-lg text-textMain truncate mb-2">${p.name}</h3>
+                        <div class="flex justify-between items-center mt-4">
+                            <div class="flex flex-col">
+                                ${discount > 0 ? `<span class="old-price">₹${price}</span>` : ''}
+                                <span class="text-2xl font-extrabold text-textMain">₹${finalPrice}</span>
+                            </div>
+                            <button onclick="event.stopPropagation(); app.addToCart('${p.id}')" class="clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-xl text-primary hover:bg-primary hover:text-white"><i data-lucide="plus"></i></button>
+                        </div>
+                    </div>
+                </div>
+             `;
+        }
+
         window.app = {
             currentUser: null, userRole: 'customer', cart: [], products: [], 
             currentTicketId: null, activeCategory: 'all', currentProductDetailId: null, 
             wishlist: [],
+            categories: [
+                 { id: 'Electronics', name: 'Electronics', icon: 'cpu', color: 'bg-blue-100 text-blue-600' },
+                 { id: 'Home', name: 'Home', icon: 'home', color: 'bg-orange-100 text-orange-600' },
+                 { id: 'Security', name: 'Security', icon: 'lock', color: 'bg-red-100 text-red-600' },
+                 { id: 'Fashion', name: 'Fashion', icon: 'shirt', color: 'bg-pink-100 text-pink-600' }, 
+                 { id: 'Sports', name: 'Sports', icon: 'activity', color: 'bg-green-100 text-green-600' },
+                 { id: 'Toys', name: 'Toys', icon: 'gamepad-2', color: 'bg-purple-100 text-purple-600' }
+            ],
 
             updateIcons: () => { if(window.lucide) window.lucide.createIcons(); },
             toast: (msg, type = 'info') => {
@@ -716,6 +780,7 @@
                 if (view) view.classList.remove('hide');
 
                 if (viewId === 'home') { await app.loadProducts(); app.loadBanners(); }
+                if (viewId === 'categories') app.loadCategories();
                 if (viewId === 'orders') await app.loadCustomerOrders();
                 if (viewId === 'profile') await app.loadProfile();
                 if (viewId === 'seller-dashboard') await app.loadSellerDashboard();
@@ -755,12 +820,30 @@
                 else { searchBar.classList.add('open'); input.focus(); }
             },
 
-            handleGlobalSearch: (query) => {
-                const homeView = document.getElementById('view-home');
-                if (homeView.classList.contains('hide')) app.router('home');
+            // SEARCH LOGIC: Dedicated Page
+            performSearch: (query) => {
+                if(!query.trim()) return;
                 const term = query.toLowerCase();
-                const filtered = app.products.filter(p => p.name.toLowerCase().includes(term) && (app.activeCategory === 'all' || p.category === app.activeCategory));
-                app.renderProductGrid(filtered);
+                const filtered = app.products.filter(p => p.name.toLowerCase().includes(term) || (p.desc && p.desc.toLowerCase().includes(term)));
+                
+                document.getElementById('search-query-display').innerText = query;
+                const grid = document.getElementById('search-results-grid');
+                grid.innerHTML = '';
+
+                if (filtered.length === 0) {
+                     grid.innerHTML = `<div class="col-span-4 text-center py-20 text-slate-400">No products found matching "${query}"</div>`;
+                } else {
+                     filtered.forEach(p => {
+                         const isLiked = app.wishlist.includes(p.id);
+                         grid.innerHTML += createProductCardHTML(p, isLiked);
+                     });
+                }
+                app.router('search-results');
+            },
+
+            handleGlobalSearch: (query) => {
+                // Keep this for live filtering on Home if desired, but user asked for dedicated page
+                // Currently unused if we rely on Enter key
             },
 
             handleAuth: async (e) => {
@@ -880,8 +963,25 @@
                 finally { app.toggleLoader(false); }
             },
 
+            loadCategories: () => {
+                const grid = document.getElementById('categories-grid');
+                grid.innerHTML = '';
+                app.categories.forEach(cat => {
+                    grid.innerHTML += `
+                        <div onclick="app.filterCategory('${cat.id}'); app.router('home')" class="clay-card p-6 flex flex-col items-center justify-center text-center cursor-pointer hover:-translate-y-2 category-card h-40">
+                             <div class="w-14 h-14 rounded-full flex items-center justify-center ${cat.color} mb-3 shadow-inner">
+                                 <i data-lucide="${cat.icon}" class="w-7 h-7"></i>
+                             </div>
+                             <span class="font-bold text-slate-700">${cat.name}</span>
+                        </div>
+                    `;
+                });
+                app.updateIcons();
+            },
+
             loadProducts: async () => {
                 const grid = document.getElementById('product-grid');
+                // Skeleton Loader
                 grid.innerHTML = '';
                 for(let i=0; i<4; i++) {
                     grid.innerHTML += `
@@ -912,33 +1012,8 @@
                 if(products.length === 0) { grid.innerHTML = '<p class="col-span-4 text-center text-slate-400 py-12">No products found.</p>'; return; }
                 
                 products.forEach(p => {
-                    const discount = p.discount ? parseInt(p.discount) : 0;
-                    const price = parseInt(p.price);
-                    const finalPrice = discount > 0 ? Math.round(price - (price * discount / 100)) : price;
                     const isLiked = app.wishlist.includes(p.id);
-                    
-                    grid.innerHTML += `
-                        <div class="clay-card overflow-hidden group cursor-pointer hover:-translate-y-2" onclick="app.loadProductDetails('${p.id}')">
-                            <div class="h-64 bg-white/50 relative p-6 flex items-center justify-center">
-                                ${discount > 0 ? `<div class="sale-badge">SALE -${discount}%</div>` : ''}
-                                <div class="absolute top-4 right-4 flex gap-2">
-                                    <button onclick="event.stopPropagation(); app.toggleWishlist('${p.id}')" class="bg-white px-2 py-2 rounded-lg text-xs font-bold ${isLiked ? 'text-danger' : 'text-slate-300'} shadow-sm hover:scale-110 transition"><i data-lucide="heart" class="w-4 h-4 ${isLiked ? 'fill-current' : ''}"></i></button>
-                                </div>
-                                <img src="${p.image}" class="w-full h-full object-contain group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/300?text=Item'">
-                            </div>
-                            <div class="p-6">
-                                <span class="text-[10px] font-bold text-primaryLight uppercase tracking-widest">${p.category||'Item'}</span>
-                                <h3 class="font-bold text-lg text-textMain truncate mb-2">${p.name}</h3>
-                                <div class="flex justify-between items-center mt-4">
-                                    <div class="flex flex-col">
-                                        ${discount > 0 ? `<span class="old-price">₹${price}</span>` : ''}
-                                        <span class="text-2xl font-extrabold text-textMain">₹${finalPrice}</span>
-                                    </div>
-                                    <button onclick="event.stopPropagation(); app.addToCart('${p.id}')" class="clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-xl text-primary hover:bg-primary hover:text-white"><i data-lucide="plus"></i></button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                    grid.innerHTML += createProductCardHTML(p, isLiked);
                 });
                 app.updateIcons();
             },
@@ -998,6 +1073,10 @@
                     app.renderProductGrid(app.products); 
                 } else if (!document.getElementById('view-product-details').classList.contains('hide')) {
                     app.loadProductDetails(pid); 
+                } else if (!document.getElementById('view-search-results').classList.contains('hide')) {
+                    // Re-render search results to update icon
+                    const query = document.getElementById('search-query-display').innerText;
+                    app.performSearch(query);
                 }
             },
 
@@ -1123,7 +1202,7 @@
                 list.forEach((a, i) => {
                     con.innerHTML += `
                         <label class="clay-input p-4 block cursor-pointer flex items-start gap-3">
-                            <input type="radio" name="selected-address" value="${i}" ${i===0?'checked':''} class="mt-1 text-primary">
+                            <input type="radio" name="sel-addr" value="${i}" ${i===0?'checked':''} class="mt-1 text-primary">
                             <div class="text-sm">
                                 <div class="font-bold text-textMain">${a.name}</div>
                                 <div class="text-slate-500">${a.line}, ${a.area}, ${a.city} - ${a.pin}</div>
@@ -1141,7 +1220,7 @@
                 try {
                     const snap = await getDoc(getUserRef(app.currentUser.uid));
                     const list = snap.data().addressList || [];
-                    const sel = document.querySelector('input[name="selected-address"]:checked');
+                    const sel = document.querySelector('input[name="sel-addr"]:checked');
                     
                     if(!sel && list.length === 0) throw new Error("Add address first");
                     
