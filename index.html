@@ -44,9 +44,7 @@
                         'clay-card': '20px 20px 60px #c8cdd6, -20px -20px 60px #ffffff',
                         'clay-float': '10px 10px 30px rgba(88, 63, 188, 0.2)',
                         'clay-inner': 'inset 6px 6px 12px #b8b9be, inset -6px -6px 12px #ffffff',
-                        'clay-btn': '8px 8px 16px rgba(88, 63, 188, 0.2), -8px -8px 16px #ffffff',
-                        'clay-bubble-me': '8px 8px 16px rgba(88, 63, 188, 0.3), -4px -4px 10px rgba(255, 255, 255, 0.2)',
-                        'clay-bubble-other': '8px 8px 16px rgba(163, 177, 198, 0.2), -6px -6px 12px #ffffff'
+                        'clay-btn': '8px 8px 16px rgba(88, 63, 188, 0.2), -8px -8px 16px #ffffff'
                     },
                     padding: {
                         'safe': 'env(safe-area-inset-bottom)',
@@ -203,23 +201,24 @@
     <!-- Top Bar -->
     <nav class="sticky top-0 z-40 transition-all duration-300">
         <div class="px-6 py-6 flex justify-between items-center">
-            <button onclick="document.getElementById('mobile-menu').classList.toggle('hide')" class="text-primary p-2 hover:bg-white/50 rounded-xl transition">
+            <button onclick="document.getElementById('mobile-menu').classList.toggle('hide')" class="text-primary p-2 hover:bg-white/50 rounded-xl transition md:hidden">
                 <i data-lucide="layout-grid" class="w-7 h-7"></i>
             </button>
 
-            <div class="hidden md:flex items-center space-x-3 cursor-pointer group" onclick="app.router('home')">
+            <div class="flex items-center space-x-3 cursor-pointer group" onclick="app.router('home')">
                 <div class="bg-primary text-white p-2 rounded-xl border border-white/10 shadow-lg">
                     <i data-lucide="shield-check" class="w-6 h-6"></i>
                 </div>
-                <span class="text-xl font-extrabold tracking-tight text-primary">SecureThing</span>
+                <span class="text-xl font-extrabold tracking-tight text-primary hidden md:block">SecureThing</span>
             </div>
             
-            <div class="hidden md:flex items-center space-x-4">
-                <button onclick="app.router('home')" class="text-primary/80 hover:text-primary font-bold text-sm transition">Shop</button>
-                <button onclick="app.router('orders')" class="text-primary/80 hover:text-primary font-bold text-sm transition">Tracking</button>
-                <button onclick="app.router('seller-dashboard')" class="text-warning font-bold text-sm transition hide" id="nav-seller">Seller</button>
+            <div class="hidden md:flex items-center space-x-6">
+                <button onclick="app.router('home')" class="text-textMain hover:text-primary font-bold text-sm transition">Shop</button>
+                <button onclick="app.router('orders')" class="text-textMain hover:text-primary font-bold text-sm transition">Orders</button>
+                <button onclick="app.router('profile')" class="text-textMain hover:text-primary font-bold text-sm transition">Profile</button>
+                <button onclick="app.router('service-dashboard')" class="text-textMain hover:text-primary font-bold text-sm transition hide" id="nav-service">Support</button>
+                <button onclick="app.router('seller-dashboard')" class="text-warning font-bold text-sm transition hide" id="nav-seller">Seller Portal</button>
                 <button onclick="app.router('admin-dashboard')" class="text-primary font-bold text-sm transition hide" id="nav-admin">Admin</button>
-                <button onclick="app.router('service-dashboard')" class="text-accent font-bold text-sm transition hide" id="nav-service">Service</button>
                 <div id="auth-section-desktop"></div>
             </div>
 
@@ -348,6 +347,10 @@
                     <button onclick="app.handleGoogleAuth()" class="clay-btn clay-btn-secondary w-12 h-12 flex items-center justify-center rounded-full text-danger"><i class="fab fa-google"></i></button>
                 </div>
                 <p class="mt-8 text-sm font-bold text-slate-400">Don't have an account? <a href="#" onclick="app.toggleAuthMode()" class="text-primary hover:underline" id="auth-switch-text">Sign up</a></p>
+                
+                <div class="mt-8 text-center border-t border-slate-200 pt-4">
+                    <button onclick="app.router('seller-login')" class="text-xs font-bold text-slate-400 hover:text-primary uppercase tracking-wide">Seller Portal Login</button>
+                </div>
             </div>
         </section>
 
@@ -405,9 +408,9 @@
             <div class="clay-card p-8 mb-8">
                 <h3 class="font-bold text-xl mb-6 text-textMain">Store Banners</h3>
                 <form onsubmit="app.adminSaveBanner(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <input type="text" id="banner-title" placeholder="Title" class="clay-input p-4" required>
+                    <input type="text" id="banner-title" placeholder="Title (e.g. Diwali Sale)" class="clay-input p-4" required>
                     <input type="text" id="banner-subtitle" placeholder="Subtitle" class="clay-input p-4">
-                    <input type="text" id="banner-img" placeholder="Image URL" class="clay-input p-4" required>
+                    <input type="text" id="banner-img" placeholder="Image URL (Horizontal)" class="clay-input p-4" required>
                     <input type="text" id="banner-cta" placeholder="Button Text" class="clay-input p-4" value="Shop Now">
                     <button type="submit" class="clay-btn clay-btn-primary p-4 md:col-span-2">Update Home Banner</button>
                 </form>
@@ -516,6 +519,7 @@
                     </div>
                     <div class="clay-card p-8">
                         <h3 class="font-bold text-xl mb-6 flex items-center text-primary"><i data-lucide="credit-card" class="mr-3"></i> Payment</h3>
+                        <!-- Credit Card Visual -->
                         <div class="mb-8 w-full max-w-sm mx-auto bg-gradient-to-br from-primary to-primaryLight rounded-[25px] p-6 text-white shadow-xl relative overflow-hidden h-56 flex flex-col justify-between">
                             <div class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
                             <div class="flex justify-between items-start z-10">
@@ -788,12 +792,13 @@
                 try {
                     const cred = await signInWithEmailAndPassword(auth, email, pass);
                     const docSnap = await getDoc(getUserRef(cred.user.uid));
-                    if(docSnap.exists() && docSnap.data().role === 'seller') {
+                    // STRICT CHECK: Only allow if DB role is 'seller' or if it's the Admin email
+                    if((docSnap.exists() && docSnap.data().role === 'seller') || cred.user.email === ADMIN_EMAIL) {
                         app.toast("Seller Login Success", "success");
                         app.router('seller-dashboard');
                     } else {
                         await signOut(auth);
-                        app.toast("Not authorized as seller", "error");
+                        app.toast("Access Denied: Authorized Sellers only.", "error");
                     }
                 } catch(err) { app.toast(err.message, "error"); }
                 finally { app.toggleLoader(false); }
@@ -1118,7 +1123,7 @@
                 list.forEach((a, i) => {
                     con.innerHTML += `
                         <label class="clay-input p-4 block cursor-pointer flex items-start gap-3">
-                            <input type="radio" name="sel-addr" value="${i}" ${i===0?'checked':''} class="mt-1 text-primary">
+                            <input type="radio" name="selected-address" value="${i}" ${i===0?'checked':''} class="mt-1 text-primary">
                             <div class="text-sm">
                                 <div class="font-bold text-textMain">${a.name}</div>
                                 <div class="text-slate-500">${a.line}, ${a.area}, ${a.city} - ${a.pin}</div>
@@ -1136,10 +1141,23 @@
                 try {
                     const snap = await getDoc(getUserRef(app.currentUser.uid));
                     const list = snap.data().addressList || [];
-                    const sel = document.querySelector('input[name="sel-addr"]:checked');
+                    const sel = document.querySelector('input[name="selected-address"]:checked');
+                    
                     if(!sel && list.length === 0) throw new Error("Add address first");
                     
-                    const addr = list[sel ? sel.value : 0];
+                    // Fallback to first address if list exists but radio not checked (edge case)
+                    let addr = null;
+                    if(sel) {
+                        addr = list[sel.value];
+                    } else if (list.length > 0) {
+                        addr = list[0];
+                    } else {
+                         throw new Error("Please select an address");
+                    }
+
+                    const payMethod = document.querySelector('input[name="payment"]:checked').value;
+                    const status = payMethod === 'upi' ? 'Pending Verification' : 'Order Placed';
+
                     const order = {
                         customerId: app.currentUser.uid,
                         customerEmail: app.currentUser.email,
@@ -1147,8 +1165,8 @@
                         items: app.cart,
                         total: app.cartTotalValue,
                         address: addr,
-                        paymentMethod: document.querySelector('input[name="payment"]:checked').value,
-                        status: 'Pending Verification',
+                        paymentMethod: payMethod,
+                        status: status,
                         trackingSteps: [{ status: 'Order Placed', time: new Date().toISOString() }],
                         createdAt: serverTimestamp()
                     };
@@ -1171,6 +1189,8 @@
                     
                     if(myOrders.length === 0) { con.innerHTML = '<div class="clay-card p-8 text-center text-slate-400">No orders yet</div>'; return; }
 
+                    myOrders.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
                     myOrders.forEach(o => {
                         const steps = ['Order Placed', 'Verified', 'Packed', 'Shipped', 'Delivered'];
                         let stepIdx = steps.indexOf(o.status);
@@ -1191,6 +1211,10 @@
                                 </div>`;
                         });
                         trackerHTML += `</div>`;
+                        
+                        // Cancellation Logic (24h)
+                        const orderTime = o.createdAt ? o.createdAt.toDate().getTime() : 0;
+                        const canCancel = (Date.now() - orderTime) < (24 * 60 * 60 * 1000) && o.status !== 'Cancelled' && o.status !== 'Delivered';
 
                         con.innerHTML += `
                             <div class="clay-card p-6 mb-4">
@@ -1206,15 +1230,27 @@
                                 </div>
                                 ${o.status !== 'Cancelled' ? trackerHTML : '<div class="mt-4 text-center text-danger text-xs font-bold bg-red-50 p-2 rounded">ORDER CANCELLED</div>'}
                                 
-                                <div class="mt-6 pt-4 border-t border-dashed border-gray-200">
-                                    <button onclick="app.openCustomerChat('${o.id}')" class="w-full clay-btn clay-btn-secondary py-3 text-xs flex items-center justify-center gap-2">
-                                        <i data-lucide="message-circle" class="w-4 h-4"></i> Need Help with this Order?
+                                <div class="mt-6 pt-4 border-t border-dashed border-gray-200 flex gap-2">
+                                    <button onclick="app.openCustomerChat('${o.id}')" class="flex-grow clay-btn clay-btn-secondary py-3 text-xs flex items-center justify-center gap-2">
+                                        <i data-lucide="message-circle" class="w-4 h-4"></i> Support
                                     </button>
+                                    ${canCancel ? `<button onclick="app.cancelOrder('${o.id}')" class="flex-grow clay-btn bg-red-50 text-danger py-3 text-xs font-bold flex items-center justify-center gap-2 hover:bg-red-100">Cancel Order</button>` : ''}
                                 </div>
                             </div>
                         `;
                     });
                 } catch(e) {} finally { app.toggleLoader(false); }
+            },
+            
+            cancelOrder: async (oid) => {
+                if(!confirm("Are you sure you want to cancel this order?")) return;
+                app.toggleLoader(true);
+                try {
+                    await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'orders', oid), { status: 'Cancelled' });
+                    app.toast("Order Cancelled", "info");
+                    app.loadCustomerOrders();
+                } catch(e) { app.toast("Error cancelling", "error"); }
+                finally { app.toggleLoader(false); }
             },
 
             loadProfile: async () => {
@@ -1290,8 +1326,10 @@
                 const snap = await getDocs(getCollectionRef('orders'));
                 snap.forEach(d => {
                     const o = d.data();
-                    if(o.status !== 'Delivered') oCount++;
-                    oList.innerHTML += `
+                    // Seller sees only processed orders or COD orders, not pending payments
+                    if(o.status !== 'Delivered' && o.status !== 'Pending Verification') { 
+                        oCount++;
+                        oList.innerHTML += `
                         <div class="clay-card !rounded-xl !shadow-sm p-4 mb-2 border-none">
                             <div class="flex justify-between mb-2">
                                 <span class="font-bold text-sm">#${d.id.substr(0,6)}</span>
@@ -1300,13 +1338,14 @@
                             <div class="flex justify-between items-center mt-2">
                                 <select onchange="app.updateOrderStatus('${d.id}', this.value)" class="text-xs bg-slate-50 border-none rounded p-1">
                                     <option value="">Status...</option>
-                                    <option value="Packed">Packed</option>
-                                    <option value="Shipped">Shipped</option>
-                                    <option value="Delivered">Delivered</option>
+                                    <option value="Packed" ${o.status==='Packed'?'selected':''}>Packed</option>
+                                    <option value="Shipped" ${o.status==='Shipped'?'selected':''}>Shipped</option>
+                                    <option value="Delivered" ${o.status==='Delivered'?'selected':''}>Delivered</option>
                                 </select>
                             </div>
                         </div>
                     `;
+                    }
                 });
                 
                 document.getElementById('seller-stat-products').innerText = pCount;
@@ -1509,8 +1548,15 @@
         onAuthStateChanged(auth, async (user) => {
             if(user) {
                 app.currentUser = user;
-                const snap = await getDoc(getUserRef(user.uid));
-                if(snap.exists()) app.userRole = snap.data().role;
+                
+                // Identify Role
+                if (user.email === ADMIN_EMAIL) {
+                    app.userRole = 'admin';
+                } else {
+                    const snap = await getDoc(getUserRef(user.uid));
+                    if(snap.exists()) app.userRole = snap.data().role;
+                }
+                
                 app.updateAuthUI();
             } else {
                 app.currentUser = null; app.userRole = 'guest';
