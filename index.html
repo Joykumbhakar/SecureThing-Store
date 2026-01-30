@@ -227,7 +227,6 @@
     <!-- Mobile Bottom Navigation -->
     <div class="fixed bottom-0 left-0 w-full z-50 md:hidden pointer-events-none">
         <div class="relative w-full h-[90px] pointer-events-auto">
-            <!-- Responsive Curve SVG: Uses percentages to try and fit wider screens better -->
             <svg class="absolute bottom-0 left-0 w-full h-full drop-shadow-[0_-10px_20px_rgba(88,63,188,0.2)]" viewBox="0 0 100 24" preserveAspectRatio="none">
                 <path d="M0,5 Q0,0 5,0 H32 Q42,0 50,9 Q58,0 68,0 H95 Q100,0 100,5 V24 H0 Z" fill="#583FBC" vector-effect="non-scaling-stroke" />
             </svg>
@@ -261,12 +260,24 @@
         <section id="view-home" class="view-section">
             <!-- Dynamic Banner -->
             <div id="home-banner-container" class="clay-card p-8 md:p-12 mb-12 relative overflow-hidden group min-h-[300px] flex items-center">
-                <div class="skeleton w-full h-full absolute inset-0 rounded-3xl"></div>
+                <!-- Fallback Banner Content -->
+                <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                <div class="absolute bottom-0 left-0 w-64 h-64 bg-primary/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+                <div class="relative z-10 w-full flex flex-col md:flex-row items-center gap-8">
+                    <div class="md:w-1/2">
+                        <span class="bg-white/50 text-primary px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block border border-white">Welcome</span>
+                        <h1 class="text-4xl md:text-5xl font-extrabold text-textMain mb-6 leading-tight">Secure Your <br/><span class="text-primary">Peace of Mind</span></h1>
+                        <button onclick="document.getElementById('product-grid').scrollIntoView({behavior: 'smooth'})" class="clay-btn clay-btn-primary px-8 py-4 text-lg shadow-lg">Start Shopping</button>
+                    </div>
+                    <div class="md:w-1/2">
+                        <img src="https://placehold.co/600x400/transparent/583FBC?text=SecureThing" class="w-full h-auto rounded-3xl shadow-lg transform rotate-2">
+                    </div>
+                </div>
             </div>
 
             <!-- Categories -->
             <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 sticky top-24 z-30 py-4 rounded-3xl backdrop-blur-sm transition-all">
-                <div class="flex gap-3 overflow-x-auto pb-2 w-full md:w-auto no-scrollbar">
+                <div class="flex gap-3 overflow-x-auto pb-2 w-full md:w-auto no-scrollbar" id="category-chips">
                     <button onclick="app.filterCategory('all')" class="clay-btn clay-btn-primary px-6 py-2 text-sm rounded-full flex items-center gap-2">
                         <i data-lucide="grid" class="w-4 h-4"></i> All
                     </button>
@@ -282,9 +293,7 @@
                 </div>
             </div>
 
-            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12">
-                <!-- Skeletons injected first -->
-            </div>
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12"></div>
         </section>
 
         <!-- VIEW: PRODUCT DETAILS -->
@@ -302,7 +311,6 @@
                     <span id="detail-cat" class="text-accent font-extrabold text-xs uppercase tracking-widest mb-2">Category</span>
                     <h2 id="detail-name" class="text-3xl font-extrabold text-textMain mb-4">Product Name</h2>
                     <p id="detail-desc" class="text-textMuted leading-relaxed mb-8">Description...</p>
-                    
                     <div class="mt-auto pt-6 border-t border-slate-200">
                         <div class="flex flex-col mb-6">
                             <span class="text-sm font-bold text-slate-400 uppercase">Price</span>
@@ -322,22 +330,19 @@
             </div>
         </section>
 
-        <!-- VIEW: LOGIN (UPDATED WITH DEMO BUTTONS) -->
+        <!-- VIEW: LOGIN (UPDATED) -->
         <section id="view-login" class="view-section hide max-w-sm mx-auto mt-12">
             <div class="clay-card p-8 md:p-10 text-center">
                 <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-primary"><i data-lucide="lock" class="w-10 h-10"></i></div>
                 <h2 class="text-3xl font-extrabold text-textMain mb-2" id="auth-title">Sign in</h2>
-                
                 <form id="auth-form" onsubmit="app.handleAuth(event)" class="space-y-5 text-left mt-8">
                     <input type="email" id="auth-email" class="clay-input w-full py-4 px-5" placeholder="Email" required>
                     <input type="password" id="auth-pass" class="clay-input w-full py-4 px-5" placeholder="Password" required>
                     <button type="submit" class="clay-btn clay-btn-primary w-full py-4 mt-4 shadow-lg text-lg"><span id="auth-btn-text">Sign In</span></button>
                 </form>
-                
                 <div class="flex gap-4 mt-6 justify-center">
                     <button onclick="app.handleGoogleAuth()" class="clay-btn clay-btn-secondary w-12 h-12 flex items-center justify-center rounded-full text-danger"><i class="fab fa-google"></i></button>
                 </div>
-                
                 <p class="mt-8 text-sm font-bold text-slate-400">Don't have an account? <a href="#" onclick="app.toggleAuthMode()" class="text-primary hover:underline" id="auth-switch-text">Sign up</a></p>
 
                 <!-- DEMO ACCESS SECTION -->
@@ -388,7 +393,6 @@
                     <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 70%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
                 </div>
             </div>
-
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div class="clay-card p-6 h-[600px] flex flex-col">
                     <h3 class="font-bold text-lg mb-4 text-textMain">Inventory</h3>
@@ -404,18 +408,18 @@
         <!-- VIEW: ADMIN DASHBOARD -->
         <section id="view-admin-dashboard" class="view-section hide">
             <h2 class="text-3xl font-extrabold mb-8 text-textMain">Admin Control</h2>
+            
             <div class="clay-card p-8 mb-8">
                 <h3 class="font-bold text-xl mb-6 text-textMain">Store Banners</h3>
                 <form onsubmit="app.adminSaveBanner(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <input type="text" id="banner-title" placeholder="Title" class="clay-input p-4" required>
+                    <input type="text" id="banner-title" placeholder="Title (e.g. Diwali Sale)" class="clay-input p-4" required>
                     <input type="text" id="banner-subtitle" placeholder="Subtitle" class="clay-input p-4">
-                    <input type="text" id="banner-img" placeholder="Image URL" class="clay-input p-4" required>
+                    <input type="text" id="banner-img" placeholder="Image URL (Horizontal)" class="clay-input p-4" required>
                     <input type="text" id="banner-cta" placeholder="Button Text" class="clay-input p-4" value="Shop Now">
                     <button type="submit" class="clay-btn clay-btn-primary p-4 md:col-span-2">Update Home Banner</button>
                 </form>
             </div>
-            
-            <!-- Admin Stats Grid -->
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 <div class="clay-card p-8 bg-primary text-white border-none relative overflow-hidden">
                     <div class="relative z-10"><div class="text-white/60 text-xs font-bold uppercase mb-2">Total Sales</div><div class="text-5xl font-extrabold" id="admin-total-sales">₹0</div></div>
@@ -436,19 +440,10 @@
                     <h3 class="font-bold text-lg mb-4">Seller Requests</h3>
                     <div id="admin-seller-requests" class="space-y-3"></div>
                 </div>
-                <div class="space-y-6">
-                    <div class="clay-card p-8">
-                        <h3 class="font-bold text-lg mb-4">Create Service Agent</h3>
-                        <form onsubmit="app.createServiceAccount(event)" class="flex gap-3">
-                            <input type="email" id="service-email-input" class="clay-input flex-grow px-4" placeholder="Agent Email" required>
-                            <button class="clay-btn clay-btn-primary px-6">Create</button>
-                        </form>
-                    </div>
-                </div>
             </div>
         </section>
 
-        <!-- VIEW: SERVICE DASHBOARD (ADDED) -->
+        <!-- VIEW: SERVICE DASHBOARD -->
         <section id="view-service-dashboard" class="view-section hide">
             <h2 class="text-3xl font-extrabold mb-8 text-textMain">Support Desk</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 h-[700px]">
@@ -496,7 +491,6 @@
             <h2 class="text-3xl font-extrabold mb-8 text-textMain ml-2">Checkout</h2>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-2 space-y-6">
-                    <!-- Address -->
                     <div class="clay-card p-8">
                         <h3 class="font-bold text-xl mb-6 flex items-center text-primary"><i data-lucide="map-pin" class="mr-3"></i> Shipping Details</h3>
                         <div id="saved-addresses" class="grid grid-cols-1 gap-4 mb-6"></div>
@@ -513,11 +507,8 @@
                             <button type="submit" class="clay-btn clay-btn-primary py-3 px-6">Save Address</button>
                         </form>
                     </div>
-
-                    <!-- Payment -->
                     <div class="clay-card p-8">
                         <h3 class="font-bold text-xl mb-6 flex items-center text-primary"><i data-lucide="credit-card" class="mr-3"></i> Payment</h3>
-                        
                         <!-- Credit Card Visual -->
                         <div class="mb-8 w-full max-w-sm mx-auto bg-gradient-to-br from-primary to-primaryLight rounded-[25px] p-6 text-white shadow-xl relative overflow-hidden h-56 flex flex-col justify-between">
                             <div class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
@@ -537,7 +528,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="space-y-4">
                             <label class="flex items-center p-4 rounded-2xl border border-transparent hover:bg-white hover:shadow-sm cursor-pointer transition clay-input">
                                 <input type="radio" name="payment" value="upi" checked class="text-primary w-5 h-5 mr-4">
@@ -550,8 +540,6 @@
                         </div>
                     </div>
                 </div>
-                
-                <!-- Summary -->
                 <div class="clay-card p-8 h-fit lg:sticky lg:top-28">
                     <h3 class="font-bold text-xl mb-6 text-textMain">Order Summary</h3>
                     <div id="checkout-items" class="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2"></div>
@@ -684,7 +672,11 @@
                 if (viewId === 'seller-dashboard') await app.loadSellerDashboard();
                 if (viewId === 'admin-dashboard') await app.loadAdminDashboard();
                 if (viewId === 'service-dashboard') await app.loadServiceDashboard();
-                if (viewId === 'seller-apply' && !app.currentUser) { app.toast("Login first", "info"); app.router('login'); }
+                
+                if (viewId === 'seller-apply' && !app.currentUser) { 
+                    app.toast("Login first", "info"); 
+                    app.router('login'); 
+                }
                 
                 document.querySelectorAll('.nav-icon-mobile').forEach(el => el.classList.remove('active'));
                 const activeNav = document.getElementById(`mob-nav-${viewId}`);
@@ -707,7 +699,7 @@
 
             demoLogin: async (role) => {
                 app.toggleLoader(true);
-                await new Promise(r => setTimeout(r, 800)); // Simulate net
+                await new Promise(r => setTimeout(r, 600)); // Simulate net
                 app.currentUser = { 
                     uid: 'demo-'+role, 
                     email: role+'@securething.com', 
@@ -814,7 +806,7 @@
                 try {
                     const snap = await getDocs(getCollectionRef('banners'));
                     if(!snap.empty) {
-                        const banner = snap.docs[0].data(); // Get first banner for simple MVP
+                        const banner = snap.docs[0].data(); 
                         const container = document.getElementById('home-banner-container');
                         container.innerHTML = `
                             <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
@@ -849,18 +841,16 @@
                     if(snap.empty) {
                         await addDoc(getCollectionRef('banners'), data);
                     } else {
-                        // Update existing first doc for simplicity
                         await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'banners', snap.docs[0].id), data);
                     }
                     app.toast("Banner Updated!", "success");
+                    app.loadBanners(); // Reload immediately
                 } catch(e) { app.toast(e.message, "error"); }
                 finally { app.toggleLoader(false); }
             },
 
             loadProducts: async () => {
                 const grid = document.getElementById('product-grid');
-                
-                // Skeleton Loader
                 grid.innerHTML = '';
                 for(let i=0; i<4; i++) {
                     grid.innerHTML += `
@@ -973,11 +963,10 @@
                 }
                 localStorage.setItem('wishlist', JSON.stringify(app.wishlist));
                 
-                // Re-render based on current view
                 if(!document.getElementById('view-home').classList.contains('hide')) {
                     app.renderProductGrid(app.products); 
                 } else if (!document.getElementById('view-product-details').classList.contains('hide')) {
-                    app.loadProductDetails(pid); // Refresh detail view icon
+                    app.loadProductDetails(pid); 
                 }
             },
 
@@ -989,7 +978,7 @@
             },
 
             filterProducts: () => {
-                const term = document.getElementById('search-input') ? document.getElementById('search-input').value.toLowerCase() : ''; // Fix for search input existing only in home
+                const term = document.getElementById('search-input') ? document.getElementById('search-input').value.toLowerCase() : ''; 
                 const filtered = app.products.filter(p => {
                     const matchSearch = p.name.toLowerCase().includes(term);
                     const matchCat = app.activeCategory === 'all' || p.category === app.activeCategory;
@@ -1004,7 +993,7 @@
                 
                 const discount = p.discount ? parseInt(p.discount) : 0;
                 const finalPrice = discount > 0 ? Math.round(p.price - (p.price * discount / 100)) : p.price;
-                const itemToAdd = { ...p, price: finalPrice, originalPrice: p.price }; // Store discounted price
+                const itemToAdd = { ...p, price: finalPrice, originalPrice: p.price }; 
 
                 const exist = app.cart.find(x => x.id === pid);
                 if(exist) exist.qty++; else app.cart.push({...itemToAdd, qty: 1});
@@ -1412,8 +1401,15 @@
         onAuthStateChanged(auth, async (user) => {
             if(user) {
                 app.currentUser = user;
-                const snap = await getDoc(getUserRef(user.uid));
-                if(snap.exists()) app.userRole = snap.data().role;
+                
+                // Identify Role
+                if (user.email === ADMIN_EMAIL) {
+                    app.userRole = 'admin';
+                } else {
+                    const snap = await getDoc(getUserRef(user.uid));
+                    if(snap.exists()) app.userRole = snap.data().role;
+                }
+                
                 app.updateAuthUI();
             } else {
                 app.currentUser = null; app.userRole = 'guest';
