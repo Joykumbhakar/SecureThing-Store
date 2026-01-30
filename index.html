@@ -54,6 +54,7 @@
                     animation: {
                         'shimmer': 'shimmer 1.5s infinite linear',
                         'cart-bounce': 'cartBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                        'heart-ping': 'heartPing 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                     },
                     keyframes: {
                         shimmer: {
@@ -63,6 +64,11 @@
                         cartBounce: {
                             '0%, 100%': { transform: 'scale(1)' },
                             '50%': { transform: 'scale(1.2)' }
+                        },
+                        heartPing: {
+                            '0%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.3)' },
+                            '100%': { transform: 'scale(1)' }
                         }
                     }
                 }
@@ -224,6 +230,7 @@
                 <button onclick="app.router('home')" class="text-textMain hover:text-primary font-bold text-sm transition">Shop</button>
                 <button onclick="app.router('categories')" class="text-textMain hover:text-primary font-bold text-sm transition">Categories</button>
                 <button onclick="app.router('orders')" class="text-textMain hover:text-primary font-bold text-sm transition">Orders</button>
+                <button onclick="app.router('wishlist')" class="text-textMain hover:text-accent font-bold text-sm transition flex items-center gap-2"><i data-lucide="heart" class="w-4 h-4"></i> Wishlist</button>
                 <button onclick="app.router('profile')" class="text-textMain hover:text-primary font-bold text-sm transition">Profile</button>
                 <button onclick="app.router('service-dashboard')" class="text-textMain hover:text-primary font-bold text-sm transition hide" id="nav-service">Support</button>
                 <button onclick="app.router('seller-dashboard')" class="text-warning font-bold text-sm transition hide" id="nav-seller">Seller Portal</button>
@@ -234,6 +241,10 @@
             <div class="flex items-center gap-4">
                 <button onclick="app.toggleHeaderSearch()" class="text-primary hover:bg-white/50 p-2.5 rounded-full transition relative group">
                     <i data-lucide="search" class="w-6 h-6"></i>
+                </button>
+                <!-- Desktop Heart Icon (Hidden on mobile as it's in bottom nav) -->
+                <button onclick="app.router('wishlist')" class="hidden md:flex text-danger hover:bg-white/50 p-2.5 rounded-full transition relative group">
+                    <i data-lucide="heart" class="w-6 h-6"></i>
                 </button>
                 <button onclick="app.router('profile')" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-primary shadow-clay-float border-2 border-white overflow-hidden relative">
                     <img id="header-avatar" src="https://ui-avatars.com/api/?name=User&background=583FBC&color=fff" class="w-full h-full object-cover">
@@ -258,7 +269,7 @@
             </svg>
             <div class="absolute inset-0 flex justify-between items-end px-4 pb-2">
                 <button onclick="app.router('home')" class="nav-icon-mobile w-1/5 pb-4" id="mob-nav-home"><i data-lucide="home" class="w-6 h-6"></i></button>
-                <button onclick="app.router('orders')" class="nav-icon-mobile w-1/5 pb-4" id="mob-nav-orders"><i data-lucide="mail" class="w-6 h-6"></i></button>
+                <button onclick="app.router('wishlist')" class="nav-icon-mobile w-1/5 pb-4" id="mob-nav-wishlist"><i data-lucide="heart" class="w-6 h-6"></i></button>
                 <div class="w-1/5 relative flex justify-center h-full">
                     <button id="fab-cart-btn" onclick="app.toggleCart()" class="absolute -top-6 w-14 h-14 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border-4 border-[#EBF0F6]/10 text-white shadow-2xl fab-pulse group transition-all hover:scale-110 active:scale-95">
                         <div class="w-10 h-10 bg-primaryLight rounded-full flex items-center justify-center shadow-inner">
@@ -267,7 +278,7 @@
                         <span id="cart-count-mobile" class="absolute top-0 right-0 bg-danger text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full border border-primary">0</span>
                     </button>
                 </div>
-                <button onclick="app.router('orders')" class="nav-icon-mobile w-1/5 pb-4" id="mob-nav-history"><i data-lucide="clock" class="w-6 h-6"></i></button>
+                <button onclick="app.router('orders')" class="nav-icon-mobile w-1/5 pb-4" id="mob-nav-orders"><i data-lucide="package" class="w-6 h-6"></i></button>
                 <button onclick="app.router('profile')" class="nav-icon-mobile w-1/5 pb-4" id="mob-nav-profile"><i data-lucide="user" class="w-6 h-6"></i></button>
             </div>
         </div>
@@ -315,6 +326,20 @@
                  <p class="text-textMuted text-sm mt-1">Explore our wide range of products.</p>
              </div>
              <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="categories-grid">
+                 <!-- Injected via JS -->
+             </div>
+        </section>
+
+        <!-- VIEW: WISHLIST -->
+        <section id="view-wishlist" class="view-section hide">
+             <div class="mb-8 flex items-center gap-3">
+                 <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-danger"><i data-lucide="heart" class="w-5 h-5 fill-current"></i></div>
+                 <div>
+                     <h2 class="text-3xl font-extrabold text-textMain">My Wishlist</h2>
+                     <p class="text-textMuted text-sm mt-1">Saved items for later.</p>
+                 </div>
+             </div>
+             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12" id="wishlist-grid">
                  <!-- Injected via JS -->
              </div>
         </section>
@@ -783,6 +808,7 @@
                 if (viewId === 'categories') app.loadCategories();
                 if (viewId === 'orders') await app.loadCustomerOrders();
                 if (viewId === 'profile') await app.loadProfile();
+                if (viewId === 'wishlist') app.loadWishlist();
                 if (viewId === 'seller-dashboard') await app.loadSellerDashboard();
                 if (viewId === 'admin-dashboard') await app.loadAdminDashboard();
                 if (viewId === 'service-dashboard') await app.loadServiceDashboard();
@@ -1058,6 +1084,22 @@
                 
                 app.router('product-details');
             },
+            
+            // --- WISHLIST LOGIC ---
+            loadWishlist: () => {
+                const grid = document.getElementById('wishlist-grid');
+                grid.innerHTML = '';
+                const wishedProducts = app.products.filter(p => app.wishlist.includes(p.id));
+                
+                if(wishedProducts.length === 0) {
+                    grid.innerHTML = '<div class="col-span-full text-center py-20 text-slate-400">Your wishlist is empty</div>';
+                    return;
+                }
+                wishedProducts.forEach(p => {
+                     grid.innerHTML += createProductCardHTML(p, true);
+                });
+                app.updateIcons();
+            },
 
             toggleWishlist: (pid) => {
                 if(app.wishlist.includes(pid)) {
@@ -1066,6 +1108,13 @@
                 } else {
                     app.wishlist.push(pid);
                     app.toast("Added to Wishlist", "success");
+                    
+                    // Add ping animation
+                    const btn = document.activeElement;
+                    if(btn) {
+                        btn.style.animation = 'heartPing 0.4s';
+                        setTimeout(()=> btn.style.animation = '', 400);
+                    }
                 }
                 localStorage.setItem('wishlist', JSON.stringify(app.wishlist));
                 
@@ -1074,9 +1123,10 @@
                 } else if (!document.getElementById('view-product-details').classList.contains('hide')) {
                     app.loadProductDetails(pid); 
                 } else if (!document.getElementById('view-search-results').classList.contains('hide')) {
-                    // Re-render search results to update icon
                     const query = document.getElementById('search-query-display').innerText;
                     app.performSearch(query);
+                } else if (!document.getElementById('view-wishlist').classList.contains('hide')) {
+                    app.loadWishlist();
                 }
             },
 
@@ -1627,15 +1677,8 @@
         onAuthStateChanged(auth, async (user) => {
             if(user) {
                 app.currentUser = user;
-                
-                // Identify Role
-                if (user.email === ADMIN_EMAIL) {
-                    app.userRole = 'admin';
-                } else {
-                    const snap = await getDoc(getUserRef(user.uid));
-                    if(snap.exists()) app.userRole = snap.data().role;
-                }
-                
+                const snap = await getDoc(getUserRef(user.uid));
+                if(snap.exists()) app.userRole = snap.data().role;
                 app.updateAuthUI();
             } else {
                 app.currentUser = null; app.userRole = 'guest';
