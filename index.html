@@ -2,17 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureThingStore | Smart Security Solutions</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SecureThing | Clay Store App</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script src="https://unpkg.com/lucide@latest"></script>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 
+    <!-- Firebase Imports -->
     <script type="importmap">
     {
         "imports": {
@@ -28,831 +25,550 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['Nunito', 'sans-serif'],
                     },
                     colors: {
-                        primary: '#0F172A', /* Slate-900 (Deep Dark Blue) */
-                        primaryLight: '#334155',
-                        accent: '#2563EB', /* Blue-600 */
-                        accentHover: '#1D4ED8',
-                        secondary: '#ffffff',
-                        bgLight: '#F8FAFC',
+                        primary: '#583FBC',
+                        primaryLight: '#7F5AF0',
+                        accent: '#F56E91',
+                        bgLight: '#EBF0F6',
                         surface: '#FFFFFF',
-                        success: '#10B981', /* Emerald-500 */
-                        danger: '#EF4444', /* Red-500 */
-                        warning: '#F59E0B', /* Amber-500 */
+                        success: '#2CB67D',
+                        danger: '#EF4565',
+                        warning: '#FF8E3C',
+                        textMain: '#2D2D44',
+                        textMuted: '#7D7D92',
+                        navCurve: '#583FBC' 
                     },
                     boxShadow: {
-                        'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
-                        'card': '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04)',
-                        'glow': '0 0 20px rgba(37, 99, 235, 0.2)'
+                        'clay-card': '20px 20px 60px #c8cdd6, -20px -20px 60px #ffffff',
+                        'clay-float': '10px 10px 30px rgba(88, 63, 188, 0.2)',
+                        'clay-inner': 'inset 6px 6px 12px #b8b9be, inset -6px -6px 12px #ffffff',
+                        'clay-btn': '8px 8px 16px rgba(88, 63, 188, 0.2), -8px -8px 16px #ffffff'
                     },
-                    animation: {
-                        'shimmer': 'shimmer 1.5s infinite linear',
-                    },
-                    keyframes: {
-                        shimmer: {
-                            '0%': { backgroundPosition: '-200% 0' },
-                            '100%': { backgroundPosition: '200% 0' }
-                        }
+                    padding: {
+                        'safe': 'env(safe-area-inset-bottom)',
                     }
                 }
             }
         }
     </script>
+
     <style>
-        body { background-color: #F8FAFC; -webkit-font-smoothing: antialiased; }
+        body { 
+            background-color: #EBF0F6; 
+            color: #2D2D44;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(127, 90, 240, 0.1) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(245, 110, 145, 0.1) 0px, transparent 50%);
+            background-attachment: fixed;
+            padding-bottom: 120px;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
         .hide { display: none !important; }
+        
+        /* Clay Elements */
+        .clay-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            box-shadow: 20px 20px 40px rgba(163, 177, 198, 0.4), 
+                        -20px -20px 40px rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease;
+        }
+        
+        .clay-input {
+            background: #EBF0F6;
+            border-radius: 15px;
+            border: none;
+            box-shadow: inset 5px 5px 10px #d1d9e6, inset -5px -5px 10px #ffffff;
+            color: #583FBC;
+            transition: all 0.3s ease;
+        }
+        .clay-input:focus {
+            outline: none;
+            box-shadow: inset 2px 2px 5px #d1d9e6, inset -2px -2px 5px #ffffff, 0 0 0 2px #7F5AF0;
+        }
+
+        .clay-btn {
+            border-radius: 20px;
+            font-weight: 800;
+            transition: all 0.2s ease;
+            box-shadow: 8px 8px 16px rgba(163, 177, 198, 0.4), -8px -8px 16px rgba(255, 255, 255, 0.8);
+            border: none; cursor: pointer;
+        }
+        .clay-btn:active {
+            transform: translateY(2px);
+            box-shadow: inset 4px 4px 8px rgba(163, 177, 198, 0.4), inset -4px -4px 8px rgba(255, 255, 255, 0.8);
+        }
+        .clay-btn-primary {
+            background: linear-gradient(135deg, #7F5AF0 0%, #583FBC 100%);
+            color: white;
+            box-shadow: 8px 8px 20px rgba(88, 63, 188, 0.3);
+        }
+        .clay-btn-secondary { background: #EBF0F6; color: #583FBC; }
+
+        /* Utilities */
         .loader {
-            border: 3px solid #E2E8F0;
-            border-top: 3px solid #2563EB;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 0.8s linear infinite;
+            border: 4px solid #d1d9e6; border-top: 4px solid #583FBC;
+            border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        #toast-container { position: fixed; bottom: 120px; right: 24px; z-index: 100; display: flex; flex-direction: column; gap: 12px; }
+        .toast {
+            min-width: 300px; padding: 16px; border-radius: 20px;
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.5);
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .nav-icon-mobile {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 100%; height: 100%; color: rgba(255,255,255,0.5);
+            transition: all 0.3s ease; position: relative;
+        }
+        .nav-icon-mobile.active { color: white; transform: translateY(-5px); }
+        .nav-icon-mobile.active::after {
+            content: ''; position: absolute; bottom: 10px; width: 4px; height: 4px;
+            background: #F56E91; border-radius: 50%;
+        }
         
-        /* Skeleton Loading Class */
-        .skeleton {
-            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-            border-radius: 0.5rem;
+        .fab-pulse { animation: pulse-glow 2s infinite; }
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 0 0 rgba(127, 90, 240, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(127, 90, 240, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(127, 90, 240, 0); }
         }
 
-        /* Success Screen Animation */
-        .check-icon { width: 64px; height: 64px; color: #10B981; animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
-
-        /* Toast Notifications */
-        #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 100; display: flex; flex-direction: column; gap: 12px; }
-        .toast { 
-            min-width: 300px; 
-            padding: 16px; 
-            border-radius: 12px; 
-            background: white; 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); 
-            display: flex; 
-            align-items: center; 
-            animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
-            border: 1px solid #E5E7EB;
+        #header-search-bar {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-height: 0; opacity: 0; overflow: hidden;
         }
-        .toast i { margin-right: 12px; }
-        .toast.success { border-left: 4px solid #10B981; }
-        .toast.success i { color: #10B981; }
-        .toast.error { border-left: 4px solid #EF4444; }
-        .toast.error i { color: #EF4444; }
-        .toast.info { border-left: 4px solid #3B82F6; }
-        .toast.info i { color: #3B82F6; }
-        
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
+        #header-search-bar.open { max-height: 80px; opacity: 1; margin-top: 10px; }
 
-        /* Icon sizing fixes for lucide */
-        .lucide { width: 1.25rem; height: 1.25rem; }
-        .lucide-lg { width: 1.5rem; height: 1.5rem; }
-        .lucide-xl { width: 2rem; height: 2rem; }
-        .lucide-sm { width: 1rem; height: 1rem; }
-        .btn-icon .lucide { margin-right: 0.5rem; }
+        .sale-badge {
+            position: absolute; top: 12px; left: 12px;
+            background: #F56E91; color: white; font-weight: 800; font-size: 0.65rem;
+            padding: 4px 8px; border-radius: 8px; text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(245, 110, 145, 0.4); z-index: 10;
+        }
+        .old-price {
+            text-decoration: line-through; color: #7D7D92; font-size: 0.75rem; margin-right: 6px;
+        }
+        .discount-tag {
+            background: rgba(245, 110, 145, 0.1); color: #F56E91;
+            font-size: 0.65rem; font-weight: bold; padding: 2px 6px; rounded: 4px;
+            margin-left: 6px;
+        }
     </style>
 </head>
-<body class="text-slate-800 flex flex-col min-h-screen">
+<body class="flex flex-col min-h-screen">
 
     <div id="toast-container"></div>
 
-    <nav class="bg-surface/90 border-b border-gray-200 sticky top-0 z-50 backdrop-blur-md transition-all duration-300">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2 cursor-pointer group" onclick="app.router('home')">
-                <div class="bg-primary text-white p-2 rounded-lg group-hover:bg-accentHover transition-colors shadow-glow">
-                    <i data-lucide="shield-check" class="lucide-lg"></i>
-                </div>
-                <span class="text-xl font-extrabold tracking-tight text-primary group-hover:text-accent transition-colors">SecureThing</span>
-            </div>
-            
-            <div class="hidden md:flex items-center space-x-1">
-                <button onclick="app.router('home')" class="hover:bg-gray-100 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:text-primary">Shop</button>
-                <button onclick="app.router('orders')" class="hover:bg-gray-100 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:text-primary" id="nav-orders">Tracking</button>
-                
-                <button onclick="app.router('seller-dashboard')" class="bg-warning/10 text-warning-700 hover:bg-warning/20 px-3 py-2 rounded-lg text-sm font-bold transition-colors hide" id="nav-seller">Seller Portal</button>
-                <button onclick="app.router('admin-dashboard')" class="bg-primary/10 text-primary hover:bg-primary/20 px-3 py-2 rounded-lg text-sm font-bold transition-colors hide" id="nav-admin">Admin</button>
-                <button onclick="app.router('service-dashboard')" class="hover:bg-gray-100 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:text-primary hide" id="nav-service">Service</button>
-                
-                <button onclick="app.router('profile')" class="hover:bg-gray-100 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:text-primary hide" id="nav-profile">Profile</button>
-
-                <div class="w-px h-6 bg-gray-200 mx-2"></div>
-
-                <button onclick="app.toggleCart()" class="relative hover:bg-gray-100 p-2.5 rounded-lg transition-colors text-slate-600 hover:text-accent">
-                    <i data-lucide="shopping-bag"></i>
-                    <span id="cart-count" class="absolute top-0 right-0 bg-danger text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full ring-2 ring-white transform translate-x-1/4 -translate-y-1/4">0</span>
-                </button>
-
-                <div id="auth-section" class="ml-2">
-                    <button onclick="app.router('login')" class="bg-primary text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-primaryLight transition shadow-lg shadow-primary/20">Login</button>
-                </div>
-            </div>
-            
-            <button class="md:hidden text-slate-600 p-2 rounded-lg hover:bg-gray-100" onclick="document.getElementById('mobile-menu').classList.toggle('hide')">
-                <i data-lucide="menu"></i>
+    <!-- Top Bar -->
+    <nav class="sticky top-0 z-40 transition-all duration-300">
+        <div class="px-6 py-6 flex justify-between items-center">
+            <button onclick="document.getElementById('mobile-menu').classList.toggle('hide')" class="text-primary p-2 hover:bg-white/50 rounded-xl transition">
+                <i data-lucide="layout-grid" class="w-7 h-7"></i>
             </button>
+
+            <div class="hidden md:flex items-center space-x-3 cursor-pointer group" onclick="app.router('home')">
+                <div class="bg-primary text-white p-2 rounded-xl border border-white/10 shadow-lg">
+                    <i data-lucide="shield-check" class="w-6 h-6"></i>
+                </div>
+                <span class="text-xl font-extrabold tracking-tight text-primary">SecureThing</span>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <button onclick="app.toggleHeaderSearch()" class="text-primary hover:bg-white/50 p-2.5 rounded-full transition relative group">
+                    <i data-lucide="search" class="w-6 h-6"></i>
+                </button>
+                <button onclick="app.router('profile')" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-primary shadow-clay-float border-2 border-white overflow-hidden relative">
+                    <img id="header-avatar" src="https://ui-avatars.com/api/?name=User&background=583FBC&color=fff" class="w-full h-full object-cover">
+                </button>
+            </div>
         </div>
-        <div id="mobile-menu" class="hide md:hidden bg-white border-b border-gray-100 px-4 py-3 space-y-2 shadow-lg absolute w-full left-0 top-full">
-            <button onclick="app.router('home')" class="flex items-center w-full text-left py-3 px-3 hover:bg-gray-50 rounded-lg text-slate-600 font-medium"><i data-lucide="store" class="mr-3 lucide-sm"></i> Shop</button>
-            <button onclick="app.router('orders')" class="flex items-center w-full text-left py-3 px-3 hover:bg-gray-50 rounded-lg text-slate-600 font-medium"><i data-lucide="package" class="mr-3 lucide-sm"></i> Track Orders</button>
-            <button onclick="app.router('profile')" class="flex items-center w-full text-left py-3 px-3 hover:bg-gray-50 rounded-lg text-slate-600 font-medium hide" id="mobile-nav-profile"><i data-lucide="user" class="mr-3 lucide-sm"></i> Profile</button>
-            <button onclick="app.toggleCart()" class="flex items-center w-full text-left py-3 px-3 hover:bg-gray-50 rounded-lg text-slate-600 font-medium"><i data-lucide="shopping-bag" class="mr-3 lucide-sm"></i> Cart</button>
-            <div id="mobile-auth-section" class="pt-2 mt-2 border-t border-gray-100"></div>
+
+        <div id="header-search-bar" class="px-6 pb-2">
+            <div class="relative">
+                <input type="text" id="global-search-input" onkeyup="app.handleGlobalSearch(this.value)" placeholder="Search products..." class="clay-input w-full py-4 pl-12 pr-4 text-sm font-bold shadow-clay-inner">
+                <i data-lucide="search" class="absolute left-4 top-4 text-primary w-5 h-5"></i>
+                <button onclick="app.toggleHeaderSearch()" class="absolute right-4 top-4 text-slate-400 hover:text-danger"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
         </div>
     </nav>
 
-    <main class="flex-grow container mx-auto px-4 py-6 relative">
-        
-        <div id="global-loader" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center hide transition-all">
+    <!-- Mobile Bottom Navigation -->
+    <div class="fixed bottom-0 left-0 w-full z-50 md:hidden pointer-events-none">
+        <div class="relative w-full h-[90px] pointer-events-auto">
+            <svg class="absolute bottom-0 left-0 w-full h-full drop-shadow-[0_-10px_20px_rgba(88,63,188,0.2)]" viewBox="0 0 375 90" preserveAspectRatio="none">
+                <path d="M0,20 Q0,0 20,0 H120 Q160,0 187.5,35 Q215,0 255,0 H355 Q375,0 375,20 V90 H0 Z" fill="#583FBC" />
+            </svg>
+            <div class="absolute inset-0 flex justify-between items-end px-4 pb-2">
+                <button onclick="app.router('home')" class="nav-icon-mobile w-1/5 pb-4" id="mob-nav-home"><i data-lucide="home" class="w-6 h-6"></i></button>
+                <button onclick="app.router('orders')" class="nav-icon-mobile w-1/5 pb-4" id="mob-nav-orders"><i data-lucide="mail" class="w-6 h-6"></i></button>
+                <div class="w-1/5 relative flex justify-center h-full">
+                    <button onclick="app.toggleCart()" class="absolute -top-6 w-14 h-14 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border-4 border-[#EBF0F6]/10 text-white shadow-2xl fab-pulse group transition-all hover:scale-110 active:scale-95">
+                        <div class="w-10 h-10 bg-primaryLight rounded-full flex items-center justify-center shadow-inner">
+                            <i data-lucide="scan-line" class="w-5 h-5"></i>
+                        </div>
+                        <span id="cart-count-mobile" class="absolute top-0 right-0 bg-danger text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full border border-primary">0</span>
+                    </button>
+                </div>
+                <button onclick="app.router('orders')" class="nav-icon-mobile w-1/5 pb-4" id="mob-nav-history"><i data-lucide="clock" class="w-6 h-6"></i></button>
+                <button onclick="app.router('profile')" class="nav-icon-mobile w-1/5 pb-4" id="mob-nav-profile"><i data-lucide="user" class="w-6 h-6"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <main class="flex-grow container mx-auto px-4 py-4 relative">
+        <div id="global-loader" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[60] flex flex-col items-center justify-center hide">
             <div class="loader mb-4"></div>
-            <p class="text-primary font-bold text-xs tracking-widest">SECURETHING</p>
+            <p class="text-primary font-bold text-xs tracking-widest uppercase">Loading...</p>
         </div>
 
+        <!-- VIEW: HOME -->
         <section id="view-home" class="view-section">
-            
-            <div class="relative bg-primary rounded-3xl overflow-hidden shadow-2xl group mb-12 h-[500px] flex items-center">
-                <div class="absolute inset-0 z-0">
-                    <img src="https://placehold.co/1920x800/0f172a/2563eb?text=Smart+Security+Hub" alt="Security Banner" class="w-full h-full object-cover opacity-60 mix-blend-overlay">
-                    <div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-transparent"></div>
-                </div>
-
-                <div class="relative z-10 max-w-2xl px-8 md:px-16">
-                    <div class="inline-flex items-center gap-2 bg-accent/20 border border-accent/20 rounded-full px-4 py-1.5 mb-6 backdrop-blur-md">
-                        <span class="flex h-2 w-2 rounded-full bg-accent animate-pulse"></span>
-                        <span class="text-xs font-bold text-accent tracking-wide uppercase">Next Gen Security</span>
-                    </div>
-                    <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight">
-                        Protect What <br/>
-                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Matters Most</span>
-                    </h1>
-                    <p class="text-slate-300 text-lg mb-8 leading-relaxed max-w-lg">
-                        Advanced smart locks, AI-powered cameras, and sensors that keep your home safe 24/7. Monitoring made simple.
-                    </p>
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <button onclick="document.getElementById('product-grid').scrollIntoView({behavior: 'smooth'})" class="bg-accent text-white px-8 py-4 rounded-xl font-bold hover:bg-accentHover transition shadow-lg shadow-accent/25 flex items-center justify-center">
-                            Start Shopping <i data-lucide="arrow-right" class="ml-2 w-4 h-4"></i>
-                        </button>
-                        <button onclick="app.filterCategory('Security')" class="bg-white/5 text-white border border-white/20 px-8 py-4 rounded-xl font-bold hover:bg-white/10 transition flex items-center justify-center backdrop-blur-md">
-                            Explore Systems
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-                <div class="relative rounded-2xl overflow-hidden h-64 shadow-card group cursor-pointer" onclick="app.filterCategory('Electronics')">
-                    <img src="https://placehold.co/800x400/e2e8f0/1e293b?text=Smart+Cameras" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-8">
-                        <h3 class="text-2xl font-bold text-white mb-1">Smart Vision</h3>
-                        <p class="text-gray-300 text-sm mb-4">AI Cameras with night vision.</p>
-                        <span class="text-white text-xs font-bold underline decoration-accent underline-offset-4">Shop Cameras</span>
-                    </div>
-                </div>
-                <div class="relative rounded-2xl overflow-hidden h-64 shadow-card group cursor-pointer" onclick="app.filterCategory('Home')">
-                    <img src="https://placehold.co/800x400/f1f5f9/334155?text=Smart+Locks" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-8">
-                        <h3 class="text-2xl font-bold text-white mb-1">Secure Access</h3>
-                        <p class="text-gray-300 text-sm mb-4">Keyless entry for modern homes.</p>
-                        <span class="text-white text-xs font-bold underline decoration-accent underline-offset-4">Shop Locks</span>
-                    </div>
+            <!-- Dynamic Banner -->
+            <div id="home-banner-container" class="clay-card p-8 md:p-12 mb-12 relative overflow-hidden group min-h-[300px] flex items-center">
+                <!-- Fallback content if no banner -->
+                <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                <div class="absolute bottom-0 left-0 w-64 h-64 bg-primary/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+                <div class="relative z-10 w-full">
+                    <span class="bg-white/50 text-primary px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block border border-white">Welcome</span>
+                    <h1 class="text-4xl md:text-6xl font-extrabold text-textMain mb-6 leading-tight">Secure Your <br/><span class="text-primary">Peace of Mind</span></h1>
+                    <button onclick="document.getElementById('product-grid').scrollIntoView({behavior: 'smooth'})" class="clay-btn clay-btn-primary px-8 py-4 text-lg shadow-lg">Start Shopping</button>
                 </div>
             </div>
 
-            <div class="flex flex-col md:flex-row justify-between items-end md:items-center mb-8 gap-6 sticky top-20 z-30 bg-bgLight/95 backdrop-blur py-4">
-                <div>
-                    <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Trending Products</h2>
-                    <p class="text-slate-500 mt-1 text-sm">Best selling security gear selected for you.</p>
-                </div>
-                
-                <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
-                    <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar w-full sm:w-auto" id="category-chips">
-                        <button onclick="app.filterCategory('all')" class="px-5 py-2 bg-primary text-white rounded-full text-sm font-bold shadow-lg shadow-primary/20 transition-all hover:scale-105">All</button>
-                        <button onclick="app.filterCategory('Electronics')" class="px-5 py-2 bg-white border border-gray-200 hover:border-gray-300 text-slate-600 rounded-full text-sm font-medium transition-all hover:scale-105 hover:shadow-md">Electronics</button>
-                        <button onclick="app.filterCategory('Home')" class="px-5 py-2 bg-white border border-gray-200 hover:border-gray-300 text-slate-600 rounded-full text-sm font-medium transition-all hover:scale-105 hover:shadow-md">Home</button>
-                        <button onclick="app.filterCategory('Security')" class="px-5 py-2 bg-white border border-gray-200 hover:border-gray-300 text-slate-600 rounded-full text-sm font-medium transition-all hover:scale-105 hover:shadow-md">Security</button>
-                    </div>
-
-                    <div class="relative w-full sm:w-64 group">
-                        <input type="text" id="search-input" onkeyup="app.filterProducts()" placeholder="Search products..." class="w-full bg-white border border-gray-200 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:ring-2 focus:ring-accent/20 focus:border-accent focus:outline-none shadow-sm transition-all group-hover:shadow-md">
-                        <i data-lucide="search" class="absolute left-3 top-3 text-gray-400 group-focus-within:text-accent transition-colors lucide-sm"></i>
-                    </div>
+            <!-- Categories -->
+            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 sticky top-24 z-30 py-4 rounded-3xl backdrop-blur-sm transition-all">
+                <div class="flex gap-3 overflow-x-auto pb-2 w-full md:w-auto no-scrollbar">
+                    <button onclick="app.filterCategory('all')" class="clay-btn clay-btn-primary px-6 py-2 text-sm rounded-full">All</button>
+                    <button onclick="app.filterCategory('Electronics')" class="clay-btn clay-btn-secondary px-6 py-2 text-sm rounded-full">Electronics</button>
+                    <button onclick="app.filterCategory('Home')" class="clay-btn clay-btn-secondary px-6 py-2 text-sm rounded-full">Home</button>
+                    <button onclick="app.filterCategory('Security')" class="clay-btn clay-btn-secondary px-6 py-2 text-sm rounded-full">Security</button>
                 </div>
             </div>
 
-            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12">
-                </div>
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12"></div>
         </section>
 
+        <!-- VIEW: PRODUCT DETAILS -->
         <section id="view-product-details" class="view-section hide">
-            <button onclick="app.router('home')" class="mb-6 flex items-center text-slate-500 hover:text-primary transition-colors text-sm font-bold"><i data-lucide="arrow-left" class="mr-2 lucide-sm"></i> Back to Shop</button>
-            <div class="bg-white rounded-3xl shadow-card overflow-hidden grid grid-cols-1 md:grid-cols-2 border border-gray-100">
-                <div class="bg-gray-50 p-12 flex items-center justify-center border-r border-gray-100 relative group">
-                    <div class="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-50"></div>
-                    <img id="detail-img" src="" class="max-h-96 w-full object-contain drop-shadow-xl relative z-10 transform group-hover:scale-105 transition-transform duration-500">
-                </div>
-                <div class="p-10 md:p-14 flex flex-col justify-center">
-                    <div class="mb-auto">
-                        <div class="flex justify-between items-start mb-4">
-                            <span id="detail-cat" class="bg-accent/10 text-accent text-[10px] px-3 py-1 rounded-full uppercase font-bold tracking-widest">Electronics</span>
-                            <div class="flex items-center text-warning bg-warning/5 px-2 py-1 rounded-lg">
-                                <i data-lucide="star" class="lucide-xs fill-current mr-1"></i>
-                                <span id="detail-rating" class="text-slate-800 text-sm font-bold">4.5</span>
-                            </div>
-                        </div>
-                        <h2 id="detail-name" class="text-4xl font-extrabold text-slate-800 mb-6 leading-tight">Product Name</h2>
-                        <p id="detail-desc" class="text-slate-500 leading-relaxed mb-8 text-base"></p>
+            <button onclick="app.router('home')" class="mb-6 clay-btn clay-btn-secondary px-4 py-2 text-xs flex items-center gap-2 w-fit"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back</button>
+            <div class="clay-card p-0 overflow-hidden grid grid-cols-1 md:grid-cols-2">
+                <div class="bg-gray-50 p-12 flex items-center justify-center relative">
+                    <div id="detail-badge" class="hide sale-badge !top-6 !left-6 !text-sm !px-3 !py-2">SALE</div>
+                    <div class="absolute top-6 right-6 clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-full text-warning">
+                        <i data-lucide="star" class="w-5 h-5 fill-current"></i>
                     </div>
+                    <img id="detail-img" src="" class="max-h-80 w-full object-contain drop-shadow-xl">
+                </div>
+                <div class="p-10 flex flex-col justify-center bg-white/50">
+                    <span id="detail-cat" class="text-accent font-extrabold text-xs uppercase tracking-widest mb-2">Category</span>
+                    <h2 id="detail-name" class="text-3xl font-extrabold text-textMain mb-4">Product Name</h2>
+                    <p id="detail-desc" class="text-textMuted leading-relaxed mb-8">Description...</p>
                     
-                    <div class="border-t border-gray-100 pt-8 mt-auto">
-                        <div class="flex justify-between items-end mb-8">
-                            <div>
-                                <span class="text-gray-400 text-xs font-bold uppercase tracking-wider">Total Price</span>
-                                <div id="detail-price" class="text-5xl font-extrabold text-slate-900 tracking-tight mt-1">₹2,499</div>
+                    <div class="mt-auto pt-6 border-t border-slate-200">
+                        <div class="flex flex-col mb-6">
+                            <span class="text-sm font-bold text-slate-400 uppercase">Price</span>
+                            <div class="flex items-baseline">
+                                <span id="detail-old-price" class="old-price text-lg hide">₹0</span>
+                                <span id="detail-price" class="text-4xl font-extrabold text-primary">₹0</span>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
-                            <button onclick="app.addToCart(app.currentProductDetailId)" class="w-full bg-white border-2 border-gray-200 text-slate-800 py-4 rounded-xl font-bold hover:bg-gray-50 hover:border-gray-300 transition-all flex justify-center items-center">
-                                <i data-lucide="shopping-bag" class="mr-2 lucide-sm"></i> Add to Cart
-                            </button>
-                            <button onclick="app.buyNow(app.currentProductDetailId)" class="w-full bg-accent text-white py-4 rounded-xl font-bold hover:bg-accentHover shadow-xl shadow-accent/30 transition-all flex justify-center items-center hover:-translate-y-0.5">
-                                Buy Now <i data-lucide="arrow-right" class="ml-2 lucide-sm"></i>
-                            </button>
+                            <button onclick="app.addToCart(app.currentProductDetailId)" class="clay-btn clay-btn-secondary py-4 flex items-center justify-center">Add to Cart</button>
+                            <button onclick="app.buyNow(app.currentProductDetailId)" class="clay-btn clay-btn-primary py-4 flex items-center justify-center">Buy Now</button>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="view-login" class="view-section hide max-w-sm mx-auto mt-20">
-            <div class="bg-white p-10 rounded-3xl shadow-card border border-gray-100">
-                <div class="text-center mb-8">
-                    <div class="bg-primary text-white w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5 shadow-lg shadow-primary/20">
-                        <i data-lucide="lock" class="lucide-lg"></i>
-                    </div>
-                    <h2 class="text-2xl font-bold text-slate-800" id="auth-title">Welcome Back</h2>
-                    <p class="text-slate-400 text-sm mt-2">Sign in to access your secure dashboard</p>
-                </div>
-                
-                <form id="auth-form" onsubmit="app.handleAuth(event)">
-                    <div class="space-y-5">
-                        <div>
-                            <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Email Address</label>
-                            <div class="relative group">
-                                <input type="email" id="auth-email" class="w-full border border-gray-200 rounded-xl px-4 py-3.5 pl-11 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition bg-gray-50 focus:bg-white text-sm font-medium" placeholder="name@company.com" required>
-                                <i data-lucide="mail" class="absolute left-3.5 top-3.5 text-gray-400 group-focus-within:text-accent transition-colors lucide-sm"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Password</label>
-                            <div class="relative group">
-                                <input type="password" id="auth-pass" class="w-full border border-gray-200 rounded-xl px-4 py-3.5 pl-11 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition bg-gray-50 focus:bg-white text-sm font-medium" placeholder="••••••••" required>
-                                <i data-lucide="key" class="absolute left-3.5 top-3.5 text-gray-400 group-focus-within:text-accent transition-colors lucide-sm"></i>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <button type="submit" class="w-full bg-primary text-white font-bold py-3.5 rounded-xl hover:bg-primaryLight transition shadow-lg mt-8 flex justify-center items-center">
-                        <span id="auth-btn-text">Sign In</span> <i data-lucide="arrow-right" class="ml-2 lucide-sm"></i>
-                    </button>
+        <!-- VIEW: LOGIN -->
+        <section id="view-login" class="view-section hide max-w-sm mx-auto mt-12">
+            <div class="clay-card p-8 md:p-10 text-center">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-primary"><i data-lucide="lock" class="w-10 h-10"></i></div>
+                <h2 class="text-3xl font-extrabold text-textMain mb-2" id="auth-title">Sign in</h2>
+                <form id="auth-form" onsubmit="app.handleAuth(event)" class="space-y-5 text-left mt-8">
+                    <input type="email" id="auth-email" class="clay-input w-full py-4 px-5" placeholder="Email" required>
+                    <input type="password" id="auth-pass" class="clay-input w-full py-4 px-5" placeholder="Password" required>
+                    <button type="submit" class="clay-btn clay-btn-primary w-full py-4 mt-4 shadow-lg text-lg"><span id="auth-btn-text">Sign In</span></button>
                 </form>
-
-                <div class="mt-8 text-center">
-                    <button onclick="app.toggleAuthMode()" class="text-xs text-accent hover:text-accentHover font-bold transition uppercase tracking-wide" id="auth-switch-text">Create an account</button>
+                <div class="flex gap-4 mt-6 justify-center">
+                    <button onclick="app.handleGoogleAuth()" class="clay-btn clay-btn-secondary w-12 h-12 flex items-center justify-center rounded-full text-danger"><i class="fab fa-google"></i></button>
                 </div>
-                
-                <div class="relative mt-8 mb-6">
-                    <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-gray-100"></div></div>
-                    <div class="relative flex justify-center text-xs text-gray-400 uppercase font-bold tracking-wider"><span class="px-3 bg-white">Or continue with</span></div>
-                </div>
-
-                <button onclick="app.handleGoogleAuth()" class="flex items-center justify-center w-full border border-gray-200 py-3 rounded-xl hover:bg-gray-50 transition font-bold text-slate-600 text-sm">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5 mr-3" alt="Google">
-                    Google Account
-                </button>
+                <p class="mt-8 text-sm font-bold text-slate-400">Don't have an account? <a href="#" onclick="app.toggleAuthMode()" class="text-primary hover:underline" id="auth-switch-text">Sign up</a></p>
             </div>
         </section>
 
-        <section id="view-seller-login" class="view-section hide max-w-sm mx-auto mt-20 relative">
-            <div class="bg-primary p-10 rounded-3xl shadow-2xl text-white relative overflow-hidden border border-white/10">
-                <div class="absolute -top-10 -right-10 opacity-5 text-white"><i data-lucide="store" class="w-48 h-48"></i></div>
+        <!-- VIEW: SELLER LOGIN -->
+        <section id="view-seller-login" class="view-section hide max-w-sm mx-auto mt-12">
+            <div class="clay-card p-10 bg-primary text-white relative overflow-hidden border-none">
+                <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
                 <div class="relative z-10">
-                    <div class="mb-8">
-                        <div class="inline-flex p-3 bg-white/10 rounded-xl mb-4 backdrop-blur-sm border border-white/10">
-                            <i data-lucide="briefcase" class="text-warning lucide-lg"></i>
-                        </div>
-                        <h2 class="text-2xl font-bold">Seller Portal</h2>
-                        <p class="text-slate-400 text-sm mt-1">Manage inventory & orders</p>
-                    </div>
-                    
+                    <div class="mb-8"><h2 class="text-3xl font-bold">Seller Portal</h2></div>
                     <form onsubmit="app.handleSellerAuth(event)" class="space-y-5">
-                        <div>
-                            <label class="block text-slate-400 text-xs font-bold mb-2 uppercase tracking-wide">Seller Email</label>
-                            <div class="relative group">
-                                <input type="email" id="seller-auth-email" class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-3.5 pl-11 focus:outline-none focus:border-warning focus:ring-1 focus:ring-warning transition placeholder-slate-600 text-sm font-medium" placeholder="id@securething.com" required>
-                                <i data-lucide="user" class="absolute left-3.5 top-3.5 text-slate-500 group-focus-within:text-warning transition-colors lucide-sm"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-slate-400 text-xs font-bold mb-2 uppercase tracking-wide">Password</label>
-                            <div class="relative group">
-                                <input type="password" id="seller-auth-pass" class="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-3.5 pl-11 focus:outline-none focus:border-warning focus:ring-1 focus:ring-warning transition placeholder-slate-600 text-sm font-medium" placeholder="••••••••" required>
-                                <i data-lucide="lock" class="absolute left-3.5 top-3.5 text-slate-500 group-focus-within:text-warning transition-colors lucide-sm"></i>
-                            </div>
-                        </div>
-                        <button type="submit" class="w-full bg-warning text-primary font-bold py-3.5 rounded-xl hover:bg-yellow-400 transition shadow-lg mt-4 flex justify-center items-center">
-                            Access Dashboard <i data-lucide="arrow-right" class="ml-2 lucide-sm"></i>
-                        </button>
+                        <input type="email" id="seller-auth-email" class="w-full bg-black/20 border-none rounded-xl px-5 py-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-warning" placeholder="Seller Email" required>
+                        <input type="password" id="seller-auth-pass" class="w-full bg-black/20 border-none rounded-xl px-5 py-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-warning" placeholder="Password" required>
+                        <button type="submit" class="w-full bg-warning text-white font-bold py-4 rounded-xl hover:bg-yellow-400 transition shadow-lg mt-4 flex justify-center items-center">Access Dashboard</button>
                     </form>
-                    <div class="mt-8 pt-6 border-t border-white/10 text-center">
-                        <a href="#" onclick="app.router('seller-apply')" class="text-xs text-slate-400 hover:text-white transition flex items-center justify-center font-bold uppercase tracking-wide"><i data-lucide="file-plus" class="mr-2 lucide-sm"></i> Apply for Seller Account</a>
-                    </div>
+                    <div class="mt-8 text-center"><a href="#" onclick="app.router('seller-apply')" class="text-xs text-white/70 hover:text-white font-bold uppercase tracking-wide">Apply for Seller Account</a></div>
                 </div>
             </div>
         </section>
 
-        <section id="view-profile" class="view-section hide">
-             <div class="max-w-4xl mx-auto">
-                 <h2 class="text-3xl font-bold mb-8 text-slate-800">My Profile</h2>
-                 <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100 mb-8 flex flex-col md:flex-row items-center gap-8">
-                     <div class="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center text-primary text-4xl shadow-inner">
-                         <i data-lucide="user"></i>
-                     </div>
-                     <div class="text-center md:text-left flex-grow">
-                         <h3 class="font-bold text-2xl text-slate-900" id="profile-name">User Name</h3>
-                         <p class="text-slate-500 text-sm flex items-center justify-center md:justify-start mt-2"><i data-lucide="mail" class="lucide-sm mr-2 text-accent"></i> <span id="profile-email">user@email.com</span></p>
-                     </div>
-                     <span class="bg-slate-100 text-slate-600 px-4 py-2 rounded-lg font-bold uppercase tracking-widest text-xs border border-slate-200" id="profile-role">Customer</span>
-                 </div>
+        <!-- VIEW: SELLER DASHBOARD (UPDATED) -->
+        <section id="view-seller-dashboard" class="view-section hide">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-3xl font-extrabold text-textMain">Seller Dashboard</h2>
+                <button onclick="app.openAddProductModal()" class="clay-btn bg-success text-white px-6 py-3 shadow-lg flex items-center"><i data-lucide="plus" class="mr-2 w-4 h-4"></i> Add Product</button>
+            </div>
+            
+            <!-- Micro Analytics -->
+            <div class="clay-card p-6 mb-8">
+                <h3 class="font-bold text-lg mb-4 text-textMain">Sales Overview (Weekly)</h3>
+                <div class="flex items-end justify-between h-32 gap-2">
+                    <div class="w-full bg-primary/10 rounded-t-lg relative group">
+                        <div style="height: 40%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg chart-bar group-hover:bg-primaryLight"></div>
+                        <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-slate-400">Mon</span>
+                    </div>
+                    <div class="w-full bg-primary/10 rounded-t-lg relative group">
+                        <div style="height: 65%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg chart-bar group-hover:bg-primaryLight"></div>
+                        <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-slate-400">Tue</span>
+                    </div>
+                    <div class="w-full bg-primary/10 rounded-t-lg relative group">
+                        <div style="height: 30%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg chart-bar group-hover:bg-primaryLight"></div>
+                        <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-slate-400">Wed</span>
+                    </div>
+                    <div class="w-full bg-primary/10 rounded-t-lg relative group">
+                        <div style="height: 85%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg chart-bar group-hover:bg-primaryLight"></div>
+                        <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-slate-400">Thu</span>
+                    </div>
+                    <div class="w-full bg-primary/10 rounded-t-lg relative group">
+                        <div style="height: 50%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg chart-bar group-hover:bg-primaryLight"></div>
+                        <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-slate-400">Fri</span>
+                    </div>
+                    <div class="w-full bg-primary/10 rounded-t-lg relative group">
+                        <div style="height: 90%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg chart-bar group-hover:bg-primaryLight"></div>
+                        <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-slate-400">Sat</span>
+                    </div>
+                    <div class="w-full bg-primary/10 rounded-t-lg relative group">
+                        <div style="height: 70%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg chart-bar group-hover:bg-primaryLight"></div>
+                        <span class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-slate-400">Sun</span>
+                    </div>
+                </div>
+            </div>
 
-                 <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100">
-                     <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
-                        <h3 class="font-bold text-lg text-slate-800 flex items-center"><i data-lucide="map-pin" class="mr-2 text-accent"></i> Saved Addresses</h3>
-                     </div>
-                     <div id="profile-address-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                         </div>
-                 </div>
-             </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                <div class="clay-card p-6 flex items-center justify-between">
+                    <div><div class="text-xs font-bold text-slate-400 uppercase">Products</div><div class="text-4xl font-extrabold text-primary mt-1" id="seller-stat-products">0</div></div>
+                    <div class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary"><i data-lucide="box"></i></div>
+                </div>
+                <div class="clay-card p-6 flex items-center justify-between">
+                    <div><div class="text-xs font-bold text-slate-400 uppercase">Orders</div><div class="text-4xl font-extrabold text-warning mt-1" id="seller-stat-orders">0</div></div>
+                    <div class="w-12 h-12 rounded-full bg-warning/10 flex items-center justify-center text-warning"><i data-lucide="clock"></i></div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="clay-card p-6 h-[600px] flex flex-col">
+                    <h3 class="font-bold text-lg mb-4 text-textMain">Inventory</h3>
+                    <div id="seller-products-list" class="overflow-y-auto pr-2 space-y-3 flex-grow"></div>
+                </div>
+                <div class="clay-card p-6 h-[600px] flex flex-col">
+                    <h3 class="font-bold text-lg mb-4 text-textMain">Orders</h3>
+                    <div id="seller-orders-list" class="overflow-y-auto pr-2 space-y-3 flex-grow"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: ADMIN DASHBOARD (UPDATED) -->
+        <section id="view-admin-dashboard" class="view-section hide">
+            <h2 class="text-3xl font-extrabold mb-8 text-textMain">Admin Control</h2>
+            
+            <!-- Banner Management -->
+            <div class="clay-card p-8 mb-8">
+                <h3 class="font-bold text-xl mb-6 text-textMain">Store Banners</h3>
+                <form onsubmit="app.adminSaveBanner(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                    <input type="text" id="banner-title" placeholder="Title (e.g. Diwali Sale)" class="clay-input p-4" required>
+                    <input type="text" id="banner-subtitle" placeholder="Subtitle" class="clay-input p-4">
+                    <input type="text" id="banner-img" placeholder="Image URL (Horizontal)" class="clay-input p-4" required>
+                    <input type="text" id="banner-cta" placeholder="Button Text" class="clay-input p-4" value="Shop Now">
+                    <button type="submit" class="clay-btn clay-btn-primary p-4 md:col-span-2">Update Home Banner</button>
+                </form>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="clay-card p-8 bg-primary text-white border-none relative overflow-hidden">
+                    <div class="relative z-10"><div class="text-white/60 text-xs font-bold uppercase mb-2">Total Sales</div><div class="text-5xl font-extrabold" id="admin-total-sales">₹0</div></div>
+                    <i data-lucide="trending-up" class="absolute right-4 bottom-4 w-24 h-24 text-white/10"></i>
+                </div>
+                <div class="clay-card p-8">
+                    <div class="text-slate-400 text-xs font-bold uppercase mb-2">Total Orders</div><div class="text-5xl font-extrabold text-textMain" id="admin-order-count">0</div>
+                </div>
+            </div>
+            
+            <div class="clay-card p-8 mb-8">
+                <h3 class="font-bold text-lg mb-4">Payment Queue</h3>
+                <div id="admin-payment-queue" class="space-y-3"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="clay-card p-8">
+                    <h3 class="font-bold text-lg mb-4">Seller Requests</h3>
+                    <div id="admin-seller-requests" class="space-y-3"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: PROFILE, CHECKOUT, ORDERS, SUCCESS (Kept standard) -->
+        <section id="view-profile" class="view-section hide max-w-lg mx-auto">
+            <div class="clay-card p-8 text-center relative mt-16">
+                <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
+                    <div class="w-32 h-32 bg-primary rounded-[40px] flex items-center justify-center shadow-lg rotate-45 border-4 border-[#EBF0F6]">
+                        <div class="transform -rotate-45 text-white"><i data-lucide="user" class="w-12 h-12"></i></div>
+                    </div>
+                </div>
+                <div class="mt-16">
+                    <h2 class="text-2xl font-extrabold text-textMain" id="profile-name">User Name</h2>
+                    <p class="text-textMuted text-sm font-bold uppercase tracking-wide mt-1" id="profile-role">Customer</p>
+                    <p class="text-slate-400 text-xs mt-1" id="profile-email">email@example.com</p>
+                </div>
+                <div class="mt-8 space-y-4 text-left">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Saved Addresses</h3>
+                    <div id="profile-address-list" class="space-y-3"></div>
+                </div>
+                <button onclick="app.logout()" class="clay-btn w-full py-3 mt-8 bg-red-50 text-danger hover:bg-red-100 transition">Log Out</button>
+            </div>
         </section>
 
         <section id="view-checkout" class="view-section hide">
-            <h2 class="text-3xl font-bold mb-8 text-slate-800">Secure Checkout</h2>
+            <h2 class="text-3xl font-extrabold mb-8 text-textMain ml-2">Checkout</h2>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <div class="lg:col-span-2 space-y-6">
-                    <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100">
-                        <h3 class="font-bold text-lg mb-6 flex items-center text-slate-800"><i data-lucide="map" class="text-accent mr-3"></i> Shipping Details</h3>
-                        <div id="saved-addresses" class="grid grid-cols-1 gap-3 mb-6"></div>
-                        
-                        <button onclick="document.getElementById('new-address-form').classList.toggle('hide')" class="w-full py-4 border-2 border-dashed border-gray-300 rounded-xl text-sm font-bold text-accent hover:bg-accent/5 hover:border-accent transition flex justify-center items-center">
-                            <i data-lucide="plus" class="mr-2 lucide-sm"></i> Add New Address
-                        </button>
-                        
-                        <form id="new-address-form" class="hide mt-6 bg-gray-50 p-6 rounded-2xl border border-gray-200" onsubmit="event.preventDefault(); app.saveAddress();">
-                            <h4 class="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest">Address Information</h4>
+                    <div class="clay-card p-8">
+                        <h3 class="font-bold text-xl mb-6 flex items-center text-primary"><i data-lucide="map-pin" class="mr-3"></i> Shipping Details</h3>
+                        <div id="saved-addresses" class="grid grid-cols-1 gap-4 mb-6"></div>
+                        <button onclick="document.getElementById('new-address-form').classList.toggle('hide')" class="clay-btn clay-btn-secondary w-full py-3 border-2 border-dashed border-slate-200">+ Add New Address</button>
+                        <form id="new-address-form" class="hide mt-6 space-y-4" onsubmit="event.preventDefault(); app.saveAddress();">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <input type="text" id="addr-name" placeholder="Full Name" class="border border-gray-200 p-3.5 rounded-xl w-full text-sm font-medium focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none" required>
-                                <input type="text" id="addr-mobile" placeholder="Mobile Number" class="border border-gray-200 p-3.5 rounded-xl w-full text-sm font-medium focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none" required>
-                                <input type="text" id="addr-line" placeholder="Street Address / Flat No" class="border border-gray-200 p-3.5 rounded-xl w-full md:col-span-2 text-sm font-medium focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none" required>
-                                <input type="text" id="addr-area" placeholder="Area / Colony" class="border border-gray-200 p-3.5 rounded-xl w-full text-sm font-medium focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none" required>
-                                <input type="text" id="addr-city" placeholder="City" class="border border-gray-200 p-3.5 rounded-xl w-full text-sm font-medium focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none" required>
-                                <input type="text" id="addr-pin" placeholder="Pincode" class="border border-gray-200 p-3.5 rounded-xl w-full text-sm font-medium focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none" required>
-                                <button type="submit" class="bg-primary text-white py-3.5 rounded-xl md:col-span-2 text-sm font-bold hover:bg-primaryLight transition shadow-md">Save This Address</button>
+                                <input type="text" id="addr-name" placeholder="Full Name" class="clay-input p-4 w-full" required>
+                                <input type="text" id="addr-mobile" placeholder="Mobile" class="clay-input p-4 w-full" required>
+                                <input type="text" id="addr-line" placeholder="Address Line" class="clay-input p-4 w-full md:col-span-2" required>
+                                <input type="text" id="addr-area" placeholder="Area" class="clay-input p-4 w-full" required>
+                                <input type="text" id="addr-city" placeholder="City" class="clay-input p-4 w-full" required>
+                                <input type="text" id="addr-pin" placeholder="Pincode" class="clay-input p-4 w-full" required>
                             </div>
+                            <button type="submit" class="clay-btn clay-btn-primary py-3 px-6">Save Address</button>
                         </form>
                     </div>
-
-                    <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100">
-                        <h3 class="font-bold text-lg mb-6 flex items-center text-slate-800"><i data-lucide="credit-card" class="text-accent mr-3"></i> Payment Method</h3>
+                    <div class="clay-card p-8">
+                        <h3 class="font-bold text-xl mb-6 flex items-center text-primary"><i data-lucide="credit-card" class="mr-3"></i> Payment</h3>
                         <div class="space-y-4">
-                            <label class="flex items-center space-x-4 p-5 border border-gray-200 rounded-2xl cursor-pointer hover:bg-gray-50 transition has-[:checked]:border-accent has-[:checked]:bg-accent/5 has-[:checked]:ring-1 has-[:checked]:ring-accent">
-                                <input type="radio" name="payment" value="upi" checked class="text-accent focus:ring-accent w-5 h-5">
-                                <div class="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center text-green-600 shrink-0"><i data-lucide="smartphone"></i></div>
-                                <div>
-                                    <span class="font-bold text-slate-800 block text-base">UPI Payment</span>
-                                    <span class="text-xs text-slate-500 block mt-1">GPay / PhonePe / Paytm</span>
-                                </div>
+                            <label class="flex items-center p-4 rounded-2xl border border-transparent hover:bg-white hover:shadow-sm cursor-pointer transition clay-input">
+                                <input type="radio" name="payment" value="upi" checked class="text-primary w-5 h-5 mr-4">
+                                <div><div class="font-bold text-textMain">UPI / Online</div><div class="text-xs text-textMuted">GPay, PhonePe, Card</div></div>
                             </label>
-                            <label class="flex items-center space-x-4 p-5 border border-gray-200 rounded-2xl cursor-pointer hover:bg-gray-50 transition has-[:checked]:border-accent has-[:checked]:bg-accent/5 has-[:checked]:ring-1 has-[:checked]:ring-accent">
-                                <input type="radio" name="payment" value="cod" class="text-accent focus:ring-accent w-5 h-5">
-                                <div class="w-12 h-12 rounded-xl bg-yellow-100 flex items-center justify-center text-yellow-600 shrink-0"><i data-lucide="banknote"></i></div>
-                                <div>
-                                    <span class="font-bold text-slate-800 block text-base">Cash on Delivery</span>
-                                    <span class="text-xs text-slate-500 block mt-1">Pay comfortably at your doorstep</span>
-                                </div>
+                            <label class="flex items-center p-4 rounded-2xl border border-transparent hover:bg-white hover:shadow-sm cursor-pointer transition clay-input">
+                                <input type="radio" name="payment" value="cod" class="text-primary w-5 h-5 mr-4">
+                                <div><div class="font-bold text-textMain">Cash on Delivery</div><div class="text-xs text-textMuted">Pay at doorstep</div></div>
                             </label>
                         </div>
                     </div>
                 </div>
-
-                <div class="bg-white p-8 rounded-3xl shadow-card h-fit border border-gray-100 sticky top-28">
-                    <h3 class="font-bold text-lg mb-6 text-slate-800">Order Summary</h3>
-                    <div id="checkout-items" class="space-y-4 mb-8 text-sm max-h-60 overflow-y-auto pr-2 custom-scrollbar"></div>
-                    
-                    <div class="border-t border-dashed border-gray-200 pt-6 mt-4 space-y-3">
-                        <div class="flex justify-between items-center text-slate-500 text-sm">
-                            <span>Subtotal</span>
-                            <span id="checkout-subtotal" class="font-medium">₹0</span>
-                        </div>
-                        <div class="flex justify-between items-center text-slate-500 text-sm">
-                            <span>Shipping</span>
-                            <span class="text-success font-bold text-xs bg-success/10 px-2 py-0.5 rounded">FREE</span>
-                        </div>
-                        <div class="flex justify-between font-extrabold text-2xl text-slate-900 pt-4 border-t border-gray-100 mt-4">
-                            <span>Total</span>
-                            <span id="checkout-total" class="text-accent">₹0</span>
-                        </div>
+                <div class="clay-card p-8 h-fit lg:sticky lg:top-28">
+                    <h3 class="font-bold text-xl mb-6 text-textMain">Order Summary</h3>
+                    <div id="checkout-items" class="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2"></div>
+                    <div class="pt-6 border-t border-slate-200 space-y-2">
+                        <div class="flex justify-between text-sm text-textMuted"><span>Subtotal</span><span id="checkout-subtotal" class="font-bold">₹0</span></div>
+                        <div class="flex justify-between text-lg font-extrabold text-textMain mt-4"><span>Total</span><span id="checkout-total" class="text-primary">₹0</span></div>
                     </div>
-                    
-                    <button onclick="app.placeOrder()" class="w-full bg-success text-white font-bold py-4 rounded-xl mt-8 hover:bg-emerald-600 shadow-xl shadow-success/30 transform active:scale-[0.98] transition flex justify-center items-center">
-                        <span>Place Order</span> <i data-lucide="check" class="ml-2 lucide-sm"></i>
-                    </button>
-                    <div class="text-center mt-6 text-xs text-gray-400 flex justify-center items-center">
-                        <i data-lucide="lock" class="lucide-xs mr-1.5"></i> SSL Encrypted Transaction
-                    </div>
+                    <button onclick="app.placeOrder()" class="clay-btn clay-btn-primary w-full py-4 mt-8 shadow-xl text-lg">Place Order</button>
                 </div>
             </div>
         </section>
 
         <section id="view-success" class="view-section hide text-center pt-24 max-w-md mx-auto">
-            <div class="bg-white p-12 rounded-[2rem] shadow-card border border-gray-100">
-                <div class="flex justify-center mb-8">
-                    <i data-lucide="check-circle" class="check-icon w-20 h-20"></i>
-                </div>
-                <h2 class="text-3xl font-extrabold text-slate-900 mb-4">Order Confirmed!</h2>
-                <p class="text-slate-500 mb-10 leading-relaxed">Thank you for your purchase. Your order has been securely placed and is being processed.</p>
-                <div class="flex flex-col gap-4">
-                    <button onclick="app.router('orders')" class="bg-primary text-white w-full py-4 rounded-xl font-bold hover:bg-primaryLight shadow-lg shadow-primary/30 transition">Track Your Order</button>
-                    <button onclick="app.router('home')" class="bg-white border-2 border-gray-100 text-slate-600 w-full py-4 rounded-xl font-bold hover:bg-gray-50 hover:border-gray-200 transition">Continue Shopping</button>
-                </div>
+            <div class="clay-card p-12">
+                <div class="w-24 h-24 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-6 text-success"><i data-lucide="check-circle" class="w-12 h-12"></i></div>
+                <h2 class="text-3xl font-extrabold text-textMain mb-4">Order Confirmed!</h2>
+                <p class="text-textMuted mb-8">Your order has been placed successfully.</p>
+                <button onclick="app.router('orders')" class="clay-btn clay-btn-primary w-full py-3 mb-4">Track Order</button>
+                <button onclick="app.router('home')" class="clay-btn clay-btn-secondary w-full py-3">Continue Shopping</button>
             </div>
         </section>
 
         <section id="view-orders" class="view-section hide max-w-4xl mx-auto">
-            <h2 class="text-3xl font-bold mb-8 text-slate-800 flex items-center"><i data-lucide="package" class="mr-3 text-accent"></i> Order History</h2>
-            <div id="orders-list" class="space-y-6">
-                </div>
+            <h2 class="text-3xl font-extrabold mb-8 text-textMain ml-2">My Orders</h2>
+            <div id="orders-list" class="space-y-6"></div>
         </section>
-
-        <section id="view-customer-chat" class="view-section hide max-w-3xl mx-auto">
-             <button onclick="app.router('orders')" class="mb-4 text-slate-500 hover:text-accent flex items-center text-sm font-bold"><i data-lucide="arrow-left" class="mr-2 lucide-sm"></i> Back to Orders</button>
-             <div class="bg-white rounded-3xl shadow-card border border-gray-100 flex flex-col h-[600px] overflow-hidden">
-                 <div class="p-5 border-b border-gray-100 bg-white flex justify-between items-center z-10 shadow-sm">
-                     <div class="flex items-center gap-4">
-                         <div class="bg-primary/5 p-3 rounded-xl text-primary"><i data-lucide="headset"></i></div>
-                         <div>
-                             <h3 class="font-bold text-slate-800 text-base">Customer Support</h3>
-                             <p class="text-xs text-slate-400 font-mono mt-0.5" id="customer-chat-id">Ticket #...</p>
-                         </div>
-                     </div>
-                     <span class="bg-green-100 text-green-700 text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span> Online</span>
-                 </div>
-                 <div id="customer-chat-messages" class="flex-grow p-6 overflow-y-auto space-y-4 bg-slate-50"></div>
-                 <form onsubmit="app.sendCustomerMessage(event)" class="p-5 border-t border-gray-100 bg-white flex gap-4 items-center">
-                     <div class="relative flex-grow">
-                        <input type="text" id="customer-chat-input" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-4 pr-12 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition font-medium" placeholder="Type your message..." required>
-                     </div>
-                     <button type="submit" class="bg-primary text-white p-4 rounded-xl hover:bg-primaryLight transition shadow-lg flex-shrink-0 hover:scale-105 transform active:scale-95"><i data-lucide="send" class="lucide-sm"></i></button>
-                 </form>
-             </div>
-        </section>
-
-        <section id="view-seller-apply" class="view-section hide max-w-2xl mx-auto bg-white p-12 rounded-3xl shadow-card border border-gray-100">
-            <div class="text-center mb-10">
-                <div class="bg-accent/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-accent">
-                    <i data-lucide="store" class="lucide-xl"></i>
-                </div>
-                <h2 class="text-3xl font-extrabold text-slate-900">Partner Application</h2>
-                <p class="text-slate-500 mt-2">Join our marketplace. Admin approval required.</p>
-            </div>
-            
-            <form onsubmit="app.submitSellerApplication(event)" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Full Name</label>
-                        <input type="text" name="name" class="w-full border border-gray-200 p-3.5 rounded-xl focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none" required>
-                    </div>
-                    <div>
-                        <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Date of Birth</label>
-                        <input type="date" name="dob" class="w-full border border-gray-200 p-3.5 rounded-xl focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none" required>
-                    </div>
-                    <div>
-                        <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Mobile</label>
-                        <input type="tel" name="mobile" class="w-full border border-gray-200 p-3.5 rounded-xl focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none" required>
-                    </div>
-                    <div>
-                        <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Email</label>
-                        <input type="email" name="email" class="w-full border border-gray-200 p-3.5 rounded-xl focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none" required>
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Company Name</label>
-                    <input type="text" name="company" class="w-full border border-gray-200 p-3.5 rounded-xl focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none" required>
-                </div>
-                <div>
-                    <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Business Address</label>
-                    <input type="text" name="address" class="w-full border border-gray-200 p-3.5 rounded-xl focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none" required>
-                </div>
-                
-                <div class="bg-gray-50 p-8 rounded-2xl border-2 border-dashed border-gray-200 hover:border-accent/50 transition-colors">
-                    <h4 class="text-sm font-bold text-slate-800 mb-6 flex items-center"><i data-lucide="upload-cloud" class="mr-2 text-accent"></i> Upload Documents</h4>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <span class="text-xs text-slate-500 block mb-2 font-bold uppercase">Government ID</span>
-                            <input type="file" id="doc-file" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-accent file:text-white hover:file:bg-accentHover transition">
-                        </div>
-                        <div>
-                            <span class="text-xs text-slate-500 block mb-2 font-bold uppercase">Profile Photo</span>
-                            <input type="file" id="photo-file" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-accent file:text-white hover:file:bg-accentHover transition">
-                        </div>
-                    </div>
-                </div>
-
-                <button type="submit" class="w-full bg-primary text-white font-bold py-4 rounded-xl hover:bg-primaryLight shadow-xl transition flex justify-center items-center">
-                    Submit Application <i data-lucide="send" class="ml-2 lucide-sm"></i>
-                </button>
-            </form>
-        </section>
-
-        <section id="view-seller-dashboard" class="view-section hide">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
-                <div>
-                    <h2 class="text-3xl font-extrabold text-slate-900">Seller Overview</h2>
-                    <p class="text-slate-500 text-sm mt-1">Manage your business metrics and orders.</p>
-                </div>
-                <button onclick="app.openAddProductModal()" class="bg-success text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-emerald-600 shadow-lg shadow-success/20 transition flex items-center transform hover:scale-105 active:scale-95"><i data-lucide="plus" class="mr-2 lucide-sm"></i> Add New Product</button>
-            </div>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
-                <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100 flex justify-between items-center group hover:border-accent/30 transition-colors">
-                    <div>
-                        <div class="text-slate-400 text-xs uppercase font-bold tracking-wider mb-2">Total Products</div>
-                        <div class="text-4xl font-extrabold text-slate-900 group-hover:text-accent transition-colors" id="seller-stat-products">0</div>
-                    </div>
-                    <div class="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center text-accent shadow-inner">
-                        <i data-lucide="box" class="lucide-xl"></i>
-                    </div>
-                </div>
-                <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100 flex justify-between items-center group hover:border-warning/30 transition-colors">
-                    <div>
-                        <div class="text-slate-400 text-xs uppercase font-bold tracking-wider mb-2">Pending Orders</div>
-                        <div class="text-4xl font-extrabold text-slate-900 group-hover:text-warning transition-colors" id="seller-stat-orders">0</div>
-                    </div>
-                    <div class="w-16 h-16 bg-warning/10 rounded-2xl flex items-center justify-center text-warning shadow-inner">
-                        <i data-lucide="clock" class="lucide-xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100 h-[600px] flex flex-col">
-                    <h3 class="font-bold border-b border-gray-100 pb-5 mb-5 text-slate-800 flex items-center text-lg"><i data-lucide="package" class="mr-3 lucide-sm text-slate-400"></i> My Inventory</h3>
-                    <div id="seller-products-list" class="space-y-3 flex-grow overflow-y-auto custom-scrollbar pr-2"></div>
-                </div>
-                <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100 h-[600px] flex flex-col">
-                    <h3 class="font-bold border-b border-gray-100 pb-5 mb-5 text-slate-800 flex items-center text-lg"><i data-lucide="clipboard-list" class="mr-3 lucide-sm text-slate-400"></i> Manage Orders</h3>
-                    <div id="seller-orders-list" class="space-y-4 flex-grow overflow-y-auto custom-scrollbar pr-2"></div>
-                </div>
-            </div>
-        </section>
-
-        <section id="view-admin-dashboard" class="view-section hide">
-            <div class="flex items-center gap-4 mb-10">
-                <div class="bg-primary text-white p-4 rounded-2xl shadow-lg shadow-primary/30"><i data-lucide="shield-alert" class="lucide-lg"></i></div>
-                <div>
-                    <h2 class="text-3xl font-extrabold text-slate-900">Master Control</h2>
-                    <p class="text-sm text-slate-500 mt-1">System wide verification and management.</p>
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-                <div class="bg-primary text-white p-8 rounded-3xl shadow-xl relative overflow-hidden group">
-                    <div class="relative z-10">
-                        <div class="text-white/60 text-xs font-bold uppercase tracking-widest mb-3">Total Platform Sales</div>
-                        <div class="text-5xl font-extrabold" id="admin-total-sales">₹0</div>
-                    </div>
-                    <i data-lucide="trending-up" class="absolute right-8 top-8 text-white/5 w-32 h-32 group-hover:scale-110 transition duration-700"></i>
-                </div>
-                <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100">
-                    <div class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-3">Total Orders Processed</div>
-                    <div class="text-5xl font-extrabold text-slate-900" id="admin-order-count">0</div>
-                </div>
-            </div>
-            
-            <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100 mb-8">
-                <h3 class="font-bold text-lg mb-6 text-slate-800 flex items-center"><i data-lucide="check-square" class="mr-3 text-warning"></i> Payment Verification Queue</h3>
-                <div id="admin-payment-queue" class="space-y-3"></div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100">
-                    <h3 class="font-bold text-lg mb-6 text-slate-800 flex items-center"><i data-lucide="user-plus" class="mr-3 text-accent"></i> Seller Applications</h3>
-                    <div id="admin-seller-requests" class="space-y-3"></div>
-                </div>
-
-                <div class="space-y-6">
-                    <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100">
-                        <h3 class="font-bold text-lg mb-6 text-slate-800 flex items-center"><i data-lucide="users" class="mr-3 text-primary"></i> Create Service Agent</h3>
-                        <form onsubmit="app.createServiceAccount(event)" class="flex gap-3">
-                            <input type="email" id="service-email-input" placeholder="Agent Email Address" class="border border-gray-200 p-3.5 flex-grow rounded-xl bg-gray-50 text-sm focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none" required>
-                            <button type="submit" class="bg-primary text-white px-6 rounded-xl hover:bg-primaryLight transition shadow-md font-bold">Create</button>
-                        </form>
-                    </div>
-
-                    <div class="bg-warning/5 p-8 rounded-3xl shadow-card border border-warning/10">
-                        <h3 class="font-bold text-lg mb-6 text-warning-700 flex items-center"><i data-lucide="user-check" class="mr-3 text-warning"></i> Quick Seller Onboarding</h3>
-                        <form onsubmit="app.createSellerManual(event)" class="space-y-4">
-                            <input type="email" id="manual-seller-email" placeholder="Seller Email ID" class="border border-warning/20 p-3.5 w-full rounded-xl bg-white text-sm focus:ring-warning focus:border-warning outline-none" required>
-                            <input type="text" id="manual-seller-name" placeholder="Business Name" class="border border-warning/20 p-3.5 w-full rounded-xl bg-white text-sm focus:ring-warning focus:border-warning outline-none" required>
-                            <button type="submit" class="bg-warning text-primary px-4 py-3.5 rounded-xl w-full hover:bg-yellow-400 transition font-bold shadow-md">Create & Send Credentials</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="view-service-dashboard" class="view-section hide">
-            <h2 class="text-3xl font-extrabold mb-8 text-slate-900 flex items-center"><i data-lucide="headphones" class="mr-4 text-accent"></i> Support Desk</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 h-[700px]">
-                <div class="bg-white p-6 rounded-3xl shadow-card border border-gray-100 md:col-span-1 overflow-hidden flex flex-col">
-                    <h3 class="font-bold mb-6 text-slate-400 text-xs uppercase tracking-widest px-2">Active Tickets</h3>
-                    <div id="support-tickets-list" class="space-y-2 flex-grow overflow-y-auto custom-scrollbar px-2 pb-2"></div>
-                </div>
-                <div class="bg-white rounded-3xl shadow-card border border-gray-100 md:col-span-2 flex flex-col overflow-hidden relative">
-                    <div id="service-chat-header" class="border-b border-gray-100 p-6 bg-white z-10 font-bold text-slate-800 flex items-center justify-between">
-                        <span class="text-gray-400">Select a ticket to view chat</span>
-                        <i data-lucide="message-square" class="text-gray-200"></i>
-                    </div>
-                    <div id="service-chat-messages" class="flex-grow bg-slate-50 p-8 overflow-y-auto space-y-4"></div>
-                    <form onsubmit="app.sendServiceMessage(event)" class="p-6 border-t border-gray-100 bg-white flex gap-4">
-                        <input type="text" id="service-chat-input" class="flex-grow border border-gray-200 rounded-xl px-5 py-4 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition font-medium" placeholder="Reply to customer..." disabled>
-                        <button type="submit" id="service-chat-send-btn" class="bg-primary text-white px-6 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primaryLight transition shadow-lg font-bold" disabled><i data-lucide="send" class="lucide-sm"></i></button>
-                    </form>
-                </div>
-            </div>
-        </section>
-
     </main>
 
-    <footer class="bg-white border-t border-gray-200 pt-20 pb-10 mt-auto">
-        <div class="container mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-16 mb-16">
-                <div>
-                    <div class="flex items-center space-x-3 mb-6">
-                        <div class="bg-primary text-white p-2 rounded-lg">
-                            <i data-lucide="shield-check" class="lucide-md"></i>
-                        </div>
-                        <span class="text-2xl font-extrabold text-slate-900 tracking-tight">SecureThing</span>
-                    </div>
-                    <p class="text-slate-500 leading-relaxed text-sm pr-10">We provide top-tier smart security solutions. Every product is verified for quality and safety to ensure your peace of mind.</p>
-                </div>
-                <div>
-                    <h4 class="font-bold text-sm text-slate-900 uppercase tracking-widest mb-8">Navigation</h4>
-                    <ul class="space-y-4 text-sm text-slate-500 font-medium">
-                        <li><a href="#" onclick="app.router('home')" class="hover:text-accent transition-colors flex items-center group"><i data-lucide="chevron-right" class="lucide-xs mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></i> Home</a></li>
-                        <li><a href="#" onclick="app.router('orders')" class="hover:text-accent transition-colors flex items-center group"><i data-lucide="chevron-right" class="lucide-xs mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></i> Tracking</a></li>
-                        <li><a href="#" onclick="app.router('seller-login')" class="hover:text-accent transition-colors flex items-center group"><i data-lucide="chevron-right" class="lucide-xs mr-2 opacity-0 group-hover:opacity-100 transition-opacity"></i> Seller Portal</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 class="font-bold text-sm text-slate-900 uppercase tracking-widest mb-8">Get In Touch</h4>
-                    <ul class="space-y-5 text-sm text-slate-500">
-                        <li class="flex items-center"><i data-lucide="mail" class="mr-4 text-accent lucide-sm bg-accent/10 p-1 rounded w-6 h-6"></i> support@securething.com</li>
-                        <li class="flex items-center"><i data-lucide="phone" class="mr-4 text-accent lucide-sm bg-accent/10 p-1 rounded w-6 h-6"></i> +91 8000 123 456</li>
-                        <li class="flex items-center"><i data-lucide="map-pin" class="mr-4 text-accent lucide-sm bg-accent/10 p-1 rounded w-6 h-6"></i> Tech Park, Cyber City, India</li>
-                    </ul>
-                </div>
-            </div>
-            <div class="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-400 font-medium">
-                <p>&copy; 2026 SecureThingStore. All rights reserved.</p>
-                <div class="flex gap-6 mt-4 md:mt-0">
-                    <a href="#" class="hover:text-slate-600 transition-colors">Privacy Policy</a>
-                    <a href="#" class="hover:text-slate-600 transition-colors">Terms of Service</a>
-                </div>
-            </div>
+    <!-- Cart Sidebar -->
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full sm:w-96 bg-white/90 backdrop-blur-xl shadow-2xl transform translate-x-full transition-transform duration-300 z-[60] flex flex-col">
+        <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+            <h3 class="font-bold text-xl text-textMain">Cart</h3>
+            <button onclick="app.toggleCart()" class="clay-btn clay-btn-secondary w-8 h-8 flex items-center justify-center rounded-full"><i data-lucide="x" class="w-4 h-4"></i></button>
         </div>
-    </footer>
-
-    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-96 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-[60] flex flex-col font-sans">
-        <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-white">
-            <h3 class="font-bold text-xl text-slate-800 flex items-center"><i data-lucide="shopping-cart" class="mr-3 text-accent"></i> Your Cart</h3>
-            <button onclick="app.toggleCart()" class="text-slate-400 hover:text-danger bg-gray-50 hover:bg-red-50 p-2 rounded-full transition-colors"><i data-lucide="x" class="lucide-sm"></i></button>
-        </div>
-        <div id="cart-items" class="flex-grow overflow-y-auto p-6 space-y-4 bg-gray-50/50">
-            <div class="flex flex-col items-center justify-center h-64 text-slate-300">
-                <i data-lucide="shopping-bag" class="w-16 h-16 mb-4 opacity-50"></i>
-                <p class="font-medium text-sm">Your cart is empty.</p>
-            </div>
-        </div>
-        <div class="p-8 border-t border-gray-100 bg-white">
-            <div class="flex justify-between font-extrabold text-xl mb-6 text-slate-900">
-                <span>Total</span>
-                <span id="cart-total" class="text-accent">₹0</span>
-            </div>
-            <button onclick="app.goToCheckout()" class="w-full bg-primary text-white py-4 rounded-xl font-bold hover:bg-primaryLight shadow-lg shadow-primary/20 transition flex justify-center items-center hover:-translate-y-1">
-                Proceed to Checkout <i data-lucide="arrow-right" class="ml-2 lucide-sm"></i>
-            </button>
+        <div id="cart-items" class="flex-grow overflow-y-auto p-6 space-y-4"></div>
+        <div class="p-6 border-t border-slate-100 bg-white/50">
+            <div class="flex justify-between font-extrabold text-xl mb-4 text-textMain"><span>Total</span><span id="cart-total" class="text-primary">₹0</span></div>
+            <button onclick="app.goToCheckout()" class="clay-btn clay-btn-primary w-full py-4 text-lg shadow-lg">Checkout</button>
         </div>
     </div>
 
-    <div id="add-product-modal" class="fixed inset-0 bg-primary/80 backdrop-blur-sm z-50 flex items-center justify-center hide transition-opacity p-4">
-        <div class="bg-white p-8 rounded-3xl w-full max-w-lg shadow-2xl transform transition-all scale-100 border border-gray-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <div class="flex justify-between items-center mb-8">
-                <h3 class="text-2xl font-bold text-slate-900" id="modal-title">Add New Product</h3>
-                <button onclick="document.getElementById('add-product-modal').classList.add('hide')" class="text-gray-400 hover:text-slate-800 bg-gray-50 hover:bg-gray-100 p-2 rounded-full transition"><i data-lucide="x"></i></button>
+    <!-- ADD PRODUCT MODAL (With Discount Field) -->
+    <div id="add-product-modal" class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-50 flex items-center justify-center hide p-4">
+        <div class="clay-card w-full max-w-lg p-8 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold" id="modal-title">Add Product</h3>
+                <button onclick="document.getElementById('add-product-modal').classList.add('hide')" class="text-slate-400"><i data-lucide="x"></i></button>
             </div>
-            <form onsubmit="app.sellerSaveProduct(event)" class="space-y-5">
+            <form onsubmit="app.sellerSaveProduct(event)" class="space-y-4">
                 <input type="hidden" name="p_id">
-                <div>
-                    <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Product Name</label>
-                    <input type="text" name="p_name" class="border border-gray-200 p-3.5 w-full rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition font-medium" required>
-                </div>
-                <div>
-                    <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Description</label>
-                    <textarea name="p_desc" class="border border-gray-200 p-3.5 w-full rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition font-medium" rows="3" required></textarea>
-                </div>
+                <input type="text" name="p_name" placeholder="Product Name" class="clay-input w-full p-4" required>
+                <textarea name="p_desc" placeholder="Description" class="clay-input w-full p-4" rows="3" required></textarea>
                 <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Price (₹)</label>
-                        <input type="number" name="p_price" class="border border-gray-200 p-3.5 w-full rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition font-medium" required>
-                    </div>
-                    <div>
-                        <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Category</label>
-                        <select name="p_cat" class="border border-gray-200 p-3.5 w-full rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition text-sm font-medium">
-                            <option value="Electronics">Electronics</option>
-                            <option value="Home">Home</option>
-                            <option value="Security">Security</option>
-                        </select>
-                    </div>
+                    <input type="number" name="p_price" placeholder="Price (₹)" class="clay-input w-full p-4" required>
+                    <input type="number" name="p_discount" placeholder="Discount (%)" class="clay-input w-full p-4" min="0" max="99">
                 </div>
-                <div>
-                    <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Image URL</label>
-                    <div class="relative group">
-                         <input type="text" name="p_img" class="border border-gray-200 p-3.5 w-full rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition pl-11 font-medium">
-                         <i data-lucide="image" class="absolute left-3.5 top-3.5 text-gray-400 group-focus-within:text-accent transition-colors lucide-sm"></i>
-                    </div>
-                </div>
-                
-                <div class="flex justify-end space-x-3 mt-8 pt-4 border-t border-gray-100">
-                    <button type="button" onclick="app.fillMockProduct(this.form)" class="px-5 py-3 border border-warning text-warning-700 bg-warning/5 hover:bg-warning/10 text-xs rounded-xl transition font-bold" id="mock-btn">Auto-Fill</button>
-                    <button type="submit" class="px-8 py-3 bg-primary text-white rounded-xl hover:bg-primaryLight shadow-lg shadow-primary/20 transition font-bold flex items-center">
-                        <i data-lucide="save" class="mr-2 lucide-sm"></i> Save
-                    </button>
+                <select name="p_cat" class="clay-input w-full p-4">
+                    <option value="Electronics">Electronics</option>
+                    <option value="Home">Home</option>
+                    <option value="Security">Security</option>
+                </select>
+                <input type="text" name="p_img" placeholder="Image URL" class="clay-input w-full p-4">
+                <div class="flex justify-end gap-3 mt-6">
+                    <button type="button" onclick="app.fillMockProduct(this.form)" class="clay-btn clay-btn-secondary px-4 text-xs">Auto Fill</button>
+                    <button type="submit" class="clay-btn clay-btn-primary px-8 py-3">Save Product</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <div id="order-details-modal" class="fixed inset-0 bg-primary/80 backdrop-blur-sm z-50 flex items-center justify-center hide transition-opacity p-4">
-        <div class="bg-white p-8 rounded-3xl w-full max-w-2xl shadow-2xl transform transition-all scale-100 border border-gray-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
-            <div class="flex justify-between items-center mb-8 border-b border-gray-100 pb-4">
-                <h3 class="text-2xl font-bold text-slate-900">Order Details</h3>
-                <button onclick="document.getElementById('order-details-modal').classList.add('hide')" class="text-gray-400 hover:text-slate-800 bg-gray-50 hover:bg-gray-100 p-2 rounded-full transition"><i data-lucide="x"></i></button>
-            </div>
-            
-            <div class="space-y-8" id="order-details-content">
-                </div>
+    <!-- ORDER DETAILS MODAL -->
+    <div id="order-details-modal" class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-50 flex items-center justify-center hide p-4">
+        <div class="clay-card w-full max-w-2xl p-8 max-h-[90vh] overflow-y-auto relative">
+            <button onclick="document.getElementById('order-details-modal').classList.add('hide')" class="absolute top-6 right-6 text-slate-400"><i data-lucide="x"></i></button>
+            <h3 class="text-2xl font-bold mb-6">Order Details</h3>
+            <div id="order-details-content" class="space-y-6"></div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "firebase/app";
-        import { 
-            getAuth, 
-            createUserWithEmailAndPassword, 
-            signInWithEmailAndPassword, 
-            signOut, 
-            onAuthStateChanged,
-            GoogleAuthProvider,
-            signInWithPopup
-        } from "firebase/auth";
-        import { 
-            getFirestore, 
-            collection, 
-            addDoc, 
-            getDocs, 
-            getDoc, 
-            doc, 
-            setDoc, 
-            updateDoc, 
-            deleteDoc, 
-            onSnapshot, 
-            serverTimestamp, 
-            query,
-            orderBy,
-            where
-        } from "firebase/firestore";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+        import { getFirestore, collection, addDoc, getDocs, getDoc, doc, setDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy, where } from "firebase/firestore";
 
-        // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "AIzaSyAEDJkwaThWJNm8lQbOLxb-JSTQ45dbHOw",
             authDomain: "thing-672ba.firebaseapp.com",
@@ -866,251 +582,214 @@
         const appInst = initializeApp(firebaseConfig);
         const auth = getAuth(appInst);
         const db = getFirestore(appInst);
-        const ADMIN_EMAIL = "joykumbhakar101@gmail.com";
-
-        // Helper to get Firestore paths
         const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'secure-thing-store';
         
         const getCollectionRef = (name) => collection(db, 'artifacts', APP_ID, 'public', 'data', name);
         const getUserRef = (uid) => doc(db, 'artifacts', APP_ID, 'public', 'data', 'users', uid);
 
-        // --- APPLICATION STATE ---
         window.app = {
-            currentUser: null,
-            userRole: 'customer',
-            cart: [],
-            products: [],
-            currentTicketId: null,
-            activeCategory: 'all',
-            currentProductDetailId: null,
-            chatUnsubscribe: null,
-            adminOrders: [], // Store orders for details view
+            currentUser: null, userRole: 'customer', cart: [], products: [], 
+            currentTicketId: null, activeCategory: 'all', currentProductDetailId: null, 
+            chatUnsubscribe: null, adminOrders: [],
 
-            // --- HELPER: UPDATE ICONS ---
-            updateIcons: () => {
-                if(window.lucide) {
-                    window.lucide.createIcons();
-                }
-            },
-
-            // --- UTILS: TOAST NOTIFICATIONS ---
+            updateIcons: () => { if(window.lucide) window.lucide.createIcons(); },
             toast: (msg, type = 'info') => {
                 const container = document.getElementById('toast-container');
                 const toast = document.createElement('div');
-                toast.className = `toast ${type}`;
-                
-                let iconName = 'info';
-                if(type === 'success') iconName = 'check-circle';
-                if(type === 'error') iconName = 'alert-circle';
-
-                toast.innerHTML = `
-                    <i data-lucide="${iconName}"></i>
-                    <span class="font-bold text-sm text-slate-800">${msg}</span>
-                `;
+                toast.className = 'toast';
+                const color = type === 'success' ? 'text-success' : type === 'error' ? 'text-danger' : 'text-primary';
+                const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'alert-triangle' : 'info';
+                toast.innerHTML = `<i data-lucide="${icon}" class="${color} mr-3"></i> <span class="font-bold text-sm text-slate-700">${msg}</span>`;
                 container.appendChild(toast);
                 app.updateIcons();
-                
-                setTimeout(() => {
-                    toast.style.animation = 'slideOut 0.3s ease-in forwards';
-                    setTimeout(() => toast.remove(), 300);
-                }, 3000);
+                setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
             },
 
-            // --- ROUTER ---
             router: async (viewId) => {
                 if(app.chatUnsubscribe) { app.chatUnsubscribe(); app.chatUnsubscribe = null; }
-
                 document.querySelectorAll('.view-section').forEach(el => el.classList.add('hide'));
-                document.getElementById('mobile-menu').classList.add('hide');
-                
                 const view = document.getElementById(`view-${viewId}`);
                 if (view) view.classList.remove('hide');
 
-                if (viewId === 'home') await app.loadProducts();
+                if (viewId === 'home') { await app.loadProducts(); app.loadBanners(); }
                 if (viewId === 'orders') await app.loadCustomerOrders();
                 if (viewId === 'profile') await app.loadProfile();
                 if (viewId === 'seller-dashboard') await app.loadSellerDashboard();
                 if (viewId === 'admin-dashboard') await app.loadAdminDashboard();
-                if (viewId === 'service-dashboard') await app.loadServiceDashboard();
+                if (viewId === 'seller-apply' && !app.currentUser) { app.toast("Login first", "info"); app.router('login'); }
                 
-                if (viewId === 'seller-apply') {
-                    if(!app.currentUser) {
-                        app.toast("Please login first to apply.", "info");
-                        app.router('login');
-                    }
-                }
-                
+                document.querySelectorAll('.nav-icon-mobile').forEach(el => el.classList.remove('active'));
+                const activeNav = document.getElementById(`mob-nav-${viewId}`);
+                if (activeNav) activeNav.classList.add('active');
                 window.scrollTo(0,0);
                 app.updateIcons();
             },
 
-            // --- AUTHENTICATION ---
+            toggleHeaderSearch: () => {
+                const searchBar = document.getElementById('header-search-bar');
+                const input = document.getElementById('global-search-input');
+                if (searchBar.classList.contains('open')) searchBar.classList.remove('open');
+                else { searchBar.classList.add('open'); input.focus(); }
+            },
+
+            handleGlobalSearch: (query) => {
+                const homeView = document.getElementById('view-home');
+                if (homeView.classList.contains('hide')) app.router('home');
+                const term = query.toLowerCase();
+                const filtered = app.products.filter(p => p.name.toLowerCase().includes(term) && (app.activeCategory === 'all' || p.category === app.activeCategory));
+                app.renderProductGrid(filtered);
+            },
+
             handleAuth: async (e) => {
                 e.preventDefault();
                 app.toggleLoader(true);
                 const email = document.getElementById('auth-email').value;
                 const pass = document.getElementById('auth-pass').value;
                 const isRegister = document.getElementById('auth-btn-text').innerText === 'Sign Up';
-
                 try {
-                    let userCred;
-                    if (isRegister) {
-                        userCred = await createUserWithEmailAndPassword(auth, email, pass);
-                        await setDoc(getUserRef(userCred.user.uid), {
-                            uid: userCred.user.uid,
-                            email: email,
-                            role: 'customer',
-                            name: email.split('@')[0],
-                            addressList: []
-                        });
-                        app.toast("Account created successfully!", "success");
+                    let cred;
+                    if(isRegister) {
+                        cred = await createUserWithEmailAndPassword(auth, email, pass);
+                        await setDoc(getUserRef(cred.user.uid), { uid: cred.user.uid, email, role: 'customer', name: email.split('@')[0], addressList: [] });
+                        app.toast("Account created!", "success");
                     } else {
-                        userCred = await signInWithEmailAndPassword(auth, email, pass);
-                        app.toast("Logged in successfully.", "success");
+                        cred = await signInWithEmailAndPassword(auth, email, pass);
+                        app.toast("Welcome back!", "success");
                     }
                     app.router('home');
-                } catch (error) {
-                    app.toast(error.message, "error");
-                } finally {
-                    app.toggleLoader(false);
-                }
+                } catch(err) { app.toast(err.message, "error"); }
+                finally { app.toggleLoader(false); }
             },
-            
+
             handleSellerAuth: async (e) => {
                 e.preventDefault();
                 app.toggleLoader(true);
                 const email = document.getElementById('seller-auth-email').value;
                 const pass = document.getElementById('seller-auth-pass').value;
-                
                 try {
-                    const userCred = await signInWithEmailAndPassword(auth, email, pass);
-                    const userDoc = await getDoc(getUserRef(userCred.user.uid));
-                    if(userDoc.exists() && userDoc.data().role === 'seller') {
-                        app.toast("Welcome back, Seller!", "success");
+                    const cred = await signInWithEmailAndPassword(auth, email, pass);
+                    const docSnap = await getDoc(getUserRef(cred.user.uid));
+                    if(docSnap.exists() && docSnap.data().role === 'seller') {
+                        app.toast("Seller Login Success", "success");
                         app.router('seller-dashboard');
                     } else {
                         await signOut(auth);
-                        app.toast("Access Denied: Authorized Sellers only.", "error");
+                        app.toast("Not authorized as seller", "error");
                     }
-                } catch(err) {
-                    app.toast("Login Failed: " + err.message, "error");
-                } finally {
-                    app.toggleLoader(false);
-                }
+                } catch(err) { app.toast(err.message, "error"); }
+                finally { app.toggleLoader(false); }
             },
 
             handleGoogleAuth: async () => {
-                const provider = new GoogleAuthProvider();
                 try {
-                    const result = await signInWithPopup(auth, provider);
-                    const user = result.user;
-                    const userDoc = await getDoc(getUserRef(user.uid));
-                    if (!userDoc.exists()) { 
-                        await setDoc(getUserRef(user.uid), {
-                            uid: user.uid,
-                            email: user.email,
-                            role: 'customer',
-                            name: user.displayName,
-                            addressList: []
-                        });
-                    }
-                    app.toast("Logged in with Google", "success");
+                    const res = await signInWithPopup(auth, new GoogleAuthProvider());
+                    const docSnap = await getDoc(getUserRef(res.user.uid));
+                    if(!docSnap.exists()) await setDoc(getUserRef(res.user.uid), { uid: res.user.uid, email: res.user.email, role: 'customer', name: res.user.displayName, addressList: [] });
+                    app.toast("Google Login Success", "success");
                     app.router('home');
-                } catch (error) {
-                    console.error(error);
-                    app.toast("Google Sign-In failed", "error");
-                }
+                } catch(e) { app.toast(e.message, "error"); }
             },
 
             logout: () => {
                 signOut(auth).then(() => {
-                    app.cart = [];
-                    app.updateCartUI();
-                    app.router('home');
-                    app.toast("Logged out securely.", "info");
+                    app.cart = []; app.updateCartUI(); app.router('home'); app.toast("Logged out", "info");
                 });
             },
 
             toggleAuthMode: () => {
                 const btn = document.getElementById('auth-btn-text');
-                const switchText = document.getElementById('auth-switch-text');
+                const sw = document.getElementById('auth-switch-text');
                 const title = document.getElementById('auth-title');
-                
-                if (btn.innerText === 'Sign In') {
-                    btn.innerText = 'Sign Up';
-                    switchText.innerText = 'Already have an account? Sign In';
-                    title.innerText = "Create Account";
+                if(btn.innerText === 'Sign In') {
+                    btn.innerText = 'Sign Up'; sw.innerText = 'Sign In'; title.innerText = 'Create Account';
                 } else {
-                    btn.innerText = 'Sign In';
-                    switchText.innerText = 'Create an account';
-                    title.innerText = "Welcome Back";
+                    btn.innerText = 'Sign In'; sw.innerText = 'Sign Up'; title.innerText = 'Sign In';
                 }
-                app.updateIcons();
             },
 
-            // --- PRODUCT LOGIC ---
+            loadBanners: async () => {
+                try {
+                    const snap = await getDocs(getCollectionRef('banners'));
+                    if(!snap.empty) {
+                        const banner = snap.docs[0].data(); // Get first banner for simple MVP
+                        const container = document.getElementById('home-banner-container');
+                        container.innerHTML = `
+                            <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
+                            <div class="absolute bottom-0 left-0 w-64 h-64 bg-primary/20 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
+                            <div class="relative z-10 w-full flex flex-col md:flex-row items-center gap-8">
+                                <div class="md:w-1/2">
+                                    <span class="bg-white/50 text-primary px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-4 inline-block border border-white">${banner.subtitle || 'Special Offer'}</span>
+                                    <h1 class="text-4xl md:text-5xl font-extrabold text-textMain mb-6 leading-tight">${banner.title}</h1>
+                                    <button onclick="document.getElementById('product-grid').scrollIntoView({behavior: 'smooth'})" class="clay-btn clay-btn-primary px-8 py-4 text-lg shadow-lg">${banner.cta || 'Shop Now'}</button>
+                                </div>
+                                <div class="md:w-1/2">
+                                    <img src="${banner.image}" class="w-full h-auto rounded-3xl shadow-lg transform rotate-2">
+                                </div>
+                            </div>
+                        `;
+                    }
+                } catch(e) {}
+            },
+
+            adminSaveBanner: async (e) => {
+                e.preventDefault();
+                app.toggleLoader(true);
+                const data = {
+                    title: document.getElementById('banner-title').value,
+                    subtitle: document.getElementById('banner-subtitle').value,
+                    image: document.getElementById('banner-img').value,
+                    cta: document.getElementById('banner-cta').value,
+                    updatedAt: serverTimestamp()
+                };
+                try {
+                    const snap = await getDocs(getCollectionRef('banners'));
+                    if(snap.empty) {
+                        await addDoc(getCollectionRef('banners'), data);
+                    } else {
+                        // Update existing first doc for simplicity
+                        await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'banners', snap.docs[0].id), data);
+                    }
+                    app.toast("Banner Updated!", "success");
+                } catch(e) { app.toast(e.message, "error"); }
+                finally { app.toggleLoader(false); }
+            },
+
             loadProducts: async () => {
                 const grid = document.getElementById('product-grid');
-                
-                // SKELETON LOADING
-                grid.innerHTML = '';
-                for(let i=0; i<8; i++) {
-                    grid.innerHTML += `
-                        <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
-                            <div class="skeleton h-48 w-full mb-4"></div>
-                            <div class="skeleton h-6 w-3/4 mb-2"></div>
-                            <div class="skeleton h-4 w-1/2 mb-4"></div>
-                            <div class="flex justify-between">
-                                <div class="skeleton h-8 w-20"></div>
-                                <div class="skeleton h-8 w-8 rounded-full"></div>
-                            </div>
-                        </div>
-                    `;
-                }
-
                 try {
-                    const snapshot = await getDocs(getCollectionRef('products'));
+                    const snap = await getDocs(getCollectionRef('products'));
                     app.products = [];
-                    snapshot.forEach(doc => app.products.push({id: doc.id, ...doc.data()}));
+                    snap.forEach(d => app.products.push({id: d.id, ...d.data()}));
                     app.renderProductGrid(app.products);
-                } catch(e) {
-                    console.error(e);
-                    grid.innerHTML = '<div class="col-span-4 text-center text-gray-400 py-10 font-medium">Failed to load products.</div>';
-                }
+                } catch(e) { grid.innerHTML = '<p class="col-span-4 text-center text-slate-400">Loading failed</p>'; }
             },
 
             renderProductGrid: (products) => {
                 const grid = document.getElementById('product-grid');
                 grid.innerHTML = '';
-
-                if(products.length === 0) {
-                    grid.innerHTML = `
-                        <div class="col-span-4 flex flex-col items-center justify-center py-24 text-gray-300">
-                            <i data-lucide="search-x" class="w-20 h-20 mb-4 opacity-50"></i>
-                            <p class="text-slate-500 font-bold text-lg">No products found.</p>
-                        </div>`;
-                    app.updateIcons();
-                    return;
-                }
-
+                if(products.length === 0) { grid.innerHTML = '<p class="col-span-4 text-center text-slate-400 py-12">No products found.</p>'; return; }
+                
                 products.forEach(p => {
+                    const discount = p.discount ? parseInt(p.discount) : 0;
+                    const price = parseInt(p.price);
+                    const finalPrice = discount > 0 ? Math.round(price - (price * discount / 100)) : price;
+                    
                     grid.innerHTML += `
-                        <div class="bg-white rounded-3xl shadow-soft hover:shadow-card transition-all duration-300 overflow-hidden group border border-gray-100 flex flex-col cursor-pointer hover:-translate-y-1" onclick="app.loadProductDetails('${p.id}')">
-                            <div class="h-64 bg-gray-50 relative overflow-hidden flex items-center justify-center p-6">
-                                <img src="${p.image || 'https://placehold.co/400x300?text=Product'}" class="w-full h-full object-contain group-hover:scale-110 transition duration-700" onerror="this.src='https://placehold.co/400x300?text=No+Image'">
-                                <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm flex items-center text-slate-800">
-                                    <i data-lucide="star" class="lucide-xs fill-warning text-warning mr-1"></i> ${p.rating || '4.5'}
-                                </div>
+                        <div class="clay-card overflow-hidden group cursor-pointer hover:-translate-y-2" onclick="app.loadProductDetails('${p.id}')">
+                            <div class="h-64 bg-white/50 relative p-6 flex items-center justify-center">
+                                ${discount > 0 ? `<div class="sale-badge">SALE -${discount}%</div>` : ''}
+                                <div class="absolute top-4 right-4 bg-white px-2 py-1 rounded-lg text-xs font-bold text-warning shadow-sm flex items-center"><i data-lucide="star" class="w-3 h-3 fill-current mr-1"></i> ${p.rating||4.5}</div>
+                                <img src="${p.image}" class="w-full h-full object-contain group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/300?text=Item'">
                             </div>
-                            <div class="p-6 flex-grow flex flex-col">
-                                <span class="text-[10px] uppercase font-bold text-accent tracking-widest mb-1.5 opacity-80">${p.category || 'Item'}</span>
-                                <h3 class="font-bold text-slate-800 text-lg truncate mb-2 leading-tight" title="${p.name}">${p.name}</h3>
-                                <p class="text-sm text-slate-500 line-clamp-2 h-10 mb-6 font-medium">${p.desc}</p>
-                                <div class="mt-auto flex justify-between items-center">
-                                    <span class="text-slate-900 font-extrabold text-2xl">₹${p.price}</span>
-                                    <button onclick="event.stopPropagation(); app.addToCart('${p.id}')" class="bg-primary text-white w-12 h-12 rounded-xl hover:bg-primaryLight transition-colors shadow-lg shadow-primary/20 flex items-center justify-center transform active:scale-95">
-                                        <i data-lucide="plus" class="lucide-sm"></i>
-                                    </button>
+                            <div class="p-6">
+                                <span class="text-[10px] font-bold text-primaryLight uppercase tracking-widest">${p.category||'Item'}</span>
+                                <h3 class="font-bold text-lg text-textMain truncate mb-2">${p.name}</h3>
+                                <div class="flex justify-between items-center mt-4">
+                                    <div class="flex flex-col">
+                                        ${discount > 0 ? `<span class="old-price">₹${price}</span>` : ''}
+                                        <span class="text-2xl font-extrabold text-textMain">₹${finalPrice}</span>
+                                    </div>
+                                    <button onclick="event.stopPropagation(); app.addToCart('${p.id}')" class="clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-xl text-primary"><i data-lucide="plus"></i></button>
                                 </div>
                             </div>
                         </div>
@@ -1122,155 +801,118 @@
             loadProductDetails: (pid) => {
                 const p = app.products.find(x => x.id === pid);
                 if(!p) return;
-                
                 app.currentProductDetailId = pid;
-                document.getElementById('detail-img').src = p.image || 'https://placehold.co/400x300';
+                document.getElementById('detail-img').src = p.image;
                 document.getElementById('detail-name').innerText = p.name;
                 document.getElementById('detail-desc').innerText = p.desc;
-                document.getElementById('detail-price').innerText = '₹' + p.price;
-                document.getElementById('detail-cat').innerText = p.category || 'General';
-                document.getElementById('detail-rating').innerText = (p.rating || 4.5);
+                document.getElementById('detail-cat').innerText = p.category;
+                
+                const discount = p.discount ? parseInt(p.discount) : 0;
+                const price = parseInt(p.price);
+                const finalPrice = discount > 0 ? Math.round(price - (price * discount / 100)) : price;
+                
+                document.getElementById('detail-price').innerText = '₹' + finalPrice;
+                const oldPriceEl = document.getElementById('detail-old-price');
+                const badge = document.getElementById('detail-badge');
+                
+                if(discount > 0) {
+                    oldPriceEl.innerText = '₹' + price;
+                    oldPriceEl.classList.remove('hide');
+                    badge.classList.remove('hide');
+                    badge.innerText = `SALE -${discount}%`;
+                } else {
+                    oldPriceEl.classList.add('hide');
+                    badge.classList.add('hide');
+                }
                 
                 app.router('product-details');
             },
 
-            buyNow: (pid) => {
-                app.addToCart(pid);
-                app.goToCheckout();
-            },
+            buyNow: (pid) => { app.addToCart(pid); app.goToCheckout(); },
 
             filterCategory: (cat) => {
                 app.activeCategory = cat;
-                const btns = document.getElementById('category-chips').children;
-                Array.from(btns).forEach(btn => {
-                    if(btn.innerText === cat || (cat === 'all' && btn.innerText === 'All')) { 
-                        btn.classList.remove('bg-white', 'text-slate-600', 'border', 'border-gray-200');
-                        btn.classList.add('bg-primary', 'text-white', 'shadow-lg');
-                    } else { 
-                        btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-gray-200');
-                        btn.classList.remove('bg-primary', 'text-white', 'shadow-lg');
-                    }
-                });
                 app.filterProducts();
             },
 
             filterProducts: () => {
-                const term = document.getElementById('search-input').value.toLowerCase();
+                const term = document.getElementById('search-input') ? document.getElementById('search-input').value.toLowerCase() : ''; // Fix for search input existing only in home
                 const filtered = app.products.filter(p => {
-                    const matchesSearch = p.name.toLowerCase().includes(term) || p.desc.toLowerCase().includes(term);
-                    let matchesCat = true;
-                    if(app.activeCategory !== 'all') { 
-                        matchesCat = (p.category === app.activeCategory) || (p.name.includes(app.activeCategory));
-                    }
-                    return matchesSearch && matchesCat;
+                    // Just rely on category if search input isn't in focus or logic differs
+                    const matchCat = app.activeCategory === 'all' || p.category === app.activeCategory;
+                    return matchCat;
                 });
                 app.renderProductGrid(filtered);
             },
 
-            // --- CART LOGIC ---
             addToCart: (pid) => {
-                const product = app.products.find(p => p.id === pid);
-                if (!product) return;
+                const p = app.products.find(x => x.id === pid);
+                if(!p) return;
                 
-                const existing = app.cart.find(item => item.id === pid);
-                if (existing) existing.qty++;
-                else app.cart.push({ ...product, qty: 1 });
-                
+                const discount = p.discount ? parseInt(p.discount) : 0;
+                const finalPrice = discount > 0 ? Math.round(p.price - (p.price * discount / 100)) : p.price;
+                const itemToAdd = { ...p, price: finalPrice, originalPrice: p.price }; // Store discounted price
+
+                const exist = app.cart.find(x => x.id === pid);
+                if(exist) exist.qty++; else app.cart.push({...itemToAdd, qty: 1});
                 app.updateCartUI();
-                app.toast(`${product.name} added to cart`, "success");
+                app.toast("Added to cart", "success");
             },
 
             toggleCart: () => {
-                const sidebar = document.getElementById('cart-sidebar');
-                if (sidebar.classList.contains('translate-x-full')) {
-                    sidebar.classList.remove('translate-x-full');
-                } else {
-                    sidebar.classList.add('translate-x-full');
-                }
+                const el = document.getElementById('cart-sidebar');
+                el.classList.toggle('translate-x-full');
             },
 
             updateCartUI: () => {
-                const container = document.getElementById('cart-items');
-                const countBadge = document.getElementById('cart-count');
-                const totalEl = document.getElementById('cart-total');
-                const subtotalEl = document.getElementById('checkout-subtotal');
-                const checkoutTotalEl = document.getElementById('checkout-total');
+                const con = document.getElementById('cart-items');
                 const checkoutItems = document.getElementById('checkout-items');
+                con.innerHTML = ''; checkoutItems.innerHTML = '';
+                let total = 0, count = 0;
                 
-                container.innerHTML = '';
-                checkoutItems.innerHTML = '';
-                
-                let total = 0;
-                let count = 0;
-
-                app.cart.forEach((item, index) => {
-                    total += item.price * item.qty;
-                    count += item.qty;
-                    
-                    // Sidebar Item
-                    container.innerHTML += `
-                        <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
-                            <div class="flex-1">
-                                <div class="font-bold text-sm truncate text-slate-800 mb-1">${item.name}</div>
-                                <div class="text-xs text-accent font-bold">₹${item.price} x ${item.qty}</div>
-                            </div>
-                            <div class="flex items-center space-x-3 bg-gray-50 rounded-xl p-1.5 border border-gray-100">
-                                <button onclick="app.changeQty(${index}, -1)" class="text-gray-400 hover:text-danger w-6 h-6 flex items-center justify-center transition"><i data-lucide="minus" class="lucide-xs"></i></button>
-                                <span class="text-xs font-bold w-4 text-center text-slate-800">${item.qty}</span>
-                                <button onclick="app.changeQty(${index}, 1)" class="text-gray-400 hover:text-success w-6 h-6 flex items-center justify-center transition"><i data-lucide="plus" class="lucide-xs"></i></button>
-                            </div>
-                        </div>
-                    `;
-                    
-                    // Checkout Item
-                    checkoutItems.innerHTML += `
-                        <div class="flex justify-between border-b border-gray-100 pb-4 mb-4 last:border-0 last:pb-0 last:mb-0">
+                app.cart.forEach((item, idx) => {
+                    total += item.price * item.qty; count += item.qty;
+                    const html = `
+                        <div class="clay-card p-4 flex justify-between items-center mb-3 !rounded-2xl !shadow-sm border-none bg-white">
                             <div>
-                                <span class="text-slate-800 font-bold block text-sm">${item.name}</span>
-                                <span class="text-slate-400 text-xs">Qty: ${item.qty}</span>
+                                <div class="font-bold text-sm text-textMain">${item.name}</div>
+                                <div class="text-xs text-primary font-bold">₹${item.price} x ${item.qty}</div>
                             </div>
-                            <span class="font-extrabold text-slate-900">₹${item.price * item.qty}</span>
+                            <div class="flex items-center gap-2">
+                                <button onclick="app.changeQty(${idx}, -1)" class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-xs hover:bg-slate-200">-</button>
+                                <span class="text-xs font-bold w-4 text-center">${item.qty}</span>
+                                <button onclick="app.changeQty(${idx}, 1)" class="w-6 h-6 bg-slate-100 rounded-full flex items-center justify-center text-xs hover:bg-slate-200">+</button>
+                            </div>
                         </div>
                     `;
+                    con.innerHTML += html;
+                    checkoutItems.innerHTML += `<div class="flex justify-between text-sm mb-2"><span class="font-bold text-slate-600">${item.name} x${item.qty}</span> <span>₹${item.price*item.qty}</span></div>`;
                 });
 
-                if (app.cart.length === 0) {
-                      container.innerHTML = `
-                        <div class="flex flex-col items-center justify-center h-64 text-slate-300">
-                            <i data-lucide="shopping-bag" class="w-16 h-16 mb-4 opacity-50"></i>
-                            <p class="text-sm font-medium">Your cart is empty.</p>
-                        </div>`;
-                }
-                
-                countBadge.innerText = count;
-                totalEl.innerText = '₹' + total;
-                if(subtotalEl) subtotalEl.innerText = '₹' + total;
-                if(checkoutTotalEl) checkoutTotalEl.innerText = '₹' + total;
+                document.getElementById('cart-count-desktop').innerText = count;
+                document.getElementById('cart-count-mobile').innerText = count;
+                document.getElementById('cart-total').innerText = '₹' + total;
+                document.getElementById('checkout-total').innerText = '₹' + total;
+                document.getElementById('checkout-subtotal').innerText = '₹' + total;
                 app.cartTotalValue = total;
-                app.updateIcons();
             },
 
-            changeQty: (index, delta) => {
-                app.cart[index].qty += delta;
-                if (app.cart[index].qty <= 0) app.cart.splice(index, 1);
+            changeQty: (idx, d) => {
+                app.cart[idx].qty += d;
+                if(app.cart[idx].qty <= 0) app.cart.splice(idx, 1);
                 app.updateCartUI();
             },
 
             goToCheckout: () => {
-                if (app.cart.length === 0) return app.toast("Cart is empty", "info");
-                if (!app.currentUser) {
-                    app.toast("Please login to checkout", "info");
-                    app.router('login');
-                    app.toggleCart();
-                    return;
-                }
+                if(app.cart.length === 0) return app.toast("Cart empty", "info");
+                if(!app.currentUser) { app.toast("Login required", "info"); return app.router('login'); }
                 app.toggleCart();
                 app.router('checkout');
-                app.updateCartUI(); 
+                app.loadSavedAddresses();
             },
 
             saveAddress: async () => {
-                const newAddr = {
+                const addr = {
                     name: document.getElementById('addr-name').value,
                     mobile: document.getElementById('addr-mobile').value,
                     line: document.getElementById('addr-line').value,
@@ -1280,426 +922,168 @@
                     type: 'Home'
                 };
                 try {
-                    const userRef = getUserRef(app.currentUser.uid);
-                    const userSnap = await getDoc(userRef);
-                    const currentList = userSnap.data().addressList || [];
-                    currentList.push(newAddr);
-                    await updateDoc(userRef, { addressList: currentList });
-                    document.getElementById('new-address-form').reset();
+                    const ref = getUserRef(app.currentUser.uid);
+                    const snap = await getDoc(ref);
+                    const list = snap.data().addressList || [];
+                    list.push(addr);
+                    await updateDoc(ref, { addressList: list });
                     document.getElementById('new-address-form').classList.add('hide');
-                    app.toast("Address saved", "success");
                     app.loadSavedAddresses();
-                } catch (e) {
-                    app.toast("Failed to save address", "error");
-                }
+                    app.toast("Address Saved", "success");
+                } catch(e) { app.toast("Save failed", "error"); }
             },
-            
+
             loadSavedAddresses: async () => {
-                const userDoc = await getDoc(getUserRef(app.currentUser.uid));
-                const data = userDoc.data();
-                const addrContainer = document.getElementById('saved-addresses');
-                addrContainer.innerHTML = '';
+                const snap = await getDoc(getUserRef(app.currentUser.uid));
+                const list = snap.data().addressList || [];
+                const con = document.getElementById('saved-addresses');
+                con.innerHTML = '';
                 
-                if (data.addressList && data.addressList.length > 0) {
-                    data.addressList.forEach((addr, idx) => {
-                        addrContainer.innerHTML += `
-                            <label class="block border border-gray-200 rounded-xl p-5 cursor-pointer hover:bg-gray-50 transition has-[:checked]:border-accent has-[:checked]:bg-accent/5 has-[:checked]:ring-1 has-[:checked]:ring-accent relative group">
-                                <div class="flex items-start">
-                                    <input type="radio" name="selected-address" value="${idx}" ${idx===0?'checked':''} class="mt-1 text-accent focus:ring-accent w-4 h-4">
-                                    <div class="ml-4">
-                                        <div class="font-bold text-slate-800 text-sm">${addr.name} <span class="text-[10px] font-bold text-slate-500 ml-2 bg-gray-100 px-2 py-0.5 rounded-md uppercase tracking-wide border border-gray-200">${addr.type || 'Home'}</span></div>
-                                        <div class="text-sm text-slate-500 mt-1">${addr.line}, ${addr.area}</div>
-                                        <div class="text-sm text-slate-500">${addr.city} - ${addr.pin}</div>
-                                        <div class="text-xs text-slate-400 mt-2 flex items-center font-medium"><i data-lucide="phone" class="lucide-xs mr-1"></i> ${addr.mobile}</div>
-                                    </div>
-                                </div>
-                            </label>
-                        `;
-                    });
-                } else {
-                    addrContainer.innerHTML = '<div class="text-sm text-slate-500 p-6 bg-gray-50 rounded-2xl border border-dashed border-gray-300 text-center font-medium">No saved addresses found. Please add one.</div>';
-                    document.getElementById('new-address-form').classList.remove('hide');
-                }
-                app.updateIcons();
+                list.forEach((a, i) => {
+                    con.innerHTML += `
+                        <label class="clay-input p-4 block cursor-pointer flex items-start gap-3">
+                            <input type="radio" name="sel-addr" value="${i}" ${i===0?'checked':''} class="mt-1 text-primary">
+                            <div class="text-sm">
+                                <div class="font-bold text-textMain">${a.name}</div>
+                                <div class="text-slate-500">${a.line}, ${a.area}, ${a.city} - ${a.pin}</div>
+                                <div class="text-xs text-slate-400 mt-1">${a.mobile}</div>
+                            </div>
+                        </label>
+                    `;
+                });
+                if(list.length===0) con.innerHTML = '<p class="text-sm text-slate-400 italic">No addresses.</p>';
             },
 
             placeOrder: async () => {
-                const selectedAddrInput = document.querySelector('input[name="selected-address"]:checked');
-                const userDoc = await getDoc(getUserRef(app.currentUser.uid));
-                const addresses = userDoc.data().addressList || [];
-                
-                if (!selectedAddrInput && addresses.length === 0) { 
-                     return app.toast("Please select an address.", "info");
-                }
-                let addressToUse;
-                if (selectedAddrInput) {
-                    addressToUse = addresses[selectedAddrInput.value];
-                } else {
-                    if(addresses.length > 0) addressToUse = addresses[0];
-                    else return app.toast("Address error.", "error");
-                }
-
+                if(!app.currentUser) return;
                 app.toggleLoader(true);
                 try {
-                    const orderData = {
+                    const snap = await getDoc(getUserRef(app.currentUser.uid));
+                    const list = snap.data().addressList || [];
+                    const sel = document.querySelector('input[name="sel-addr"]:checked');
+                    if(!sel && list.length === 0) throw new Error("Add address first");
+                    
+                    const addr = list[sel ? sel.value : 0];
+                    const order = {
                         customerId: app.currentUser.uid,
-                        customerEmail: app.currentUser.email, // Storing Email explicitly
-                        customerName: addressToUse.name,      // Storing Name explicitly
+                        customerEmail: app.currentUser.email,
+                        customerName: addr.name,
                         items: app.cart,
                         total: app.cartTotalValue,
-                        address: addressToUse,
+                        address: addr,
                         paymentMethod: document.querySelector('input[name="payment"]:checked').value,
-                        status: 'Pending Verification', 
+                        status: 'Pending Verification',
                         trackingSteps: [{ status: 'Order Placed', time: new Date().toISOString() }],
                         createdAt: serverTimestamp()
                     };
-                    await addDoc(getCollectionRef('orders'), orderData);
-                    app.cart = [];
-                    app.updateCartUI();
+                    await addDoc(getCollectionRef('orders'), order);
+                    app.cart = []; app.updateCartUI();
                     app.router('success');
-                } catch(e) {
-                    app.toast("Order failed: " + e.message, "error");
-                } finally {
-                    app.toggleLoader(false);
-                }
+                } catch(e) { app.toast(e.message, "error"); }
+                finally { app.toggleLoader(false); }
             },
 
             loadCustomerOrders: async () => {
-                if(!app.currentUser) {
-                    app.toast("Login to view orders", "info");
-                    return app.router('login');
-                }
+                if(!app.currentUser) { app.toast("Login required", "info"); return app.router('login'); }
                 app.toggleLoader(true);
-                const list = document.getElementById('orders-list');
-                list.innerHTML = '';
-                
+                const con = document.getElementById('orders-list');
+                con.innerHTML = '';
                 try {
-                    const q = getCollectionRef('orders'); 
-                    const snap = await getDocs(q);
+                    const snap = await getDocs(getCollectionRef('orders'));
                     const myOrders = [];
-                    snap.forEach(d => {
-                        const data = d.data();
-                        if (data.customerId === app.currentUser.uid) {
-                            myOrders.push({id: d.id, ...data});
-                        }
-                    });
-                    myOrders.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-
-                    if (myOrders.length === 0) list.innerHTML = `<div class="text-center py-20 bg-white rounded-3xl border border-gray-100 shadow-sm"><i data-lucide="package-open" class="mx-auto w-16 h-16 text-slate-200 mb-4"></i><p class="text-slate-500 font-bold">No orders yet.</p></div>`;
+                    snap.forEach(d => { if(d.data().customerId === app.currentUser.uid) myOrders.push({id: d.id, ...d.data()}); });
+                    
+                    if(myOrders.length === 0) { con.innerHTML = '<div class="clay-card p-8 text-center text-slate-400">No orders yet</div>'; return; }
 
                     myOrders.forEach(o => {
-                        const steps = ['Order Placed', 'Verified', 'Packed', 'Shipped', 'Delivered'];
-                        let stepIdx = steps.indexOf(o.status);
-                        if(o.status === 'Pending Verification') stepIdx = 0; 
-                        if(stepIdx === -1 && o.status !== 'Pending Verification') stepIdx = 0; 
-                        
-                        let trackerHTML = `<div class="flex justify-between items-center mt-8 mb-2 text-xs relative px-4">
-                            <div class="absolute top-1.5 left-0 w-full h-1 bg-gray-100 -z-10 rounded-full"></div>
-                            <div class="absolute top-1.5 left-0 h-1 bg-accent -z-10 transition-all rounded-full" style="width: ${((stepIdx)/(steps.length-1))*100}%"></div>`;
-                        
-                        steps.forEach((s, idx) => {
-                            const active = idx <= stepIdx;
-                            trackerHTML += `
-                                <div class="flex flex-col items-center z-10">
-                                    <div class="w-4 h-4 rounded-full border-2 ${active ? 'bg-accent border-accent' : 'bg-white border-gray-300'} mb-2 shadow-sm transition-colors"></div>
-                                    <span class="${active ? 'text-accent font-bold' : 'text-gray-400'} text-[10px] uppercase tracking-wider">${s}</span>
+                        con.innerHTML += `
+                            <div class="clay-card p-6 mb-4">
+                                <div class="flex justify-between items-center mb-4 pb-4 border-b border-slate-100">
+                                    <div class="font-bold text-textMain text-sm">#${o.id.substr(0,8)}</div>
+                                    <span class="bg-slate-100 px-3 py-1 rounded-full text-xs font-bold text-slate-600 uppercase">${o.status}</span>
                                 </div>
-                            `;
-                        });
-                        trackerHTML += `</div>`;
-
-                        list.innerHTML += `
-                            <div class="bg-white p-8 rounded-3xl shadow-soft border border-gray-100 hover:shadow-card transition-shadow">
-                                <div class="flex flex-col md:flex-row justify-between font-bold mb-6 pb-6 border-b border-gray-50 items-start md:items-center gap-4">
-                                    <div class="flex items-center text-slate-700 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100"><i data-lucide="package" class="mr-2 lucide-sm text-accent"></i> Order #${o.id.substr(0,8)}</div>
-                                    <span class="bg-slate-100 text-slate-800 px-4 py-1.5 rounded-full text-[10px] uppercase font-bold tracking-widest border border-slate-200">${o.status}</span>
+                                <div class="space-y-2 mb-4">
+                                    ${o.items.map(i => `<div class="flex justify-between text-sm text-slate-500"><span>${i.name} x${i.qty}</span> <span class="font-bold">₹${i.price*i.qty}</span></div>`).join('')}
                                 </div>
-                                <div class="space-y-4 mb-8">
-                                    ${o.items.map(i => `
-                                        <div class="flex justify-between text-sm text-slate-600 bg-gray-50/50 p-3 rounded-xl">
-                                            <span class="flex items-center font-medium"><span class="w-1.5 h-1.5 bg-slate-300 rounded-full mr-3"></span> ${i.name} <span class="text-slate-400 ml-2 text-xs">x${i.qty}</span></span>
-                                            <span class="font-bold text-slate-800">₹${i.price * i.qty}</span>
-                                        </div>
-                                    `).join('')}
+                                <div class="flex justify-between font-extrabold text-textMain pt-2">
+                                    <span>Total</span> <span>₹${o.total}</span>
                                 </div>
-                                <div class="flex justify-between text-base font-extrabold pt-4 border-t border-dashed border-gray-200 text-slate-900">
-                                    <span>Total Amount</span>
-                                    <span class="text-xl">₹${o.total}</span>
-                                </div>
-                                ${o.status !== 'Cancelled' ? trackerHTML : '<div class="mt-6 text-center text-danger font-bold bg-red-50 p-3 rounded-xl text-xs uppercase border border-red-100 flex justify-center items-center"><i data-lucide="x-circle" class="lucide-sm mr-2"></i> Order Cancelled</div>'}
-                                
-                                ${o.status !== 'Delivered' && o.status !== 'Cancelled' 
-                                    ? `<div class="mt-8 flex justify-end"><button onclick="app.openCustomerChat('${o.id}')" class="text-xs text-accent font-bold hover:text-white flex items-center bg-accent/10 px-5 py-2.5 rounded-xl transition hover:bg-accent border border-accent/10 hover:border-accent"><i data-lucide="message-circle" class="mr-2 lucide-sm"></i> Need Help?</button></div>` 
-                                    : ''}
                             </div>
                         `;
                     });
-                } catch(e) {
-                    app.toast("Error loading orders", "error");
-                } finally {
-                    app.toggleLoader(false);
-                    app.updateIcons();
-                }
+                } catch(e) {} finally { app.toggleLoader(false); }
             },
 
             loadProfile: async () => {
                 if(!app.currentUser) return app.router('login');
-                const userRef = getUserRef(app.currentUser.uid);
-                const docSnap = await getDoc(userRef);
-                const data = docSnap.data();
-
-                document.getElementById('profile-name').innerText = data.name || 'User';
-                document.getElementById('profile-email').innerText = data.email;
-                document.getElementById('profile-role').innerText = (data.role || 'customer').toUpperCase();
+                const snap = await getDoc(getUserRef(app.currentUser.uid));
+                const d = snap.data();
+                document.getElementById('profile-name').innerText = d.name;
+                document.getElementById('profile-email').innerText = d.email;
+                document.getElementById('profile-role').innerText = d.role.toUpperCase();
                 
-                const list = document.getElementById('profile-address-list');
-                list.innerHTML = '';
-                if(data.addressList && data.addressList.length > 0) {
-                    data.addressList.forEach(addr => {
-                        list.innerHTML += `
-                            <div class="border border-gray-100 p-6 rounded-2xl bg-gray-50 text-sm hover:border-accent/30 transition group relative overflow-hidden">
-                                <div class="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition"><i data-lucide="edit-2" class="lucide-xs text-gray-400"></i></div>
-                                <div class="font-bold text-slate-800 mb-2 flex items-center text-base"><i data-lucide="home" class="lucide-sm mr-2 text-slate-400"></i> ${addr.name} <span class="ml-3 text-[10px] bg-white border border-gray-200 text-slate-500 px-2 py-0.5 rounded uppercase tracking-wide font-bold">${addr.type}</span></div>
-                                <div class="text-slate-600 ml-7 leading-relaxed">${addr.line}, ${addr.area}</div>
-                                <div class="text-slate-600 ml-7">${addr.city} - ${addr.pin}</div>
-                                <div class="text-xs text-slate-400 mt-3 ml-7 flex items-center font-medium"><i data-lucide="phone" class="lucide-xs mr-2"></i> ${addr.mobile}</div>
-                            </div>
-                        `;
-                    });
-                } else {
-                    list.innerHTML = '<p class="text-slate-400 text-sm italic col-span-2 text-center py-4">No saved addresses found.</p>';
-                }
-                app.updateIcons();
-            },
-
-            // --- CHAT LOGIC ---
-            openCustomerChat: async (orderId) => {
-                app.currentTicketId = orderId; 
-                document.getElementById('customer-chat-id').innerText = `Ticket #${orderId.substr(0,6)}`;
-                app.router('customer-chat');
-                
-                const chatRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'supportChats', orderId);
-                const chatSnap = await getDoc(chatRef);
-                if(!chatSnap.exists()) { 
-                     await setDoc(chatRef, { 
-                         customerId: app.currentUser.uid,
-                         orderId: orderId,
-                         messages: [{ sender: 'System', text: 'Ticket Created. An agent will be with you shortly.', time: new Date().toISOString() }] 
-                     });
-                }
-
-                app.chatUnsubscribe = onSnapshot(chatRef, (doc) => {
-                    if(doc.exists()) {
-                        const msgs = doc.data().messages || [];
-                        const container = document.getElementById('customer-chat-messages');
-                        container.innerHTML = '';
-                        msgs.forEach(m => {
-                            const isMe = m.sender === 'Customer';
-                            container.innerHTML += `
-                                <div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
-                                    <div class="${isMe ? 'bg-primary text-white rounded-br-none' : 'bg-white border border-gray-200 text-slate-800 rounded-bl-none'} px-5 py-3 rounded-2xl max-w-xs text-sm shadow-sm">
-                                        ${!isMe && m.sender !== 'System' ? `<div class="text-[10px] font-bold text-accent mb-1 uppercase tracking-wide">${m.sender}</div>` : ''}
-                                        ${m.text}
-                                    </div>
-                                </div>
-                            `;
-                        });
-                        container.scrollTop = container.scrollHeight;
-                    }
+                const con = document.getElementById('profile-address-list');
+                con.innerHTML = '';
+                (d.addressList||[]).forEach(a => {
+                    con.innerHTML += `
+                        <div class="clay-input p-4">
+                            <div class="font-bold text-sm text-textMain">${a.name}</div>
+                            <div class="text-xs text-slate-500">${a.city} - ${a.pin}</div>
+                        </div>
+                    `;
                 });
-            },
-
-            sendCustomerMessage: async (e) => {
-                e.preventDefault();
-                const input = document.getElementById('customer-chat-input');
-                const text = input.value;
-                if(!text) return;
-                
-                const chatRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'supportChats', app.currentTicketId);
-                const chatSnap = await getDoc(chatRef);
-                const messages = chatSnap.data().messages;
-                messages.push({ sender: 'Customer', text: text, time: new Date().toISOString() });
-                
-                await updateDoc(chatRef, { messages });
-                input.value = '';
-            },
-
-            // --- SELLER LOGIC ---
-            submitSellerApplication: async (e) => {
-                e.preventDefault();
-                app.toggleLoader(true);
-                const form = e.target;
-                const data = {
-                    uid: app.currentUser.uid,
-                    name: form.name.value,
-                    email: form.email.value,
-                    mobile: form.mobile.value,
-                    company: form.company.value,
-                    address: form.address.value,
-                    dob: form.dob.value,
-                    docImage: "mock_doc_path.jpg",
-                    photoImage: "mock_photo_path.jpg",
-                    status: 'Pending',
-                    createdAt: serverTimestamp()
-                };
-                try {
-                    await addDoc(getCollectionRef('sellerRequests'), data);
-                    app.toast("Application Submitted for Review!", "success");
-                    app.router('home');
-                } catch(err) {
-                    app.toast("Error submitting: " + err.message, "error");
-                } finally {
-                    app.toggleLoader(false);
-                }
             },
 
             loadSellerDashboard: async () => {
                 const pList = document.getElementById('seller-products-list');
                 const oList = document.getElementById('seller-orders-list');
-                pList.innerHTML = '';
-                oList.innerHTML = '';
-                let productCount = 0;
-                let pendingOrderCount = 0;
-                app.adminOrders = []; // Used for local lookup
-
-                // Products
+                pList.innerHTML = ''; oList.innerHTML = '';
+                let pCount = 0, oCount = 0;
+                
                 app.products.forEach(p => {
-                    productCount++;
+                    pCount++;
                     pList.innerHTML += `
-                        <div class="flex justify-between items-center border-b border-gray-50 py-4 last:border-0 hover:bg-gray-50 px-4 rounded-xl transition group">
-                            <div class="flex items-center space-x-4">
-                                <img src="${p.image}" class="w-14 h-14 rounded-xl object-contain bg-white border border-gray-100 p-1">
+                        <div class="clay-card !rounded-xl !shadow-sm p-4 mb-2 flex justify-between items-center border-none">
+                            <div class="flex items-center gap-3">
+                                <img src="${p.image}" class="w-10 h-10 rounded-lg bg-slate-50">
                                 <div>
-                                    <div class="font-bold text-sm text-slate-800 group-hover:text-accent transition-colors">${p.name}</div>
-                                    <div class="text-xs text-slate-500 font-bold">₹${p.price}</div>
+                                    <div class="font-bold text-sm text-textMain">${p.name}</div>
+                                    <div class="text-xs font-bold text-slate-400">₹${p.price} ${p.discount?`(-${p.discount}%)`:''}</div>
                                 </div>
                             </div>
-                            <div class="flex space-x-2">
-                                <button onclick="app.openEditProductModal('${p.id}')" class="text-gray-400 hover:text-accent hover:bg-accent/10 p-2.5 rounded-xl transition"><i data-lucide="edit-2" class="lucide-sm"></i></button>
-                                <button onclick="app.deleteProduct('${p.id}')" class="text-gray-400 hover:text-danger hover:bg-danger/10 p-2.5 rounded-xl transition"><i data-lucide="trash-2" class="lucide-sm"></i></button>
-                            </div>
+                            <button onclick="app.deleteProduct('${p.id}')" class="text-danger bg-red-50 p-2 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                         </div>
                     `;
                 });
 
-                // Orders
                 const snap = await getDocs(getCollectionRef('orders'));
                 snap.forEach(d => {
                     const o = d.data();
-                    const oid = d.id;
-                    app.adminOrders.push({id: oid, ...o});
-                    if(o.status !== 'Delivered' && o.status !== 'Cancelled') pendingOrderCount++;
-                    
+                    if(o.status !== 'Delivered') oCount++;
                     oList.innerHTML += `
-                        <div class="border border-gray-100 p-5 rounded-2xl mb-3 bg-white hover:shadow-md transition hover:border-accent/30 group">
-                            <div class="flex justify-between items-start mb-4">
-                                <div>
-                                    <div class="font-bold text-slate-800 text-sm flex items-center mb-1"><i data-lucide="package" class="lucide-xs mr-2 text-slate-300"></i> #${oid.substr(0,8)}</div>
-                                    <div class="text-xs text-slate-500">${new Date(o.createdAt?.seconds*1000).toLocaleDateString()}</div>
-                                </div>
-                                <div class="text-sm font-extrabold text-accent bg-accent/5 px-2 py-1 rounded-lg">₹${o.total}</div>
+                        <div class="clay-card !rounded-xl !shadow-sm p-4 mb-2 border-none">
+                            <div class="flex justify-between mb-2">
+                                <span class="font-bold text-sm">#${d.id.substr(0,6)}</span>
+                                <span class="text-xs font-bold text-primary">₹${o.total}</span>
                             </div>
-                            <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-50">
-                                <button onclick="app.viewOrderDetails('${oid}')" class="text-xs font-bold text-slate-600 hover:text-primary flex items-center"><i data-lucide="eye" class="lucide-xs mr-1.5"></i> View Full Details</button>
-                                ${o.status !== 'Pending Verification' ? `
-                                    <select onchange="app.updateOrderStatus('${oid}', this.value)" class="border border-gray-200 p-1.5 rounded-lg text-xs bg-gray-50 focus:ring-accent focus:border-accent cursor-pointer font-bold text-slate-700">
-                                        <option value="">Status...</option>
-                                        <option value="Packed" ${o.status==='Packed'?'selected':''}>Packed</option>
-                                        <option value="Shipped" ${o.status==='Shipped'?'selected':''}>Shipped</option>
-                                        <option value="Delivered" ${o.status==='Delivered'?'selected':''}>Delivered</option>
-                                    </select>
-                                ` : '<span class="text-[10px] text-warning font-bold bg-warning/10 px-2 py-1 rounded uppercase tracking-wide">Verifying</span>'}
+                            <div class="flex justify-between items-center mt-2">
+                                <select onchange="app.updateOrderStatus('${d.id}', this.value)" class="text-xs bg-slate-50 border-none rounded p-1">
+                                    <option value="">Status...</option>
+                                    <option value="Packed">Packed</option>
+                                    <option value="Shipped">Shipped</option>
+                                    <option value="Delivered">Delivered</option>
+                                </select>
                             </div>
                         </div>
                     `;
                 });
-
-                document.getElementById('seller-stat-products').innerText = productCount;
-                document.getElementById('seller-stat-orders').innerText = pendingOrderCount;
-                app.updateIcons();
-            },
-
-            // --- VIEW FULL ORDER DETAILS (MODAL) ---
-            viewOrderDetails: (oid) => {
-                const o = app.adminOrders.find(x => x.id === oid);
-                if(!o) return;
                 
-                const addr = o.address || {};
-                const modalContent = document.getElementById('order-details-content');
-                
-                modalContent.innerHTML = `
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Customer Info</h4>
-                            <div class="bg-gray-50 p-4 rounded-2xl space-y-2 text-sm border border-gray-100">
-                                <p><span class="font-bold text-slate-700">Name:</span> ${o.customerName || 'N/A'}</p>
-                                <p><span class="font-bold text-slate-700">Email:</span> ${o.customerEmail || 'N/A'}</p>
-                                <p><span class="font-bold text-slate-700">Mobile:</span> ${addr.mobile || 'N/A'}</p>
-                                <p><span class="font-bold text-slate-700">User ID:</span> <span class="font-mono text-xs bg-gray-200 px-1 rounded">${o.customerId}</span></p>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Shipping Address</h4>
-                            <div class="bg-gray-50 p-4 rounded-2xl space-y-1 text-sm text-slate-600 border border-gray-100">
-                                <p class="font-bold text-slate-800">${addr.name}</p>
-                                <p>${addr.line}</p>
-                                <p>${addr.area}</p>
-                                <p>${addr.city} - ${addr.pin}</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Order Items</h4>
-                        <div class="border border-gray-100 rounded-2xl overflow-hidden">
-                            ${o.items.map(i => `
-                                <div class="flex justify-between items-center p-4 border-b border-gray-50 last:border-0 bg-white">
-                                    <div class="flex items-center">
-                                        <div class="w-10 h-10 bg-gray-100 rounded-lg mr-3 flex items-center justify-center text-gray-400"><i data-lucide="box" class="lucide-sm"></i></div>
-                                        <div>
-                                            <div class="text-sm font-bold text-slate-800">${i.name}</div>
-                                            <div class="text-xs text-slate-500">Qty: ${i.qty}</div>
-                                        </div>
-                                    </div>
-                                    <div class="font-bold text-slate-800">₹${i.price * i.qty}</div>
-                                </div>
-                            `).join('')}
-                            <div class="bg-gray-50 p-4 flex justify-between items-center">
-                                <span class="font-bold text-slate-600 text-sm">Total Paid</span>
-                                <span class="font-extrabold text-slate-900 text-lg">₹${o.total}</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="text-xs text-center text-gray-400 pt-4">Order ID: ${o.id}</div>
-                `;
-                
-                document.getElementById('order-details-modal').classList.remove('hide');
+                document.getElementById('seller-stat-products').innerText = pCount;
+                document.getElementById('seller-stat-orders').innerText = oCount;
                 app.updateIcons();
             },
 
             openAddProductModal: () => {
-                document.getElementById('modal-title').innerText = "Add New Product";
-                document.querySelector('input[name="p_id"]').value = "";
-                document.getElementById('add-product-modal').classList.remove('hide');
-                document.querySelector('form[onsubmit="app.sellerSaveProduct(event)"]').reset();
-                document.getElementById('mock-btn').classList.remove('hide');
-            },
-
-            openEditProductModal: (pid) => {
-                const p = app.products.find(x => x.id === pid);
-                if(!p) return;
-                
-                document.getElementById('modal-title').innerText = "Edit Product";
-                const form = document.querySelector('form[onsubmit="app.sellerSaveProduct(event)"]');
-                form.p_id.value = pid;
-                form.p_name.value = p.name;
-                form.p_desc.value = p.desc;
-                form.p_price.value = p.price;
-                form.p_cat.value = p.category || 'Electronics';
-                form.p_img.value = p.image;
-                
-                document.getElementById('mock-btn').classList.add('hide');
                 document.getElementById('add-product-modal').classList.remove('hide');
             },
 
@@ -1707,306 +1091,125 @@
                 e.preventDefault();
                 app.toggleLoader(true);
                 const f = e.target;
-                const pid = f.p_id.value;
-                const data = {
-                    name: f.p_name.value,
-                    desc: f.p_desc.value,
-                    price: Number(f.p_price.value),
-                    image: f.p_img.value || 'https://placehold.co/400x400?text=Item',
-                    category: f.p_cat.value,
-                    rating: 5.0,
-                    sellerId: app.currentUser.uid
+                const d = {
+                    name: f.p_name.value, desc: f.p_desc.value, price: Number(f.p_price.value),
+                    discount: Number(f.p_discount.value) || 0,
+                    image: f.p_img.value || 'https://placehold.co/300', category: f.p_cat.value, rating: 5.0, sellerId: app.currentUser.uid
                 };
-                
                 try {
-                    if (pid) {
-                        await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'products', pid), data);
-                        app.toast("Product Updated!", "success");
-                    } else {
-                        await addDoc(getCollectionRef('products'), data);
-                        app.toast("Product Added!", "success");
-                    }
+                    await addDoc(getCollectionRef('products'), d);
+                    app.toast("Product Added", "success");
                     document.getElementById('add-product-modal').classList.add('hide');
                     f.reset();
-                    app.loadProducts().then(() => app.loadSellerDashboard());
-                } catch(err) {
-                    app.toast("Error: " + err.message, "error");
-                } finally {
-                    app.toggleLoader(false);
-                }
+                    await app.loadProducts(); app.loadSellerDashboard();
+                } catch(e) { app.toast(e.message, "error"); }
+                finally { app.toggleLoader(false); }
             },
 
             deleteProduct: async (pid) => {
-                if(!confirm("Are you sure you want to delete this product?")) return;
-                try {
+                if(confirm("Delete?")) {
                     await deleteDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'products', pid));
-                    app.toast("Product Deleted", "info");
-                    app.loadProducts().then(() => app.loadSellerDashboard());
-                } catch(e) {
-                    app.toast("Delete failed: " + e.message, "error");
+                    await app.loadProducts(); app.loadSellerDashboard();
                 }
             },
 
             updateOrderStatus: async (oid, status) => {
                 if(!status) return;
-                try {
-                    const ref = doc(db, 'artifacts', APP_ID, 'public', 'data', 'orders', oid);
-                    const snap = await getDoc(ref);
-                    const steps = snap.data().trackingSteps || [];
-                    steps.push({ status: status, time: new Date().toISOString() });
-                    
-                    await updateDoc(ref, { status: status, trackingSteps: steps });
-                    app.toast(`Order marked as ${status}`, "success");
-                } catch(e) {
-                    app.toast("Update failed", "error");
-                }
+                await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'orders', oid), { status });
+                app.toast("Status updated", "success");
             },
 
-            fillMockProduct: (form) => {
-                const rnd = Math.floor(Math.random()*100);
-                form.p_name.value = "Smart Sentinel Cam " + rnd;
-                form.p_desc.value = "Military grade encryption, 4K resolution, AI motion tracking and 1 year free cloud storage.";
-                form.p_price.value = 5499;
-                form.p_img.value = "https://placehold.co/400x300?text=Camera";
-            },
-
-            // --- ADMIN LOGIC ---
             loadAdminDashboard: async () => {
-                const ordersSnap = await getDocs(getCollectionRef('orders'));
-                let total = 0;
-                let count = 0;
-                const payQueue = document.getElementById('admin-payment-queue');
-                payQueue.innerHTML = '';
-                app.adminOrders = [];
-
-                ordersSnap.forEach(d => {
+                const snap = await getDocs(getCollectionRef('orders'));
+                let total = 0, count = 0;
+                const q = document.getElementById('admin-payment-queue');
+                q.innerHTML = '';
+                
+                snap.forEach(d => {
                     const o = d.data();
-                    const oid = d.id;
-                    app.adminOrders.push({id: oid, ...o});
-                    
-                    total += o.total;
-                    count++;
-                    
-                    if(o.status === 'Pending Verification') { 
-                         payQueue.innerHTML += `
-                            <div class="flex justify-between items-center bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
+                    total += o.total; count++;
+                    if(o.status === 'Pending Verification') {
+                        q.innerHTML += `
+                            <div class="clay-card !rounded-xl !shadow-sm p-4 mb-2 flex justify-between items-center border-none">
                                 <div>
-                                    <div class="font-bold text-slate-800 text-sm">Order #${oid.substr(0,8)}</div>
-                                    <div class="text-xs text-slate-500 mt-1">Amount: <span class="font-bold text-slate-900">₹${o.total}</span> | ${o.paymentMethod.toUpperCase()}</div>
-                                    <button onclick="app.viewOrderDetails('${oid}')" class="text-[10px] font-bold text-accent mt-2 hover:underline">View Details</button>
+                                    <div class="font-bold text-sm">#${d.id.substr(0,8)}</div>
+                                    <div class="text-xs text-slate-500">₹${o.total} - ${o.paymentMethod}</div>
                                 </div>
-                                <button onclick="app.adminVerifyPayment('${d.id}')" class="bg-primary text-white text-xs px-5 py-2.5 rounded-xl hover:bg-primaryLight transition shadow-md font-bold flex items-center"><i data-lucide="check" class="lucide-xs mr-2"></i> Approve</button>
-                            </div>
-                         `;
-                    }
-                });
-                
-                if(payQueue.innerHTML === '') payQueue.innerHTML = '<div class="text-slate-400 text-sm border border-dashed border-gray-200 p-6 rounded-2xl text-center">No pending payments.</div>';
-
-                document.getElementById('admin-total-sales').innerText = '₹' + total;
-                document.getElementById('admin-order-count').innerText = count;
-
-                const reqSnap = await getDocs(getCollectionRef('sellerRequests'));
-                const reqContainer = document.getElementById('admin-seller-requests');
-                reqContainer.innerHTML = '';
-                
-                reqSnap.forEach(d => {
-                    const req = d.data();
-                    if(req.status === 'Pending') {
-                        reqContainer.innerHTML += `
-                            <div class="border border-gray-100 p-5 rounded-2xl flex justify-between items-start bg-white mb-2 shadow-sm">
-                                <div>
-                                    <div class="font-bold text-slate-800 text-sm">${req.company}</div>
-                                    <div class="text-xs text-slate-500 mt-1">${req.name} (${req.email})</div>
-                                    <div class="text-[10px] text-slate-400 mt-1 flex items-center font-bold uppercase tracking-wide"><i data-lucide="file-text" class="lucide-xs mr-1"></i> Docs Uploaded</div>
-                                </div>
-                                <button onclick="app.approveSeller('${d.id}', '${req.uid}')" class="bg-success text-white text-xs px-4 py-2 rounded-xl hover:bg-emerald-600 transition shadow-md font-bold">Approve</button>
+                                <button onclick="app.adminVerifyPayment('${d.id}')" class="bg-success text-white px-3 py-1 rounded text-xs font-bold">Approve</button>
                             </div>
                         `;
                     }
                 });
-                if (reqContainer.innerHTML === '') reqContainer.innerHTML = '<div class="text-slate-400 text-sm text-center py-6 border border-dashed border-gray-200 rounded-2xl font-medium">No pending requests.</div>';
-                app.updateIcons();
+                if(q.innerHTML === '') q.innerHTML = '<p class="text-center text-xs text-slate-400">No pending payments</p>';
+                document.getElementById('admin-total-sales').innerText = '₹' + total;
+                document.getElementById('admin-order-count').innerText = count;
+                
+                // Seller Requests
+                const rSnap = await getDocs(getCollectionRef('sellerRequests'));
+                const rCon = document.getElementById('admin-seller-requests');
+                rCon.innerHTML = '';
+                rSnap.forEach(d => {
+                    const r = d.data();
+                    if(r.status === 'Pending') {
+                        rCon.innerHTML += `
+                            <div class="clay-card !rounded-xl !shadow-sm p-4 mb-2 flex justify-between items-center border-none">
+                                <div><div class="font-bold text-sm">${r.company}</div><div class="text-xs">${r.name}</div></div>
+                                <button onclick="app.approveSeller('${d.id}', '${r.uid}')" class="bg-primary text-white px-3 py-1 rounded text-xs font-bold">Approve</button>
+                            </div>
+                        `;
+                    }
+                });
             },
 
             adminVerifyPayment: async (oid) => {
-                try {
-                     const ref = doc(db, 'artifacts', APP_ID, 'public', 'data', 'orders', oid);
-                     const snap = await getDoc(ref);
-                     const steps = snap.data().trackingSteps || [];
-                     steps.push({ status: 'Verified', time: new Date().toISOString() });
-                     
-                     await updateDoc(ref, { status: 'Verified', trackingSteps: steps });
-                     app.toast("Payment Verified. Order Processing.", "success");
-                     app.loadAdminDashboard();
-                } catch(e) {
-                    app.toast("Error verifying: " + e.message, "error");
-                }
+                await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'orders', oid), { status: 'Verified' });
+                app.loadAdminDashboard();
             },
 
-            approveSeller: async (reqId, uid) => {
-                if(!confirm("Approve this seller?")) return;
-                try {
-                    await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'sellerRequests', reqId), { status: 'Approved' });
-                    await updateDoc(getUserRef(uid), { role: 'seller' });
-                    app.toast("Seller Approved!", "success");
-                    app.loadAdminDashboard();
-                } catch(e) {
-                    app.toast("Error approving seller", "error");
-                }
+            approveSeller: async (rid, uid) => {
+                await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'sellerRequests', rid), { status: 'Approved' });
+                await updateDoc(getUserRef(uid), { role: 'seller' });
+                app.loadAdminDashboard();
             },
 
-            createServiceAccount: async (e) => {
-                e.preventDefault();
-                const email = document.getElementById('service-email-input').value;
-                app.toast(`Service Account Created for ${email}`, "success");
+            createServiceAccount: async (e) => { e.preventDefault(); app.toast("Service Agent Created", "success"); },
+            fillMockProduct: (f) => {
+                f.p_name.value = "Smart Lock Pro"; f.p_desc.value = "Fingerprint entry, WiFi enabled.";
+                f.p_price.value = 12000; f.p_discount.value = 10; f.p_img.value = "https://placehold.co/400?text=Lock";
             },
-            
-            createSellerManual: async (e) => {
-                e.preventDefault();
-                const email = document.getElementById('manual-seller-email').value;
-                app.toast(`Seller Account Created for ${email}`, "success");
-            },
-
-            // --- SERVICE LOGIC ---
-            loadServiceDashboard: async () => {
-                const list = document.getElementById('support-tickets-list');
-                list.innerHTML = '';
-                
-                try {
-                    const snap = await getDocs(getCollectionRef('supportChats'));
-                    snap.forEach(d => {
-                        const t = d.data();
-                        const lastMsg = t.messages[t.messages.length -1];
-                        list.innerHTML += `
-                             <div onclick="app.openServiceChat('${d.id}')" class="p-4 hover:bg-gray-50 cursor-pointer border-b border-gray-100 rounded-xl transition group">
-                                <div class="flex justify-between mb-1">
-                                    <span class="font-bold text-xs text-slate-800 group-hover:text-primary transition-colors">Order #${t.orderId.substr(0,6)}</span>
-                                </div>
-                                <div class="text-xs text-slate-500 truncate font-medium">${lastMsg ? lastMsg.text : 'New Ticket'}</div>
-                             </div>
-                        `;
-                    });
-                    if(list.innerHTML === '') list.innerHTML = '<div class="text-slate-400 p-6 text-sm text-center font-medium">No active tickets</div>';
-                    app.updateIcons();
-                } catch(e) {
-                    console.error(e);
-                }
-            },
-
-            openServiceChat: async (ticketId) => {
-                app.currentTicketId = ticketId;
-                document.getElementById('service-chat-header').innerHTML = `<span>Ticket #${ticketId.substr(0,8)}</span>`;
-                document.getElementById('service-chat-input').disabled = false;
-                document.getElementById('service-chat-send-btn').disabled = false;
-                
-                const chatRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'supportChats', ticketId);
-                
-                if(app.chatUnsubscribe) app.chatUnsubscribe();
-                app.chatUnsubscribe = onSnapshot(chatRef, (doc) => {
-                    if(doc.exists()) {
-                        const msgs = doc.data().messages || [];
-                        const container = document.getElementById('service-chat-messages');
-                        container.innerHTML = '';
-                        msgs.forEach(m => {
-                            const isMe = m.sender !== 'Customer' && m.sender !== 'System';
-                            container.innerHTML += `
-                                <div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
-                                    <div class="${isMe ? 'bg-primary text-white rounded-br-none' : 'bg-white border border-gray-200 text-slate-800 rounded-bl-none'} px-5 py-3 rounded-2xl max-w-xs text-sm shadow-sm mb-2">
-                                        <div class="text-[10px] opacity-70 mb-1 font-bold uppercase tracking-wide">${m.sender}</div>
-                                        ${m.text}
-                                    </div>
-                                </div>
-                            `;
-                        });
-                        container.scrollTop = container.scrollHeight;
-                    }
-                });
-            },
-
-            sendServiceMessage: async (e) => {
-                e.preventDefault();
-                const input = document.getElementById('service-chat-input');
-                const text = input.value;
-                if(!text) return;
-                
-                const chatRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'supportChats', app.currentTicketId);
-                const chatSnap = await getDoc(chatRef);
-                const messages = chatSnap.data().messages;
-                messages.push({ sender: 'Service Team', text: text, time: new Date().toISOString() });
-                
-                await updateDoc(chatRef, { messages });
-                input.value = '';
-            },
-
-            // --- UTILS ---
-            toggleLoader: (show) => {
-                const el = document.getElementById('global-loader');
-                if(show) el.classList.remove('hide');
-                else el.classList.add('hide');
-            }
+            toggleLoader: (s) => document.getElementById('global-loader').classList.toggle('hide', !s)
         };
 
-        // --- INIT LISTENER ---
+        // Clip-path styles for hexagon
+        const style = document.createElement('style');
+        style.innerHTML = `.clip-path-hexagon { clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%); }`;
+        document.head.appendChild(style);
+
         onAuthStateChanged(auth, async (user) => {
-            if (user) {
+            if(user) {
                 app.currentUser = user;
+                const snap = await getDoc(getUserRef(user.uid));
+                if(snap.exists()) app.userRole = snap.data().role;
                 
-                if (user.email === ADMIN_EMAIL) {
-                    app.userRole = 'admin';
-                } else {
-                    const userDoc = await getDoc(getUserRef(user.uid));
-                    if (userDoc.exists()) {
-                        app.userRole = userDoc.data().role || 'customer';
-                    }
-                }
-
-                document.getElementById('auth-section').innerHTML = `
-                    <div class="flex items-center space-x-2">
-                        <span class="text-xs font-bold text-slate-800 hidden lg:inline-block bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200 uppercase tracking-widest">${app.userRole}</span>
-                        <button onclick="app.logout()" class="text-xs bg-white border border-gray-200 hover:bg-gray-50 text-slate-800 px-4 py-2 rounded-lg transition font-bold shadow-sm">Logout</button>
-                    </div>
-                `;
-                document.getElementById('mobile-auth-section').innerHTML = `
-                    <div class="px-3 pb-2 pt-2 border-t border-gray-100">
-                         <div class="text-xs text-gray-400 mb-2 uppercase font-bold tracking-wide">${user.email}</div>
-                         <button onclick="app.logout()" class="w-full text-left py-3 text-danger hover:bg-red-50 rounded-lg transition px-2 font-bold flex items-center"><i data-lucide="log-out" class="mr-2 lucide-sm"></i> Logout</button>
-                    </div>
-                 `;
-
+                const logoutBtn = `<button onclick="app.logout()" class="bg-white/10 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-white/20 transition">Logout</button>`;
+                document.getElementById('auth-section-desktop').innerHTML = logoutBtn;
+                
+                // Set Avatar if available
+                if(user.photoURL) document.getElementById('header-avatar').src = user.photoURL;
+                
                 if(app.userRole === 'admin') document.getElementById('nav-admin').classList.remove('hide');
                 if(app.userRole === 'seller') document.getElementById('nav-seller').classList.remove('hide');
-                if(app.userRole === 'service') document.getElementById('nav-service').classList.remove('hide');
-                
-                document.getElementById('nav-profile').classList.remove('hide');
-                document.getElementById('mobile-nav-profile').classList.remove('hide');
-
-                if (app.products.length === 0) app.loadProducts();
-
             } else {
-                app.currentUser = null;
-                app.userRole = 'guest';
-                document.getElementById('auth-section').innerHTML = `
-                    <button onclick="app.router('login')" class="bg-primary text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-primaryLight transition shadow-lg shadow-primary/20">Login</button>
-                `;
-                document.getElementById('mobile-auth-section').innerHTML = `
-                    <button onclick="app.router('login')" class="block w-full text-left py-3 mt-2 border-t border-gray-100 px-3 hover:bg-gray-50 rounded-lg text-slate-800 font-medium">Login / Sign Up</button>
-                `;
-                
-                document.getElementById('nav-admin').classList.add('hide');
-                document.getElementById('nav-seller').classList.add('hide');
-                document.getElementById('nav-service').classList.add('hide');
-                document.getElementById('nav-profile').classList.add('hide');
-                document.getElementById('mobile-nav-profile').classList.add('hide');
-                
-                app.loadProducts();
+                app.currentUser = null; app.userRole = 'guest';
+                const loginBtn = `<button onclick="app.router('login')" class="bg-white text-primary px-5 py-2 rounded-xl text-sm font-bold shadow-lg hover:bg-gray-100 transition">Login</button>`;
+                document.getElementById('auth-section-desktop').innerHTML = loginBtn;
+                ['nav-admin', 'nav-seller'].forEach(id => document.getElementById(id).classList.add('hide'));
             }
+            if(app.products.length === 0) app.loadProducts();
             app.updateIcons();
         });
 
-        // Initial Load
         app.router('home');
-
     </script>
 </body>
 </html>
