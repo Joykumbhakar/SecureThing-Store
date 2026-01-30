@@ -239,14 +239,12 @@
                 <span class="text-xl font-extrabold tracking-tight text-primary hidden md:block">SecureThing</span>
             </div>
             
-            <!-- Desktop Navigation Tabs -->
             <div class="hidden md:flex items-center space-x-2">
                 <button onclick="app.router('home')" id="nav-home" class="nav-link-desktop">Shop</button>
                 <button onclick="app.router('categories')" id="nav-categories" class="nav-link-desktop">Categories</button>
                 <button onclick="app.router('orders')" id="nav-orders" class="nav-link-desktop">Orders</button>
                 <button onclick="app.router('wishlist')" id="nav-wishlist" class="nav-link-desktop flex items-center gap-1"><i data-lucide="heart" class="w-4 h-4 text-accent"></i> Wishlist</button>
                 <button onclick="app.router('profile')" id="nav-profile" class="nav-link-desktop">Profile</button>
-                <button onclick="app.toggleCart()" id="nav-cart" class="nav-link-desktop flex items-center gap-1 text-primary"><i data-lucide="shopping-bag" class="w-4 h-4"></i> Cart <span id="cart-badge-desktop" class="bg-danger text-white text-[10px] px-1.5 rounded-full ml-1">0</span></button>
                 
                 <button onclick="app.router('service-dashboard')" class="nav-link-desktop text-accent hide" id="nav-service">Support</button>
                 <button onclick="app.router('seller-dashboard')" class="nav-link-desktop text-warning hide" id="nav-seller">Seller Portal</button>
@@ -820,7 +818,7 @@
         window.app = {
             currentUser: null, userRole: 'customer', cart: [], products: [], 
             currentTicketId: null, activeCategory: 'all', currentProductDetailId: null, 
-            wishlist: [],
+            wishlist: [], cartTotalValue: 0,
             categories: [
                  { id: 'Electronics', name: 'Electronics', icon: 'cpu', color: 'bg-blue-100 text-blue-600' },
                  { id: 'Home', name: 'Home', icon: 'home', color: 'bg-orange-100 text-orange-600' },
