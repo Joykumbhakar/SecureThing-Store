@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#EBF0F6">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#583FBC">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>SecureThing | Smart Security Store</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -40,7 +42,7 @@
                         warning: '#FF8E3C',
                         textMain: '#2D2D44',
                         textMuted: '#7D7D92',
-                        navCurve: '#583FBC' 
+                        navCurve: '#583FBC'
                     },
                     boxShadow: {
                         'clay-card': '20px 20px 60px #c8cdd6, -20px -20px 60px #ffffff',
@@ -79,10 +81,10 @@
     </script>
 
     <style>
-        body { 
-            background-color: #EBF0F6; 
+        body {
+            background-color: #EBF0F6;
             color: #2D2D44;
-            background-image: 
+            background-image:
                 radial-gradient(at 0% 0%, rgba(127, 90, 240, 0.1) 0px, transparent 50%),
                 radial-gradient(at 100% 100%, rgba(245, 110, 145, 0.1) 0px, transparent 50%);
             background-attachment: fixed;
@@ -93,28 +95,181 @@
             flex-direction: column;
             -webkit-tap-highlight-color: transparent;
         }
-        
+
         main {
             flex: 1;
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
-            padding-bottom: 140px; 
+            padding-bottom: 140px;
             position: relative;
         }
-        
-        .hide { display: none !important; }
-        
-        /* Clay Components */
-        .clay-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(20px);
-            border-radius: 30px;
-            box-shadow: 20px 20px 40px rgba(163, 177, 198, 0.4), 
-                        -20px -20px 40px rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            transition: transform 0.3s ease;
+
+        .hide {
+            display: none !important;
         }
-        
+
+        /* Product Card */
+        .product-card {
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        /* Image area */
+        .product-image-wrap {
+            position: relative;
+            background: rgba(255, 255, 255, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Actions */
+        .product-actions {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+        }
+
+        .wishlist-btn {
+            background: #ffffff;
+            padding: 8px;
+            border-radius: 12px;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            color: #cbd5e1;
+        }
+
+        .wishlist-btn.liked {
+            color: #ef4444;
+        }
+
+        .wishlist-btn.liked i {
+            fill: currentColor;
+        }
+
+        /* Content */
+        .product-content {
+            padding: 16px;
+        }
+
+        .product-category {
+            font-size: 10px;
+            font-weight: 800;
+            color: #7F5AF0;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+
+        .product-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #2D2D44;
+            margin: 6px 0 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Footer */
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 0px;
+        }
+
+        .product-price {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .final-price {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #2D2D44;
+        }
+
+        /* Add to cart */
+        .add-cart-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Skeleton Card Layout */
+        .clay-card.skeleton-card {
+            position: relative;
+            height: 320px;
+            /* h-80 equivalent */
+            overflow: hidden;
+        }
+
+        /* Top image skeleton */
+        .skeleton-card .skeleton-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 160px;
+            border-radius: 30px 30px 0 0;
+        }
+
+        /* Bottom content */
+        .skeleton-card .card-content {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 12px 16px;
+            /* ↓ reduced padding */
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* Footer row */
+        .skeleton-card .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 6px;
+        }
+
+        /* Skeleton sizes */
+        .skeleton-title-small {
+            height: 14px;
+            width: 35%;
+            border-radius: 6px;
+        }
+
+        .skeleton-title-large {
+            height: 20px;
+            width: 75%;
+            border-radius: 8px;
+        }
+
+        .skeleton-price {
+            height: 28px;
+            width: 25%;
+            border-radius: 8px;
+        }
+
+        .skeleton-avatar {
+            height: 28px;
+            width: 28px;
+            border-radius: 50%;
+        }
+
+
         .clay-input {
             background: #EBF0F6;
             border-radius: 15px;
@@ -123,6 +278,7 @@
             color: #583FBC;
             transition: all 0.3s ease;
         }
+
         .clay-input:focus {
             outline: none;
             box-shadow: inset 2px 2px 5px #d1d9e6, inset -2px -2px 5px #ffffff, 0 0 0 2px #7F5AF0;
@@ -133,93 +289,206 @@
             font-weight: 800;
             transition: all 0.2s ease;
             box-shadow: 8px 8px 16px rgba(163, 177, 198, 0.4), -8px -8px 16px rgba(255, 255, 255, 0.8);
-            border: none; cursor: pointer;
+            border: none;
+            cursor: pointer;
         }
+
         .clay-btn:active {
             transform: translateY(2px);
             box-shadow: inset 4px 4px 8px rgba(163, 177, 198, 0.4), inset -4px -4px 8px rgba(255, 255, 255, 0.8);
         }
+
         .clay-btn-primary {
             background: linear-gradient(135deg, #7F5AF0 0%, #583FBC 100%);
             color: white;
             box-shadow: 8px 8px 20px rgba(88, 63, 188, 0.3);
         }
-        .clay-btn-secondary { background: #EBF0F6; color: #583FBC; }
+
+        .clay-btn-secondary {
+            background: #EBF0F6;
+            color: #583FBC;
+        }
 
         /* Utilities */
         .skeleton {
             background: #f6f7f8;
             background-image: linear-gradient(to right, #f6f7f8 0%, #edeef1 20%, #f6f7f8 40%, #f6f7f8 100%);
             background-repeat: no-repeat;
-            background-size: 1000px 100%; 
+            background-size: 1000px 100%;
             animation: shimmer 1s infinite linear forwards;
         }
 
-        #toast-container { position: absolute; bottom: 120px; right: 24px; z-index: 100; display: flex; flex-direction: column; gap: 12px; pointer-events: none; }
+        #toast-container {
+            position: absolute;
+            bottom: 120px;
+            right: 24px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            pointer-events: none;
+        }
+
         .toast {
             pointer-events: auto;
-            min-width: 300px; padding: 16px; border-radius: 20px;
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            display: flex; align-items: center; border: 1px solid rgba(255,255,255,0.5);
+            min-width: 300px;
+            padding: 16px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
             animation: slideIn 0.3s ease-out;
         }
-        @keyframes slideIn { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
 
         .nav-icon-mobile {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            width: 100%; height: 100%; color: rgba(255,255,255,0.5);
-            transition: all 0.3s ease; position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            color: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+            position: relative;
         }
-        .nav-icon-mobile.active { color: white; transform: translateY(-5px); }
+
+        .nav-icon-mobile.active {
+            color: white;
+            transform: translateY(-5px);
+        }
+
         .nav-icon-mobile.active::after {
-            content: ''; position: absolute; bottom: 10px; width: 4px; height: 4px;
-            background: #F56E91; border-radius: 50%;
+            content: '';
+            position: absolute;
+            bottom: 10px;
+            width: 4px;
+            height: 4px;
+            background: #F56E91;
+            border-radius: 50%;
         }
 
         .nav-link-desktop {
-            position: relative; padding: 8px 12px; color: #2D2D44;
-            font-weight: 700; font-size: 0.9rem; transition: color 0.3s;
+            position: relative;
+            padding: 8px 12px;
+            color: #2D2D44;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: color 0.3s;
         }
-        .nav-link-desktop:hover, .nav-link-desktop.active { color: #583FBC; }
+
+        .nav-link-desktop:hover,
+        .nav-link-desktop.active {
+            color: #583FBC;
+        }
+
         .nav-link-desktop.active::after {
-            content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
-            width: 6px; height: 6px; background: #583FBC; border-radius: 50%;
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: #583FBC;
+            border-radius: 50%;
         }
-        
-        .fab-pulse { animation: pulse-glow 2s infinite; }
+
+        .fab-pulse {
+            animation: pulse-glow 2s infinite;
+        }
+
         @keyframes pulse-glow {
-            0% { box-shadow: 0 0 0 0 rgba(127, 90, 240, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(127, 90, 240, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(127, 90, 240, 0); }
+            0% {
+                box-shadow: 0 0 0 0 rgba(127, 90, 240, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 10px rgba(127, 90, 240, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(127, 90, 240, 0);
+            }
         }
 
         #header-search-bar {
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            max-height: 0; opacity: 0; overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
         }
-        #header-search-bar.open { max-height: 80px; opacity: 1; margin-top: 10px; }
+
+        #header-search-bar.open {
+            max-height: 80px;
+            opacity: 1;
+            margin-top: 10px;
+        }
 
         .sale-badge {
-            position: absolute; top: 12px; left: 12px;
-            background: #F56E91; color: white; font-weight: 800; font-size: 0.65rem;
-            padding: 4px 8px; border-radius: 8px; text-transform: uppercase;
-            box-shadow: 0 4px 10px rgba(245, 110, 145, 0.4); z-index: 10;
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: #F56E91;
+            color: white;
+            font-weight: 800;
+            font-size: 0.55rem;
+            padding: 2px 6px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 10px rgba(245, 110, 145, 0.4);
+            z-index: 10;
         }
-        .old-price { text-decoration: line-through; color: #7D7D92; font-size: 0.75rem; margin-right: 6px; }
-        
+
+        .old-price {
+            text-decoration: line-through;
+            color: #7D7D92;
+            font-size: 0.75rem;
+            margin-right: 6px;
+        }
+
         .chat-bubble-me {
-            background: linear-gradient(135deg, #7F5AF0 0%, #583FBC 100%); color: white;
-            border-radius: 18px 18px 0 18px; padding: 10px 16px; box-shadow: var(--tw-shadow-clay-bubble-me);
+            background: linear-gradient(135deg, #7F5AF0 0%, #583FBC 100%);
+            color: white;
+            border-radius: 18px 18px 0 18px;
+            padding: 10px 16px;
+            box-shadow: var(--tw-shadow-clay-bubble-me);
         }
+
         .chat-bubble-other {
-            background: #ffffff; color: #2D2D44;
-            border-radius: 18px 18px 18px 0; padding: 10px 16px; box-shadow: var(--tw-shadow-clay-bubble-other);
+            background: #ffffff;
+            color: #2D2D44;
+            border-radius: 18px 18px 18px 0;
+            padding: 10px 16px;
+            box-shadow: var(--tw-shadow-clay-bubble-other);
         }
-        
-        .category-card:active { transform: scale(0.98); }
+
+        .category-card:active {
+            transform: scale(0.98);
+        }
+
+        /* Ensure banner aspect ratio */
+        #home-banner-container {
+            aspect-ratio: 3584 / 1184;
+            min-height: auto;
+        }
     </style>
 </head>
+
 <body class="flex flex-col h-screen w-screen relative overflow-hidden">
 
     <div id="toast-container"></div>
@@ -228,7 +497,8 @@
     <nav class="z-40 transition-all duration-300 w-full shrink-0">
         <div class="px-6 py-6 flex justify-between items-center">
             <!-- Mobile Menu Toggle (Links to Categories) -->
-            <button onclick="app.router('categories')" class="text-primary p-2 bg-white rounded-xl shadow-clay-btn md:hidden">
+            <button onclick="app.router('categories')"
+                class="text-primary p-2 bg-white rounded-xl shadow-clay-btn md:hidden">
                 <i data-lucide="layout-grid" class="w-6 h-6"></i>
             </button>
 
@@ -238,35 +508,48 @@
                 </div>
                 <span class="text-xl font-extrabold tracking-tight text-primary hidden md:block">SecureThing</span>
             </div>
-            
+
             <div class="hidden md:flex items-center space-x-2">
                 <button onclick="app.router('home')" id="nav-home" class="nav-link-desktop">Shop</button>
-                <button onclick="app.router('categories')" id="nav-categories" class="nav-link-desktop">Categories</button>
+                <button onclick="app.router('categories')" id="nav-categories"
+                    class="nav-link-desktop">Categories</button>
                 <button onclick="app.router('orders')" id="nav-orders" class="nav-link-desktop">Orders</button>
-                <button onclick="app.router('wishlist')" id="nav-wishlist" class="nav-link-desktop flex items-center gap-1"><i data-lucide="heart" class="w-4 h-4 text-accent"></i> Wishlist</button>
+                <button onclick="app.router('wishlist')" id="nav-wishlist"
+                    class="nav-link-desktop flex items-center gap-1"><i data-lucide="heart"
+                        class="w-4 h-4 text-accent"></i> Wishlist</button>
                 <button onclick="app.router('profile')" id="nav-profile" class="nav-link-desktop">Profile</button>
-                
-                <button onclick="app.router('service-dashboard')" class="nav-link-desktop text-accent hide" id="nav-service">Support</button>
-                <button onclick="app.router('seller-dashboard')" class="nav-link-desktop text-warning hide" id="nav-seller">Seller Portal</button>
-                <button onclick="app.router('admin-dashboard')" class="nav-link-desktop text-primary hide" id="nav-admin">Admin</button>
+
+                <button onclick="app.router('service-dashboard')" class="nav-link-desktop text-accent hide"
+                    id="nav-service">Support</button>
+                <button onclick="app.router('seller-dashboard')" class="nav-link-desktop text-warning hide"
+                    id="nav-seller">Seller Portal</button>
+                <button onclick="app.router('admin-dashboard')" class="nav-link-desktop text-primary hide"
+                    id="nav-admin">Admin</button>
                 <div id="auth-section-desktop" class="ml-4"></div>
             </div>
 
             <div class="flex items-center gap-4">
-                <button onclick="app.toggleHeaderSearch()" class="text-primary bg-white p-2.5 rounded-full shadow-clay-float relative group">
+                <button onclick="app.toggleHeaderSearch()"
+                    class="text-primary bg-white p-2.5 rounded-full shadow-clay-float relative group">
                     <i data-lucide="search" class="w-5 h-5"></i>
                 </button>
-                <button onclick="app.router('profile')" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-primary shadow-clay-float border-2 border-white overflow-hidden relative">
-                    <img id="header-avatar" src="https://ui-avatars.com/api/?name=User&background=583FBC&color=fff" class="w-full h-full object-cover">
+                <button onclick="app.router('profile')"
+                    class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-primary shadow-clay-float border-2 border-white overflow-hidden relative">
+                    <img id="header-avatar" src="https://ui-avatars.com/api/?name=User&background=583FBC&color=fff"
+                        class="w-full h-full object-cover">
                 </button>
             </div>
         </div>
 
         <div id="header-search-bar" class="px-6 pb-2">
             <div class="relative">
-                <input type="text" id="global-search-input" onkeydown="if(event.key === 'Enter') app.performSearch(this.value)" placeholder="Search products & press Enter..." class="clay-input w-full py-4 pl-12 pr-12 text-sm font-bold shadow-clay-inner">
+                <input type="text" id="global-search-input"
+                    onkeydown="if(event.key === 'Enter') app.performSearch(this.value)"
+                    placeholder="Search products & press Enter..."
+                    class="clay-input w-full py-4 pl-12 pr-12 text-sm font-bold shadow-clay-inner">
                 <i data-lucide="search" class="absolute left-4 top-4 text-primary w-5 h-5"></i>
-                <button onclick="app.clearSearch()" class="absolute right-4 top-4 text-slate-400 hover:text-danger"><i data-lucide="x" class="w-5 h-5"></i></button>
+                <button onclick="app.clearSearch()" class="absolute right-4 top-4 text-slate-400 hover:text-danger"><i
+                        data-lucide="x" class="w-5 h-5"></i></button>
             </div>
         </div>
     </nav>
@@ -274,22 +557,31 @@
     <!-- Mobile Bottom Navigation -->
     <div class="absolute bottom-0 left-0 w-full z-50 md:hidden pointer-events-none pb-safe">
         <div class="relative w-full h-[90px] pointer-events-auto">
-            <svg class="absolute bottom-0 left-0 w-full h-full drop-shadow-[0_-10px_20px_rgba(88,63,188,0.2)]" viewBox="0 0 100 24" preserveAspectRatio="none">
-                <path d="M0,5 Q0,0 5,0 H32 Q42,0 50,9 Q58,0 68,0 H95 Q100,0 100,5 V24 H0 Z" fill="#583FBC" vector-effect="non-scaling-stroke" />
+            <svg class="absolute bottom-0 left-0 w-full h-full drop-shadow-[0_-10px_20px_rgba(88,63,188,0.2)]"
+                viewBox="0 0 100 24" preserveAspectRatio="none">
+                <path d="M0,5 Q0,0 5,0 H32 Q42,0 50,9 Q58,0 68,0 H95 Q100,0 100,5 V24 H0 Z" fill="#583FBC"
+                    vector-effect="non-scaling-stroke" />
             </svg>
             <div class="absolute inset-0 flex justify-between items-end px-4 pb-2">
-                <button onclick="app.router('home')" class="nav-icon-mobile w-1/5 pb-4" id="mob-nav-home"><i data-lucide="home" class="w-6 h-6"></i></button>
-                <button onclick="app.router('wishlist')" class="nav-icon-mobile w-1/5 pb-4" id="mob-nav-wishlist"><i data-lucide="heart" class="w-6 h-6"></i></button>
+                <button onclick="app.router('home')" class="nav-icon-mobile w-1/5 pb-4" id="mob-nav-home"><i
+                        data-lucide="home" class="w-6 h-6"></i></button>
+                <button onclick="app.router('wishlist')" class="nav-icon-mobile w-1/5 pb-4" id="mob-nav-wishlist"><i
+                        data-lucide="heart" class="w-6 h-6"></i></button>
                 <div class="w-1/5 relative flex justify-center h-full">
-                    <button id="fab-cart-btn" onclick="app.toggleCart()" class="absolute -top-6 w-14 h-14 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border-4 border-[#EBF0F6]/10 text-white shadow-2xl fab-pulse group transition-all active:scale-95">
-                        <div class="w-10 h-10 bg-primaryLight rounded-full flex items-center justify-center shadow-inner">
+                    <button id="fab-cart-btn" onclick="app.toggleCart()"
+                        class="absolute -top-6 w-14 h-14 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border-4 border-[#EBF0F6]/10 text-white shadow-2xl fab-pulse group transition-all active:scale-95">
+                        <div
+                            class="w-10 h-10 bg-primaryLight rounded-full flex items-center justify-center shadow-inner">
                             <i data-lucide="scan-line" class="w-5 h-5"></i>
                         </div>
-                        <span id="cart-count-mobile" class="absolute top-0 right-0 bg-danger text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full border border-primary">0</span>
+                        <span id="cart-count-mobile"
+                            class="absolute top-0 right-0 bg-danger text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full border border-primary">0</span>
                     </button>
                 </div>
-                <button onclick="app.router('orders')" class="nav-icon-mobile w-1/5 pb-4" id="mob-nav-orders"><i data-lucide="package" class="w-6 h-6"></i></button>
-                <button onclick="app.router('profile')" class="nav-icon-mobile w-1/5 pb-4" id="mob-nav-profile"><i data-lucide="user" class="w-6 h-6"></i></button>
+                <button onclick="app.router('orders')" class="nav-icon-mobile w-1/5 pb-4" id="mob-nav-orders"><i
+                        data-lucide="package" class="w-6 h-6"></i></button>
+                <button onclick="app.router('profile')" class="nav-icon-mobile w-1/5 pb-4" id="mob-nav-profile"><i
+                        data-lucide="user" class="w-6 h-6"></i></button>
             </div>
         </div>
     </div>
@@ -297,99 +589,122 @@
     <!-- MAIN SCROLLABLE AREA -->
     <main class="flex-grow w-full relative">
         <div class="container mx-auto px-4 py-4 min-h-full">
-            
+
             <!-- Global Loader -->
-            <div id="global-loader" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-[60] flex flex-col items-center justify-center hide">
+            <div id="global-loader"
+                class="absolute inset-0 bg-white/80 backdrop-blur-sm z-[60] flex flex-col items-center justify-center hide">
                 <div class="clay-card p-6 flex flex-col items-center">
-                    <div class="w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-3"></div>
+                    <div class="w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-3">
+                    </div>
                     <p class="text-primary font-bold text-xs tracking-widest uppercase">Loading...</p>
                 </div>
             </div>
 
             <!-- VIEW: HOME -->
             <section id="view-home" class="view-section">
-                <div id="home-banner-container" class="clay-card p-8 md:p-12 mb-12 relative overflow-hidden group min-h-[300px] flex items-center">
-                    <div class="skeleton w-full h-full absolute inset-0 rounded-3xl"></div>
+                <!-- Hero Banner: Fixed Aspect Ratio, Image Only -->
+                <div id="home-banner-container"
+                    class="w-full rounded-3xl overflow-hidden shadow-clay-card relative group mb-8">
+                    <img id="hero-banner-img" src="https://cybercafejoy.netlify.app/Banners.png"
+                        class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        alt="Banner">
                 </div>
 
-                <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 sticky top-0 z-30 py-4 rounded-3xl backdrop-blur-sm transition-all bg-white/5">
-                    <div class="flex gap-3 overflow-x-auto pb-2 w-full md:w-auto no-scrollbar" id="home-categories-scroll">
+                <div
+                    class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 sticky top-0 z-30 py-4 rounded-3xl backdrop-blur-sm transition-all bg-white/5">
+                    <div class="flex gap-3 overflow-x-auto pb-2 w-full md:w-auto no-scrollbar"
+                        id="home-categories-scroll">
                         <!-- Dynamic Categories -->
                     </div>
                 </div>
 
-                <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12"></div>
+                <!-- Product Grid: Min 2 Cols -->
+                <div id="product-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 pb-12"></div>
             </section>
 
             <!-- VIEW: CATEGORIES -->
             <section id="view-categories" class="view-section hide">
-                 <div class="mb-8">
-                     <h2 class="text-3xl font-extrabold text-textMain">Browse Categories</h2>
-                     <p class="text-textMuted text-sm mt-1">Explore our wide range of products.</p>
-                 </div>
-                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="categories-grid"></div>
+                <div class="mb-8">
+                    <h2 class="text-3xl font-extrabold text-textMain">Browse Categories</h2>
+                    <p class="text-textMuted text-sm mt-1">Explore our wide range of products.</p>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="categories-grid"></div>
             </section>
 
             <!-- VIEW: WISHLIST -->
             <section id="view-wishlist" class="view-section hide">
-                 <div class="mb-8 flex items-center gap-3">
-                     <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-danger"><i data-lucide="heart" class="w-5 h-5 fill-current"></i></div>
-                     <div>
-                         <h2 class="text-3xl font-extrabold text-textMain">My Wishlist</h2>
-                         <p class="text-textMuted text-sm mt-1">Saved items for later.</p>
-                     </div>
-                 </div>
-                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12" id="wishlist-grid"></div>
+                <div class="mb-8 flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-danger"><i
+                            data-lucide="heart" class="w-5 h-5 fill-current"></i></div>
+                    <div>
+                        <h2 class="text-3xl font-extrabold text-textMain">My Wishlist</h2>
+                        <p class="text-textMuted text-sm mt-1">Saved items for later.</p>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 pb-12" id="wishlist-grid"></div>
             </section>
 
             <!-- VIEW: SEARCH RESULTS -->
             <section id="view-search-results" class="view-section hide">
                 <div class="flex items-center gap-4 mb-8">
-                     <button onclick="app.router('home')" class="clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-full"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
-                     <div>
-                         <h2 class="text-2xl font-extrabold text-textMain">Search Results</h2>
-                         <p class="text-slate-500 text-sm">Showing results for "<span id="search-query-display" class="font-bold text-primary"></span>"</p>
-                     </div>
+                    <button onclick="app.router('home')"
+                        class="clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-full"><i
+                            data-lucide="arrow-left" class="w-5 h-5"></i></button>
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-textMain">Search Results</h2>
+                        <p class="text-slate-500 text-sm">Showing results for "<span id="search-query-display"
+                                class="font-bold text-primary"></span>"</p>
+                    </div>
                 </div>
-                <div id="search-results-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12"></div>
+                <div id="search-results-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 pb-12"></div>
             </section>
 
             <!-- VIEW: PRODUCT DETAILS -->
             <section id="view-product-details" class="view-section hide">
-                <button onclick="app.router('home')" class="mb-6 clay-btn clay-btn-secondary px-4 py-2 text-xs flex items-center gap-2 w-fit"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back</button>
+                <button onclick="app.router('home')"
+                    class="mb-6 clay-btn clay-btn-secondary px-4 py-2 text-xs flex items-center gap-2 w-fit"><i
+                        data-lucide="arrow-left" class="w-4 h-4"></i> Back</button>
                 <div class="clay-card p-0 overflow-hidden grid grid-cols-1 md:grid-cols-2">
                     <div class="bg-gray-50 p-12 flex items-center justify-center relative">
                         <div id="detail-badge" class="hide sale-badge !top-6 !left-6 !text-sm !px-3 !py-2">SALE</div>
-                        <button onclick="app.toggleWishlist(app.currentProductDetailId)" class="absolute top-6 right-6 clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-full text-danger transition">
+                        <button onclick="app.toggleWishlist(app.currentProductDetailId)"
+                            class="absolute top-6 right-6 clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-full text-danger transition">
                             <i data-lucide="heart" class="w-5 h-5" id="detail-wishlist-icon"></i>
                         </button>
-                        <img id="detail-img" src="" class="max-h-80 w-full object-contain drop-shadow-xl" loading="lazy">
+                        <img id="detail-img" src="" class="max-h-80 w-full object-contain drop-shadow-xl"
+                            loading="lazy">
                     </div>
                     <div class="p-10 flex flex-col justify-center bg-white/50">
-                        <span id="detail-cat" class="text-accent font-extrabold text-xs uppercase tracking-widest mb-2">Category</span>
+                        <span id="detail-cat"
+                            class="text-accent font-extrabold text-xs uppercase tracking-widest mb-2">Category</span>
                         <h2 id="detail-name" class="text-3xl font-extrabold text-textMain mb-4">Product Name</h2>
                         <p id="detail-desc" class="text-textMuted leading-relaxed mb-8">Description...</p>
-                        
+
                         <div class="mt-auto">
                             <div class="pt-6 border-t border-slate-200">
                                 <div class="flex flex-col mb-6">
                                     <span class="text-sm font-bold text-slate-400 uppercase">Price</span>
                                     <div class="flex items-baseline gap-3">
                                         <span id="detail-price" class="text-4xl font-extrabold text-primary">₹0</span>
-                                        <span id="detail-old-price" class="old-price text-xl text-slate-400 decoration-danger hide">₹0</span>
+                                        <span id="detail-old-price"
+                                            class="old-price text-xl text-slate-400 decoration-danger hide">₹0</span>
                                     </div>
                                 </div>
                                 <div class="grid grid-cols-2 gap-4">
-                                    <button onclick="app.addToCart(app.currentProductDetailId)" class="clay-btn clay-btn-secondary py-4 flex items-center justify-center gap-2">
+                                    <button onclick="app.addToCart(app.currentProductDetailId)"
+                                        class="clay-btn clay-btn-secondary py-4 flex items-center justify-center gap-2">
                                         <i data-lucide="shopping-bag" class="w-4 h-4"></i> Add
                                     </button>
-                                    <button onclick="app.buyNow(app.currentProductDetailId)" class="clay-btn clay-btn-primary py-4 flex items-center justify-center">Buy Now</button>
+                                    <button onclick="app.buyNow(app.currentProductDetailId)"
+                                        class="clay-btn clay-btn-primary py-4 flex items-center justify-center">Buy
+                                        Now</button>
                                 </div>
                             </div>
                             <!-- Reviews -->
                             <div class="mt-8 pt-8 border-t border-slate-200">
-                                 <h3 class="font-bold text-lg mb-4 text-textMain flex items-center gap-2"><i data-lucide="message-circle" class="w-4 h-4"></i> Reviews</h3>
-                                 <div id="detail-reviews" class="space-y-4"></div>
+                                <h3 class="font-bold text-lg mb-4 text-textMain flex items-center gap-2"><i
+                                        data-lucide="message-circle" class="w-4 h-4"></i> Reviews</h3>
+                                <div id="detail-reviews" class="space-y-4"></div>
                             </div>
                         </div>
                     </div>
@@ -399,22 +714,34 @@
             <!-- VIEW: LOGIN -->
             <section id="view-login" class="view-section hide max-w-sm mx-auto mt-12">
                 <div class="clay-card p-8 md:p-10 text-center">
-                    <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-primary"><i data-lucide="lock" class="w-10 h-10"></i></div>
+                    <div
+                        class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-primary">
+                        <i data-lucide="lock" class="w-10 h-10"></i></div>
                     <h2 class="text-3xl font-extrabold text-textMain mb-2" id="auth-title">Sign in</h2>
                     <form id="auth-form" onsubmit="app.handleAuth(event)" class="space-y-5 text-left mt-8">
                         <div id="auth-name-group" class="hide">
-                             <input type="text" id="auth-name" class="clay-input w-full py-4 px-5" placeholder="Full Name">
+                            <input type="text" id="auth-name" class="clay-input w-full py-4 px-5"
+                                placeholder="Full Name">
                         </div>
-                        <input type="email" id="auth-email" class="clay-input w-full py-4 px-5" placeholder="Email" required>
-                        <input type="password" id="auth-pass" class="clay-input w-full py-4 px-5" placeholder="Password" required>
-                        <button type="submit" class="clay-btn clay-btn-primary w-full py-4 mt-4 shadow-lg text-lg"><span id="auth-btn-text">Sign In</span></button>
+                        <input type="email" id="auth-email" class="clay-input w-full py-4 px-5" placeholder="Email"
+                            required>
+                        <input type="password" id="auth-pass" class="clay-input w-full py-4 px-5" placeholder="Password"
+                            required>
+                        <button type="submit" class="clay-btn clay-btn-primary w-full py-4 mt-4 shadow-lg text-lg"><span
+                                id="auth-btn-text">Sign In</span></button>
                     </form>
                     <div class="flex gap-4 mt-6 justify-center">
-                        <button onclick="app.handleGoogleAuth()" class="clay-btn clay-btn-secondary w-12 h-12 flex items-center justify-center rounded-full text-danger"><i class="fab fa-google"></i></button>
+                        <button onclick="app.handleGoogleAuth()"
+                            class="clay-btn clay-btn-secondary w-12 h-12 flex items-center justify-center rounded-full text-danger"><i
+                                class="fab fa-google"></i></button>
                     </div>
-                    <p class="mt-8 text-sm font-bold text-slate-400">Don't have an account? <a href="#" onclick="app.toggleAuthMode()" class="text-primary hover:underline" id="auth-switch-text">Sign up</a></p>
+                    <p class="mt-8 text-sm font-bold text-slate-400">Don't have an account? <a href="#"
+                            onclick="app.toggleAuthMode()" class="text-primary hover:underline"
+                            id="auth-switch-text">Sign up</a></p>
                     <div class="mt-8 text-center border-t border-slate-200 pt-4">
-                        <button onclick="app.router('seller-login')" class="text-xs font-bold text-slate-400 hover:text-primary uppercase tracking-wide">Seller Portal Login</button>
+                        <button onclick="app.router('seller-login')"
+                            class="text-xs font-bold text-slate-400 hover:text-primary uppercase tracking-wide">Seller
+                            Portal Login</button>
                     </div>
                 </div>
             </section>
@@ -424,13 +751,23 @@
                 <div class="clay-card p-10 bg-primary text-white relative overflow-hidden border-none">
                     <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
                     <div class="relative z-10">
-                        <div class="mb-8"><h2 class="text-3xl font-bold">Seller Portal</h2></div>
+                        <div class="mb-8">
+                            <h2 class="text-3xl font-bold">Seller Portal</h2>
+                        </div>
                         <form onsubmit="app.handleSellerAuth(event)" class="space-y-5">
-                            <input type="email" id="seller-auth-email" class="w-full bg-black/20 border-none rounded-xl px-5 py-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-warning" placeholder="Seller Email" required>
-                            <input type="password" id="seller-auth-pass" class="w-full bg-black/20 border-none rounded-xl px-5 py-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-warning" placeholder="Password" required>
-                            <button type="submit" class="w-full bg-warning text-white font-bold py-4 rounded-xl hover:bg-yellow-400 transition shadow-lg mt-4 flex justify-center items-center">Access Dashboard</button>
+                            <input type="email" id="seller-auth-email"
+                                class="w-full bg-black/20 border-none rounded-xl px-5 py-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-warning"
+                                placeholder="Seller Email" required>
+                            <input type="password" id="seller-auth-pass"
+                                class="w-full bg-black/20 border-none rounded-xl px-5 py-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-warning"
+                                placeholder="Password" required>
+                            <button type="submit"
+                                class="w-full bg-warning text-white font-bold py-4 rounded-xl hover:bg-yellow-400 transition shadow-lg mt-4 flex justify-center items-center">Access
+                                Dashboard</button>
                         </form>
-                        <div class="mt-8 text-center"><a href="#" onclick="app.router('seller-apply')" class="text-xs text-white/70 hover:text-white font-bold uppercase tracking-wide">Apply for Seller Account</a></div>
+                        <div class="mt-8 text-center"><a href="#" onclick="app.router('seller-apply')"
+                                class="text-xs text-white/70 hover:text-white font-bold uppercase tracking-wide">Apply
+                                for Seller Account</a></div>
                     </div>
                 </div>
             </section>
@@ -439,30 +776,60 @@
             <section id="view-seller-dashboard" class="view-section hide">
                 <div class="flex justify-between items-center mb-8">
                     <h2 class="text-3xl font-extrabold text-textMain">Seller Dashboard</h2>
-                    <button onclick="app.openAddProductModal()" class="clay-btn bg-success text-white px-6 py-3 shadow-lg flex items-center"><i data-lucide="plus" class="mr-2 w-4 h-4"></i> Add Product</button>
+                    <button onclick="app.openAddProductModal()"
+                        class="clay-btn bg-success text-white px-6 py-3 shadow-lg flex items-center"><i
+                            data-lucide="plus" class="mr-2 w-4 h-4"></i> Add Product</button>
                 </div>
                 <div class="clay-card p-6 mb-8">
                     <h3 class="font-bold text-lg mb-4 text-textMain">Sales Overview</h3>
-                        <div class="flex items-end justify-between h-32 gap-2">
-                            <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 40%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
-                            <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 65%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
-                            <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 30%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
-                            <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 85%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
-                            <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 50%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
-                            <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 90%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
-                            <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 70%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
+                    <div class="flex items-end justify-between h-32 gap-2">
+                        <div class="w-full bg-primary/10 rounded-t-lg relative group h-full">
+                            <div style="height: 40%;"
+                                class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight">
+                            </div>
+                        </div>
+                        <div class="w-full bg-primary/10 rounded-t-lg relative group h-full">
+                            <div style="height: 65%;"
+                                class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight">
+                            </div>
+                        </div>
+                        <div class="w-full bg-primary/10 rounded-t-lg relative group h-full">
+                            <div style="height: 30%;"
+                                class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight">
+                            </div>
+                        </div>
+                        <div class="w-full bg-primary/10 rounded-t-lg relative group h-full">
+                            <div style="height: 85%;"
+                                class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight">
+                            </div>
+                        </div>
+                        <div class="w-full bg-primary/10 rounded-t-lg relative group h-full">
+                            <div style="height: 50%;"
+                                class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight">
+                            </div>
+                        </div>
+                        <div class="w-full bg-primary/10 rounded-t-lg relative group h-full">
+                            <div style="height: 90%;"
+                                class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight">
+                            </div>
+                        </div>
+                        <div class="w-full bg-primary/10 rounded-t-lg relative group h-full">
+                            <div style="height: 70%;"
+                                class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight">
+                            </div>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <div class="clay-card p-6 h-[600px] flex flex-col">
-                            <h3 class="font-bold text-lg mb-4 text-textMain">Inventory</h3>
-                            <div id="seller-products-list" class="overflow-y-auto pr-2 space-y-3 flex-grow"></div>
-                        </div>
-                        <div class="clay-card p-6 h-[600px] flex flex-col">
-                            <h3 class="font-bold text-lg mb-4 text-textMain">Orders</h3>
-                            <div id="seller-orders-list" class="overflow-y-auto pr-2 space-y-3 flex-grow"></div>
-                        </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="clay-card p-6 h-[600px] flex flex-col">
+                        <h3 class="font-bold text-lg mb-4 text-textMain">Inventory</h3>
+                        <div id="seller-products-list" class="overflow-y-auto pr-2 space-y-3 flex-grow"></div>
                     </div>
+                    <div class="clay-card p-6 h-[600px] flex flex-col">
+                        <h3 class="font-bold text-lg mb-4 text-textMain">Orders</h3>
+                        <div id="seller-orders-list" class="overflow-y-auto pr-2 space-y-3 flex-grow"></div>
+                    </div>
+                </div>
             </section>
 
             <!-- VIEW: ADMIN DASHBOARD -->
@@ -471,20 +838,28 @@
                 <div class="clay-card p-8 mb-8">
                     <h3 class="font-bold text-xl mb-6 text-textMain">Store Banners</h3>
                     <form onsubmit="app.adminSaveBanner(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <input type="text" id="banner-title" placeholder="Title (e.g. Diwali Sale)" class="clay-input p-4" required>
+                        <input type="text" id="banner-title" placeholder="Title (e.g. Diwali Sale)"
+                            class="clay-input p-4" required>
                         <input type="text" id="banner-subtitle" placeholder="Subtitle" class="clay-input p-4">
-                        <input type="text" id="banner-img" placeholder="Image URL (Horizontal)" class="clay-input p-4" required>
-                        <input type="text" id="banner-cta" placeholder="Button Text" class="clay-input p-4" value="Shop Now">
-                        <button type="submit" class="clay-btn clay-btn-primary p-4 md:col-span-2">Update Home Banner</button>
+                        <input type="text" id="banner-img" placeholder="Image URL (Horizontal)" class="clay-input p-4"
+                            required>
+                        <input type="text" id="banner-cta" placeholder="Button Text" class="clay-input p-4"
+                            value="Shop Now">
+                        <button type="submit" class="clay-btn clay-btn-primary p-4 md:col-span-2">Update Home
+                            Banner</button>
                     </form>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div class="clay-card p-8 bg-primary text-white border-none relative overflow-hidden">
-                        <div class="relative z-10"><div class="text-white/60 text-xs font-bold uppercase mb-2">Total Sales</div><div class="text-5xl font-extrabold" id="admin-total-sales">₹0</div></div>
+                        <div class="relative z-10">
+                            <div class="text-white/60 text-xs font-bold uppercase mb-2">Total Sales</div>
+                            <div class="text-5xl font-extrabold" id="admin-total-sales">₹0</div>
+                        </div>
                         <i data-lucide="trending-up" class="absolute right-4 bottom-4 w-24 h-24 text-white/10"></i>
                     </div>
                     <div class="clay-card p-8">
-                        <div class="text-slate-400 text-xs font-bold uppercase mb-2">Total Orders</div><div class="text-5xl font-extrabold text-textMain" id="admin-order-count">0</div>
+                        <div class="text-slate-400 text-xs font-bold uppercase mb-2">Total Orders</div>
+                        <div class="text-5xl font-extrabold text-textMain" id="admin-order-count">0</div>
                     </div>
                 </div>
                 <div class="clay-card p-8 mb-8">
@@ -504,7 +879,8 @@
                         <div class="clay-card p-8">
                             <h3 class="font-bold text-lg mb-4">Create Service Agent</h3>
                             <form onsubmit="app.createServiceAccount(event)" class="flex gap-3">
-                                <input type="email" id="service-email-input" class="clay-input flex-grow px-4" placeholder="Agent Email" required>
+                                <input type="email" id="service-email-input" class="clay-input flex-grow px-4"
+                                    placeholder="Agent Email" required>
                                 <button class="clay-btn clay-btn-primary px-6">Create</button>
                             </form>
                         </div>
@@ -518,17 +894,26 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 h-[700px]">
                     <div class="clay-card p-6 h-full flex flex-col">
                         <h3 class="font-bold mb-6 text-slate-400 text-xs uppercase tracking-widest">Active Tickets</h3>
-                        <div id="support-tickets-list" class="space-y-2 flex-grow overflow-y-auto custom-scrollbar"></div>
+                        <div id="support-tickets-list" class="space-y-2 flex-grow overflow-y-auto custom-scrollbar">
+                        </div>
                     </div>
                     <div class="clay-card p-6 md:col-span-2 flex flex-col h-full relative">
-                        <div class="border-b border-gray-100 pb-4 mb-4 font-bold text-slate-800 flex justify-between items-center">
+                        <div
+                            class="border-b border-gray-100 pb-4 mb-4 font-bold text-slate-800 flex justify-between items-center">
                             <span id="service-chat-header-text">Select a ticket</span>
-                            <div class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span> Live</div>
+                            <div
+                                class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold flex items-center">
+                                <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span> Live</div>
                         </div>
-                        <div id="service-chat-messages" class="flex-grow bg-slate-50 rounded-xl p-4 overflow-y-auto mb-4 border border-gray-100 shadow-inner"></div>
+                        <div id="service-chat-messages"
+                            class="flex-grow bg-slate-50 rounded-xl p-4 overflow-y-auto mb-4 border border-gray-100 shadow-inner">
+                        </div>
                         <form onsubmit="app.sendServiceMessage(event)" class="flex gap-4">
-                            <input type="text" id="service-chat-input" class="clay-input flex-grow px-4" placeholder="Reply..." disabled>
-                            <button type="submit" id="service-chat-send-btn" class="clay-btn clay-btn-primary w-12 h-12 flex items-center justify-center" disabled><i data-lucide="send" class="w-4 h-4"></i></button>
+                            <input type="text" id="service-chat-input" class="clay-input flex-grow px-4"
+                                placeholder="Reply..." disabled>
+                            <button type="submit" id="service-chat-send-btn"
+                                class="clay-btn clay-btn-primary w-12 h-12 flex items-center justify-center" disabled><i
+                                    data-lucide="send" class="w-4 h-4"></i></button>
                         </form>
                     </div>
                 </div>
@@ -538,21 +923,27 @@
             <section id="view-profile" class="view-section hide max-w-lg mx-auto">
                 <div class="clay-card p-8 text-center relative mt-16">
                     <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
-                        <div class="w-32 h-32 bg-primary rounded-[40px] flex items-center justify-center shadow-lg rotate-45 border-4 border-[#EBF0F6]">
-                            <div class="transform -rotate-45 text-white"><i data-lucide="user" class="w-12 h-12"></i></div>
+                        <div
+                            class="w-32 h-32 bg-primary rounded-[40px] flex items-center justify-center shadow-lg rotate-45 border-4 border-[#EBF0F6]">
+                            <div class="transform -rotate-45 text-white"><i data-lucide="user" class="w-12 h-12"></i>
+                            </div>
                         </div>
                     </div>
                     <div class="mt-16">
                         <h2 class="text-2xl font-extrabold text-textMain" id="profile-name">User</h2>
-                        <p class="text-textMuted text-sm font-bold uppercase tracking-wide mt-1" id="profile-role">Customer</p>
+                        <p class="text-textMuted text-sm font-bold uppercase tracking-wide mt-1" id="profile-role">
+                            Customer</p>
                         <p class="text-slate-400 text-xs mt-1" id="profile-email">email@example.com</p>
-                        <button onclick="app.openEditProfile()" class="text-xs text-accent font-bold mt-2 hover:underline">Edit Profile</button>
+                        <button onclick="app.openEditProfile()"
+                            class="text-xs text-accent font-bold mt-2 hover:underline">Edit Profile</button>
                     </div>
                     <div class="mt-8 space-y-4 text-left">
                         <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Saved Addresses</h3>
                         <div id="profile-address-list" class="space-y-3"></div>
                     </div>
-                    <button onclick="app.logout()" class="clay-btn w-full py-3 mt-8 bg-red-50 text-danger hover:bg-red-100 transition">Log Out</button>
+                    <button onclick="app.logout()"
+                        class="clay-btn w-full py-3 mt-8 bg-red-50 text-danger hover:bg-red-100 transition">Log
+                        Out</button>
                 </div>
             </section>
 
@@ -562,31 +953,46 @@
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     <div class="lg:col-span-2 space-y-6">
                         <div class="clay-card p-8">
-                            <h3 class="font-bold text-xl mb-6 flex items-center text-primary"><i data-lucide="map-pin" class="mr-3"></i> Shipping Details</h3>
+                            <h3 class="font-bold text-xl mb-6 flex items-center text-primary"><i data-lucide="map-pin"
+                                    class="mr-3"></i> Shipping Details</h3>
                             <div id="saved-addresses" class="grid grid-cols-1 gap-4 mb-6"></div>
-                            <button onclick="document.getElementById('new-address-form').classList.toggle('hide')" class="clay-btn clay-btn-secondary w-full py-3 border-2 border-dashed border-slate-200">+ Add New Address</button>
-                            <form id="new-address-form" class="hide mt-6 space-y-4" onsubmit="event.preventDefault(); app.saveAddress();">
+                            <button onclick="document.getElementById('new-address-form').classList.toggle('hide')"
+                                class="clay-btn clay-btn-secondary w-full py-3 border-2 border-dashed border-slate-200">+
+                                Add New Address</button>
+                            <form id="new-address-form" class="hide mt-6 space-y-4"
+                                onsubmit="event.preventDefault(); app.saveAddress();">
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <input type="text" id="addr-name" placeholder="Full Name" class="clay-input p-4 w-full" required>
-                                    <input type="text" id="addr-mobile" placeholder="Mobile" class="clay-input p-4 w-full" required>
-                                    <input type="text" id="addr-line" placeholder="Address Line" class="clay-input p-4 w-full md:col-span-2" required>
-                                    <input type="text" id="addr-area" placeholder="Area" class="clay-input p-4 w-full" required>
-                                    <input type="text" id="addr-city" placeholder="City" class="clay-input p-4 w-full" required>
-                                    <input type="text" id="addr-pin" placeholder="Pincode" class="clay-input p-4 w-full" required>
+                                    <input type="text" id="addr-name" placeholder="Full Name"
+                                        class="clay-input p-4 w-full" required>
+                                    <input type="text" id="addr-mobile" placeholder="Mobile"
+                                        class="clay-input p-4 w-full" required>
+                                    <input type="text" id="addr-line" placeholder="Address Line"
+                                        class="clay-input p-4 w-full md:col-span-2" required>
+                                    <input type="text" id="addr-area" placeholder="Area" class="clay-input p-4 w-full"
+                                        required>
+                                    <input type="text" id="addr-city" placeholder="City" class="clay-input p-4 w-full"
+                                        required>
+                                    <input type="text" id="addr-pin" placeholder="Pincode" class="clay-input p-4 w-full"
+                                        required>
                                 </div>
                                 <button type="submit" class="clay-btn clay-btn-primary py-3 px-6">Save Address</button>
                             </form>
                         </div>
                         <div class="clay-card p-8">
-                            <h3 class="font-bold text-xl mb-6 flex items-center text-primary"><i data-lucide="credit-card" class="mr-3"></i> Payment</h3>
-                            <div class="mb-8 w-full max-w-sm mx-auto bg-gradient-to-br from-primary to-primaryLight rounded-[25px] p-6 text-white shadow-xl relative overflow-hidden h-56 flex flex-col justify-between">
-                                <div class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                            <h3 class="font-bold text-xl mb-6 flex items-center text-primary"><i
+                                    data-lucide="credit-card" class="mr-3"></i> Payment</h3>
+                            <div
+                                class="mb-8 w-full max-w-sm mx-auto bg-gradient-to-br from-primary to-primaryLight rounded-[25px] p-6 text-white shadow-xl relative overflow-hidden h-56 flex flex-col justify-between">
+                                <div
+                                    class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10">
+                                </div>
                                 <div class="flex justify-between items-start z-10">
                                     <i data-lucide="nfc" class="w-8 h-8 opacity-80"></i>
                                     <span class="font-bold tracking-widest text-lg italic opacity-80">VISA</span>
                                 </div>
                                 <div class="z-10">
-                                    <div class="text-xl tracking-[4px] font-mono mb-4 text-white/90">**** **** **** 4242</div>
+                                    <div class="text-xl tracking-[4px] font-mono mb-4 text-white/90">**** **** **** 4242
+                                    </div>
                                     <div class="flex justify-between text-xs uppercase tracking-wider opacity-75">
                                         <span>Card Holder</span>
                                         <span>Expires</span>
@@ -598,13 +1004,22 @@
                                 </div>
                             </div>
                             <div class="space-y-4">
-                                <label class="flex items-center p-4 rounded-2xl border border-transparent hover:bg-white hover:shadow-sm cursor-pointer transition clay-input">
-                                    <input type="radio" name="payment" value="upi" checked class="text-primary w-5 h-5 mr-4">
-                                    <div><div class="font-bold text-textMain">UPI / Online</div><div class="text-xs text-textMuted">GPay, PhonePe, Card</div></div>
+                                <label
+                                    class="flex items-center p-4 rounded-2xl border border-transparent hover:bg-white hover:shadow-sm cursor-pointer transition clay-input">
+                                    <input type="radio" name="payment" value="upi" checked
+                                        class="text-primary w-5 h-5 mr-4">
+                                    <div>
+                                        <div class="font-bold text-textMain">UPI / Online</div>
+                                        <div class="text-xs text-textMuted">GPay, PhonePe, Card</div>
+                                    </div>
                                 </label>
-                                <label class="flex items-center p-4 rounded-2xl border border-transparent hover:bg-white hover:shadow-sm cursor-pointer transition clay-input">
+                                <label
+                                    class="flex items-center p-4 rounded-2xl border border-transparent hover:bg-white hover:shadow-sm cursor-pointer transition clay-input">
                                     <input type="radio" name="payment" value="cod" class="text-primary w-5 h-5 mr-4">
-                                    <div><div class="font-bold text-textMain">Cash on Delivery</div><div class="text-xs text-textMuted">Pay at doorstep</div></div>
+                                    <div>
+                                        <div class="font-bold text-textMain">Cash on Delivery</div>
+                                        <div class="text-xs text-textMuted">Pay at doorstep</div>
+                                    </div>
                                 </label>
                             </div>
                         </div>
@@ -613,41 +1028,58 @@
                         <h3 class="font-bold text-xl mb-6 text-textMain">Order Summary</h3>
                         <div id="checkout-items" class="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2"></div>
                         <div class="pt-6 border-t border-slate-200 space-y-2">
-                            <div class="flex justify-between text-sm text-textMuted"><span>Subtotal</span><span id="checkout-subtotal" class="font-bold">₹0</span></div>
-                            <div class="flex justify-between text-lg font-extrabold text-textMain mt-4"><span>Total</span><span id="checkout-total" class="text-primary">₹0</span></div>
+                            <div class="flex justify-between text-sm text-textMuted"><span>Subtotal</span><span
+                                    id="checkout-subtotal" class="font-bold">₹0</span></div>
+                            <div class="flex justify-between text-lg font-extrabold text-textMain mt-4">
+                                <span>Total</span><span id="checkout-total" class="text-primary">₹0</span></div>
                         </div>
-                        <button onclick="app.placeOrder()" class="clay-btn clay-btn-primary w-full py-4 mt-8 shadow-xl text-lg">Place Order</button>
+                        <button onclick="app.placeOrder()"
+                            class="clay-btn clay-btn-primary w-full py-4 mt-8 shadow-xl text-lg">Place Order</button>
                     </div>
                 </div>
             </section>
 
             <section id="view-success" class="view-section hide text-center pt-24 max-w-md mx-auto">
                 <div class="clay-card p-12">
-                    <div class="w-24 h-24 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-6 text-success"><i data-lucide="check-circle" class="w-12 h-12"></i></div>
+                    <div
+                        class="w-24 h-24 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-6 text-success">
+                        <i data-lucide="check-circle" class="w-12 h-12"></i></div>
                     <h2 class="text-3xl font-extrabold text-textMain mb-4">Order Confirmed!</h2>
                     <p class="text-textMuted mb-8">Your order has been placed successfully.</p>
-                    <button onclick="app.router('orders')" class="clay-btn clay-btn-primary w-full py-3 mb-4">Track Order</button>
-                    <button onclick="app.router('home')" class="clay-btn clay-btn-secondary w-full py-3">Continue Shopping</button>
+                    <button onclick="app.router('orders')" class="clay-btn clay-btn-primary w-full py-3 mb-4">Track
+                        Order</button>
+                    <button onclick="app.router('home')" class="clay-btn clay-btn-secondary w-full py-3">Continue
+                        Shopping</button>
                 </div>
             </section>
 
             <!-- CUSTOMER CHAT VIEW -->
             <section id="view-customer-chat" class="view-section hide max-w-3xl mx-auto">
-                 <button onclick="app.router('orders')" class="mb-4 text-textMuted hover:text-accent flex items-center text-sm font-bold"><i data-lucide="arrow-left" class="mr-2"></i> Back to Orders</button>
-                 <div class="clay-card p-6 h-[600px] flex flex-col relative overflow-hidden">
-                     <div class="border-b border-gray-100 pb-4 mb-4 flex justify-between items-center z-10 bg-white/90 backdrop-blur-sm">
-                         <div>
-                             <h3 class="font-bold text-slate-800 text-base">Support Chat</h3>
-                             <p class="text-xs text-slate-400 font-mono mt-0.5" id="customer-chat-id">Ticket #...</p>
-                         </div>
-                         <span class="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-bold flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span> Online</span>
-                     </div>
-                     <div id="customer-chat-messages" class="flex-grow p-4 overflow-y-auto space-y-3 bg-slate-50/50 rounded-xl mb-4 border border-slate-100"></div>
-                     <form onsubmit="app.sendCustomerMessage(event)" class="flex gap-3 items-center">
-                         <input type="text" id="customer-chat-input" class="clay-input flex-grow px-4 py-3" placeholder="Type your message..." required>
-                         <button type="submit" class="clay-btn clay-btn-primary w-12 h-12 flex items-center justify-center flex-shrink-0"><i data-lucide="send" class="w-5 h-5"></i></button>
-                     </form>
-                 </div>
+                <button onclick="app.router('orders')"
+                    class="mb-4 text-textMuted hover:text-accent flex items-center text-sm font-bold"><i
+                        data-lucide="arrow-left" class="mr-2"></i> Back to Orders</button>
+                <div class="clay-card p-6 h-[600px] flex flex-col relative overflow-hidden">
+                    <div
+                        class="border-b border-gray-100 pb-4 mb-4 flex justify-between items-center z-10 bg-white/90 backdrop-blur-sm">
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base">Support Chat</h3>
+                            <p class="text-xs text-slate-400 font-mono mt-0.5" id="customer-chat-id">Ticket #...</p>
+                        </div>
+                        <span
+                            class="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-bold flex items-center"><span
+                                class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span> Online</span>
+                    </div>
+                    <div id="customer-chat-messages"
+                        class="flex-grow p-4 overflow-y-auto space-y-3 bg-slate-50/50 rounded-xl mb-4 border border-slate-100">
+                    </div>
+                    <form onsubmit="app.sendCustomerMessage(event)" class="flex gap-3 items-center">
+                        <input type="text" id="customer-chat-input" class="clay-input flex-grow px-4 py-3"
+                            placeholder="Type your message..." required>
+                        <button type="submit"
+                            class="clay-btn clay-btn-primary w-12 h-12 flex items-center justify-center flex-shrink-0"><i
+                                data-lucide="send" class="w-5 h-5"></i></button>
+                    </form>
+                </div>
             </section>
 
             <section id="view-orders" class="view-section hide max-w-4xl mx-auto">
@@ -658,32 +1090,41 @@
     </main>
 
     <!-- Cart Sidebar (Right) -->
-    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full sm:w-96 bg-white/90 backdrop-blur-xl shadow-2xl transform translate-x-full transition-transform duration-300 z-[60] flex flex-col absolute top-0">
+    <div id="cart-sidebar"
+        class="fixed inset-y-0 right-0 w-full sm:w-96 bg-white/90 backdrop-blur-xl shadow-2xl transform translate-x-full transition-transform duration-300 z-[60] flex flex-col absolute top-0">
         <div class="p-6 border-b border-slate-100 flex justify-between items-center">
             <h3 class="font-bold text-xl text-textMain">Cart</h3>
-            <button onclick="app.toggleCart()" class="clay-btn clay-btn-secondary w-8 h-8 flex items-center justify-center rounded-full"><i data-lucide="x" class="w-4 h-4"></i></button>
+            <button onclick="app.toggleCart()"
+                class="clay-btn clay-btn-secondary w-8 h-8 flex items-center justify-center rounded-full"><i
+                    data-lucide="x" class="w-4 h-4"></i></button>
         </div>
         <div id="cart-items" class="flex-grow overflow-y-auto p-6 space-y-4"></div>
         <div class="p-6 border-t border-slate-100 bg-white/50">
-            <div class="flex justify-between font-extrabold text-xl mb-4 text-textMain"><span>Total</span><span id="cart-total" class="text-primary">₹0</span></div>
-            <button onclick="app.goToCheckout()" class="clay-btn clay-btn-primary w-full py-4 text-lg shadow-lg">Checkout</button>
+            <div class="flex justify-between font-extrabold text-xl mb-4 text-textMain"><span>Total</span><span
+                    id="cart-total" class="text-primary">₹0</span></div>
+            <button onclick="app.goToCheckout()"
+                class="clay-btn clay-btn-primary w-full py-4 text-lg shadow-lg">Checkout</button>
         </div>
     </div>
 
     <!-- ADD PRODUCT MODAL -->
-    <div id="add-product-modal" class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-50 flex items-center justify-center hide p-4 absolute">
+    <div id="add-product-modal"
+        class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-50 flex items-center justify-center hide p-4 absolute">
         <div class="clay-card w-full max-w-lg p-8 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold" id="modal-title">Add Product</h3>
-                <button onclick="document.getElementById('add-product-modal').classList.add('hide')" class="text-slate-400"><i data-lucide="x"></i></button>
+                <button onclick="document.getElementById('add-product-modal').classList.add('hide')"
+                    class="text-slate-400"><i data-lucide="x"></i></button>
             </div>
             <form onsubmit="app.sellerSaveProduct(event)" class="space-y-4">
                 <input type="hidden" name="p_id">
                 <input type="text" name="p_name" placeholder="Product Name" class="clay-input w-full p-4" required>
-                <textarea name="p_desc" placeholder="Description" class="clay-input w-full p-4" rows="3" required></textarea>
+                <textarea name="p_desc" placeholder="Description" class="clay-input w-full p-4" rows="3"
+                    required></textarea>
                 <div class="grid grid-cols-2 gap-4">
                     <input type="number" name="p_price" placeholder="Price (₹)" class="clay-input w-full p-4" required>
-                    <input type="number" name="p_discount" placeholder="Discount (%)" class="clay-input w-full p-4" min="0" max="99">
+                    <input type="number" name="p_discount" placeholder="Discount (%)" class="clay-input w-full p-4"
+                        min="0" max="99">
                 </div>
                 <select name="p_cat" class="clay-input w-full p-4">
                     <option value="Electronics">Electronics</option>
@@ -694,11 +1135,15 @@
                     <option value="Toys">Toys</option>
                 </select>
                 <div class="space-y-2">
-                    <input type="text" name="p_img" id="p_img_input" placeholder="Image URL" class="clay-input w-full p-4" oninput="document.getElementById('product-preview').src = this.value || 'https://placehold.co/400x300?text=Preview'">
-                    <img id="product-preview" src="https://placehold.co/400x300?text=Preview" class="w-full h-32 object-contain rounded-xl bg-slate-100 border border-slate-200">
+                    <input type="text" name="p_img" id="p_img_input" placeholder="Image URL"
+                        class="clay-input w-full p-4"
+                        oninput="document.getElementById('product-preview').src = this.value || 'https://placehold.co/400x300?text=Preview'">
+                    <img id="product-preview" src="https://placehold.co/400x300?text=Preview"
+                        class="w-full h-32 object-contain rounded-xl bg-slate-100 border border-slate-200">
                 </div>
                 <div class="flex justify-end gap-3 mt-6">
-                    <button type="button" onclick="app.fillMockProduct(this.form)" class="clay-btn clay-btn-secondary px-4 text-xs">Auto Fill</button>
+                    <button type="button" onclick="app.fillMockProduct(this.form)"
+                        class="clay-btn clay-btn-secondary px-4 text-xs">Auto Fill</button>
                     <button type="submit" class="clay-btn clay-btn-primary px-8 py-3">Save Product</button>
                 </div>
             </form>
@@ -706,14 +1151,17 @@
     </div>
 
     <!-- EDIT PROFILE MODAL -->
-    <div id="edit-profile-modal" class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-50 flex items-center justify-center hide p-4 absolute">
+    <div id="edit-profile-modal"
+        class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-50 flex items-center justify-center hide p-4 absolute">
         <div class="clay-card w-full max-w-sm p-8">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-bold">Edit Profile</h3>
-                <button onclick="document.getElementById('edit-profile-modal').classList.add('hide')" class="text-slate-400"><i data-lucide="x"></i></button>
+                <button onclick="document.getElementById('edit-profile-modal').classList.add('hide')"
+                    class="text-slate-400"><i data-lucide="x"></i></button>
             </div>
             <form onsubmit="app.updateProfile(event)" class="space-y-4">
-                <input type="text" id="edit-profile-name" placeholder="Display Name" class="clay-input w-full p-3" required>
+                <input type="text" id="edit-profile-name" placeholder="Display Name" class="clay-input w-full p-3"
+                    required>
                 <input type="text" id="edit-profile-photo" placeholder="Photo URL" class="clay-input w-full p-3">
                 <button type="submit" class="clay-btn clay-btn-primary w-full py-3">Update Profile</button>
             </form>
@@ -721,9 +1169,11 @@
     </div>
 
     <!-- ORDER DETAILS MODAL -->
-    <div id="order-details-modal" class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-50 flex items-center justify-center hide p-4 absolute">
+    <div id="order-details-modal"
+        class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-50 flex items-center justify-center hide p-4 absolute">
         <div class="clay-card w-full max-w-2xl p-8 max-h-[90vh] overflow-y-auto relative">
-            <button onclick="document.getElementById('order-details-modal').classList.add('hide')" class="absolute top-6 right-6 text-slate-400"><i data-lucide="x"></i></button>
+            <button onclick="document.getElementById('order-details-modal').classList.add('hide')"
+                class="absolute top-6 right-6 text-slate-400"><i data-lucide="x"></i></button>
             <h3 class="text-2xl font-bold mb-6">Order Details</h3>
             <div id="order-details-content" class="space-y-6"></div>
         </div>
@@ -749,57 +1199,73 @@
         const db = getFirestore(appInst);
         const ADMIN_EMAIL = "joykumbhakar101@gmail.com";
         const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'secure-thing-store';
-        
+
         const getCollectionRef = (name) => collection(db, 'artifacts', APP_ID, 'public', 'data', name);
         const getUserRef = (uid) => doc(db, 'artifacts', APP_ID, 'public', 'data', 'users', uid);
 
         // Standard function to create consistent product cards
         function createProductCardHTML(p, isLiked) {
-             const discount = p.discount ? parseInt(p.discount) : 0;
-             const price = parseInt(p.price);
-             const finalPrice = discount > 0 ? Math.round(price - (price * discount / 100)) : price;
-             
-             return `
-                <div class="clay-card overflow-hidden group cursor-pointer category-card" onclick="app.loadProductDetails('${p.id}')">
-                    <div class="h-64 bg-white/50 relative p-6 flex items-center justify-center">
-                        ${discount > 0 ? `<div class="sale-badge">SALE -${discount}%</div>` : ''}
-                        <div class="absolute top-4 right-4 flex gap-2">
-                            <button onclick="event.stopPropagation(); app.toggleWishlist('${p.id}')" class="bg-white px-2 py-2 rounded-lg text-xs font-bold ${isLiked ? 'text-danger' : 'text-slate-300'} shadow-sm transition"><i data-lucide="heart" class="w-4 h-4 ${isLiked ? 'fill-current' : ''}"></i></button>
-                        </div>
-                        <img src="${p.image}" class="w-full h-full object-contain transition duration-500" loading="lazy" onerror="this.src='https://placehold.co/300?text=Item'">
-                    </div>
-                    <div class="p-6">
-                        <span class="text-[10px] font-bold text-primaryLight uppercase tracking-widest">${p.category||'Item'}</span>
-                        <h3 class="font-bold text-lg text-textMain truncate mb-2">${p.name}</h3>
-                        <div class="flex justify-between items-center mt-4">
-                            <div class="flex flex-col">
-                                ${discount > 0 ? `<span class="old-price">₹${price}</span>` : ''}
-                                <span class="text-2xl font-extrabold text-textMain">₹${finalPrice}</span>
-                            </div>
-                            <button onclick="event.stopPropagation(); app.addToCart('${p.id}')" class="clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-xl text-primary hover:bg-primary hover:text-white"><i data-lucide="plus"></i></button>
-                        </div>
-                    </div>
+            const discount = p.discount ? parseInt(p.discount) : 0;
+            const price = parseInt(p.price);
+            const finalPrice = discount > 0
+                ? Math.round(price - (price * discount / 100))
+                : price;
+
+            return `
+        <div class="clay-card product-card category-card" onclick="app.loadProductDetails('${p.id}')">
+            
+            <div class="product-image-wrap">
+                ${discount > 0 ? `<div class="sale-badge">SALE -${discount}%</div>` : ''}
+
+                <div class="product-actions">
+                    <button onclick="event.stopPropagation(); app.toggleWishlist('${p.id}')"
+                        class="wishlist-btn ${isLiked ? 'liked' : ''}">
+                        <i data-lucide="heart"></i>
+                    </button>
                 </div>
-             `;
+
+                <img src="${p.image}" class="product-image" loading="lazy"
+                     onerror="this.src='https://placehold.co/300?text=Item'">
+            </div>
+
+            <div class="product-content">
+                <span class="product-category">${p.category || 'Item'}</span>
+                <h3 class="product-title">${p.name}</h3>
+
+                <div class="product-footer">
+                    <div class="product-price">
+                        ${discount > 0 ? `<span class="old-price">₹${price}</span>` : ''}
+                        <span class="final-price">₹${finalPrice}</span>
+                    </div>
+
+                    <button onclick="event.stopPropagation(); app.addToCart('${p.id}')"
+                        class="clay-btn clay-btn-secondary add-cart-btn">
+                        <i data-lucide="plus"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
         }
-        
+
+
         // Randomized reviews generator for demo feel
         function generateRandomReviews() {
-             const names = ["Alice S.", "John D.", "Emma W.", "Michael B.", "Sophia L."];
-             const comments = [
-                 "Absolutely love this! Great quality.",
-                 "Fast delivery and exactly as described.",
-                 "Good value for money. Highly recommend.",
-                 "Works perfectly for my needs.",
-                 "Excellent build quality and design."
-             ];
-             let html = '';
-             // Generate 2 random reviews
-             for(let i=0; i<2; i++) {
-                 const name = names[Math.floor(Math.random()*names.length)];
-                 const comment = comments[Math.floor(Math.random()*comments.length)];
-                 const initials = name.split(' ').map(n=>n[0]).join('');
-                 html += `
+            const names = ["Alice S.", "John D.", "Emma W.", "Michael B.", "Sophia L."];
+            const comments = [
+                "Absolutely love this! Great quality.",
+                "Fast delivery and exactly as described.",
+                "Good value for money. Highly recommend.",
+                "Works perfectly for my needs.",
+                "Excellent build quality and design."
+            ];
+            let html = '';
+            // Generate 2 random reviews
+            for (let i = 0; i < 2; i++) {
+                const name = names[Math.floor(Math.random() * names.length)];
+                const comment = comments[Math.floor(Math.random() * comments.length)];
+                const initials = name.split(' ').map(n => n[0]).join('');
+                html += `
                      <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
                          <div class="flex items-center justify-between mb-2">
                              <div class="flex items-center gap-2">
@@ -811,24 +1277,24 @@
                          <p class="text-xs text-slate-500">${comment}</p>
                      </div>
                  `;
-             }
-             return html;
+            }
+            return html;
         }
 
         window.app = {
-            currentUser: null, userRole: 'customer', cart: [], products: [], 
-            currentTicketId: null, activeCategory: 'all', currentProductDetailId: null, 
+            currentUser: null, userRole: 'customer', cart: [], products: [],
+            currentTicketId: null, activeCategory: 'all', currentProductDetailId: null,
             wishlist: [], cartTotalValue: 0,
             categories: [
-                 { id: 'Electronics', name: 'Electronics', icon: 'cpu', color: 'bg-blue-100 text-blue-600' },
-                 { id: 'Home', name: 'Home', icon: 'home', color: 'bg-orange-100 text-orange-600' },
-                 { id: 'Security', name: 'Security', icon: 'lock', color: 'bg-red-100 text-red-600' },
-                 { id: 'Fashion', name: 'Fashion', icon: 'shirt', color: 'bg-pink-100 text-pink-600' }, 
-                 { id: 'Sports', name: 'Sports', icon: 'activity', color: 'bg-green-100 text-green-600' },
-                 { id: 'Toys', name: 'Toys', icon: 'gamepad-2', color: 'bg-purple-100 text-purple-600' }
+                { id: 'Electronics', name: 'Electronics', icon: 'cpu', color: 'bg-blue-100 text-blue-600' },
+                { id: 'Home', name: 'Home', icon: 'home', color: 'bg-orange-100 text-orange-600' },
+                { id: 'Security', name: 'Security', icon: 'lock', color: 'bg-red-100 text-red-600' },
+                { id: 'Fashion', name: 'Fashion', icon: 'shirt', color: 'bg-pink-100 text-pink-600' },
+                { id: 'Sports', name: 'Sports', icon: 'activity', color: 'bg-green-100 text-green-600' },
+                { id: 'Toys', name: 'Toys', icon: 'gamepad-2', color: 'bg-purple-100 text-purple-600' }
             ],
 
-            updateIcons: () => { if(window.lucide) window.lucide.createIcons(); },
+            updateIcons: () => { if (window.lucide) window.lucide.createIcons(); },
             toast: (msg, type = 'info') => {
                 const container = document.getElementById('toast-container');
                 const toast = document.createElement('div');
@@ -842,20 +1308,20 @@
             },
 
             init: () => {
-                 // Load cart from local storage
-                 const savedCart = localStorage.getItem('cart');
-                 if(savedCart) {
-                     window.app.cart = JSON.parse(savedCart);
-                     window.app.updateCartUI();
-                 }
-                 const savedWishlist = localStorage.getItem('wishlist');
-                 if(savedWishlist) window.app.wishlist = JSON.parse(savedWishlist);
+                // Load cart from local storage
+                const savedCart = localStorage.getItem('cart');
+                if (savedCart) {
+                    window.app.cart = JSON.parse(savedCart);
+                    window.app.updateCartUI();
+                }
+                const savedWishlist = localStorage.getItem('wishlist');
+                if (savedWishlist) window.app.wishlist = JSON.parse(savedWishlist);
             },
 
             router: async (viewId) => {
-                if(app.chatUnsubscribe) { app.chatUnsubscribe(); app.chatUnsubscribe = null; }
+                if (app.chatUnsubscribe) { app.chatUnsubscribe(); app.chatUnsubscribe = null; }
                 document.querySelectorAll('.view-section').forEach(el => el.classList.add('hide'));
-                
+
                 const view = document.getElementById(`view-${viewId}`);
                 if (view) view.classList.remove('hide');
 
@@ -868,23 +1334,23 @@
                 if (viewId === 'admin-dashboard') await app.loadAdminDashboard();
                 if (viewId === 'service-dashboard') await app.loadServiceDashboard();
                 if (viewId === 'customer-chat') { /* handled by openCustomerChat */ }
-                
-                if (viewId === 'seller-apply' && !app.currentUser) { 
-                    app.toast("Login first", "info"); 
-                    app.router('login'); 
+
+                if (viewId === 'seller-apply' && !app.currentUser) {
+                    app.toast("Login first", "info");
+                    app.router('login');
                 }
-                
+
                 document.querySelectorAll('.nav-icon-mobile').forEach(el => el.classList.remove('active'));
                 const activeNav = document.getElementById(`mob-nav-${viewId}`);
                 if (activeNav) activeNav.classList.add('active');
 
                 // Desktop Nav Active State
                 document.querySelectorAll('.nav-link-desktop').forEach(el => {
-                     if(el.id === `nav-${viewId}`) el.classList.add('active');
-                     else el.classList.remove('active');
+                    if (el.id === `nav-${viewId}`) el.classList.add('active');
+                    else el.classList.remove('active');
                 });
 
-                window.scrollTo(0,0);
+                window.scrollTo(0, 0);
                 app.updateIcons();
             },
 
@@ -892,13 +1358,13 @@
             updateAuthUI: () => {
                 const logoutBtn = `<button onclick="app.logout()" class="bg-white/10 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-white/20 transition">Logout</button>`;
                 document.getElementById('auth-section-desktop').innerHTML = app.currentUser ? logoutBtn : `<button onclick="app.router('login')" class="bg-white text-primary px-5 py-2 rounded-xl text-sm font-bold shadow-lg hover:bg-gray-100 transition">Login</button>`;
-                
+
                 ['nav-admin', 'nav-seller', 'nav-service'].forEach(id => document.getElementById(id).classList.add('hide'));
-                if(app.userRole === 'admin') document.getElementById('nav-admin').classList.remove('hide');
-                if(app.userRole === 'seller') document.getElementById('nav-seller').classList.remove('hide');
-                if(app.userRole === 'service') document.getElementById('nav-service').classList.remove('hide');
-                
-                if(app.currentUser && app.currentUser.photoURL) document.getElementById('header-avatar').src = app.currentUser.photoURL;
+                if (app.userRole === 'admin') document.getElementById('nav-admin').classList.remove('hide');
+                if (app.userRole === 'seller') document.getElementById('nav-seller').classList.remove('hide');
+                if (app.userRole === 'service') document.getElementById('nav-service').classList.remove('hide');
+
+                if (app.currentUser && app.currentUser.photoURL) document.getElementById('header-avatar').src = app.currentUser.photoURL;
             },
 
             toggleHeaderSearch: () => {
@@ -907,30 +1373,30 @@
                 if (searchBar.classList.contains('open')) searchBar.classList.remove('open');
                 else { searchBar.classList.add('open'); input.focus(); }
             },
-            
+
             clearSearch: () => {
-                 document.getElementById('global-search-input').value = '';
-                 app.toggleHeaderSearch();
-                 app.router('home');
+                document.getElementById('global-search-input').value = '';
+                app.toggleHeaderSearch();
+                app.router('home');
             },
 
             // SEARCH LOGIC: Dedicated Page
             performSearch: (query) => {
-                if(!query.trim()) return;
+                if (!query.trim()) return;
                 const term = query.toLowerCase();
                 const filtered = app.products.filter(p => p.name.toLowerCase().includes(term) || (p.desc && p.desc.toLowerCase().includes(term)));
-                
+
                 document.getElementById('search-query-display').innerText = query;
                 const grid = document.getElementById('search-results-grid');
                 grid.innerHTML = '';
 
                 if (filtered.length === 0) {
-                     grid.innerHTML = `<div class="col-span-4 text-center py-20 text-slate-400">No products found matching "${query}"</div>`;
+                    grid.innerHTML = `<div class="col-span-4 text-center py-20 text-slate-400">No products found matching "${query}"</div>`;
                 } else {
-                     filtered.forEach(p => {
-                         const isLiked = app.wishlist.includes(p.id);
-                         grid.innerHTML += createProductCardHTML(p, isLiked);
-                     });
+                    filtered.forEach(p => {
+                        const isLiked = app.wishlist.includes(p.id);
+                        grid.innerHTML += createProductCardHTML(p, isLiked);
+                    });
                 }
                 app.router('search-results');
             },
@@ -950,8 +1416,8 @@
 
                 try {
                     let cred;
-                    if(isRegister) {
-                        if(!name) throw new Error("Please enter your name.");
+                    if (isRegister) {
+                        if (!name) throw new Error("Please enter your name.");
                         cred = await createUserWithEmailAndPassword(auth, email, pass);
                         await setDoc(getUserRef(cred.user.uid), { uid: cred.user.uid, email, role: 'customer', name: name || email.split('@')[0], addressList: [] });
                         await updateProfile(cred.user, { displayName: name });
@@ -961,7 +1427,7 @@
                         app.toast("Welcome back!", "success");
                     }
                     app.router('home');
-                } catch(err) { app.toast(err.message, "error"); }
+                } catch (err) { app.toast(err.message, "error"); }
                 finally { app.toggleLoader(false); }
             },
 
@@ -974,14 +1440,14 @@
                     const cred = await signInWithEmailAndPassword(auth, email, pass);
                     const docSnap = await getDoc(getUserRef(cred.user.uid));
                     // STRICT CHECK: Only allow if DB role is 'seller' or if it's the Admin email
-                    if((docSnap.exists() && docSnap.data().role === 'seller') || cred.user.email === ADMIN_EMAIL) {
+                    if ((docSnap.exists() && docSnap.data().role === 'seller') || cred.user.email === ADMIN_EMAIL) {
                         app.toast("Seller Login Success", "success");
                         app.router('seller-dashboard');
                     } else {
                         await signOut(auth);
                         app.toast("Access Denied: Authorized Sellers only.", "error");
                     }
-                } catch(err) { app.toast(err.message, "error"); }
+                } catch (err) { app.toast(err.message, "error"); }
                 finally { app.toggleLoader(false); }
             },
 
@@ -989,10 +1455,10 @@
                 try {
                     const res = await signInWithPopup(auth, new GoogleAuthProvider());
                     const docSnap = await getDoc(getUserRef(res.user.uid));
-                    if(!docSnap.exists()) await setDoc(getUserRef(res.user.uid), { uid: res.user.uid, email: res.user.email, role: 'customer', name: res.user.displayName, addressList: [] });
+                    if (!docSnap.exists()) await setDoc(getUserRef(res.user.uid), { uid: res.user.uid, email: res.user.email, role: 'customer', name: res.user.displayName, addressList: [] });
                     app.toast("Google Login Success", "success");
                     app.router('home');
-                } catch(e) { app.toast(e.message, "error"); }
+                } catch (e) { app.toast(e.message, "error"); }
             },
 
             logout: () => {
@@ -1010,7 +1476,7 @@
                 const title = document.getElementById('auth-title');
                 const nameGroup = document.getElementById('auth-name-group');
 
-                if(btn.innerText === 'Sign In') {
+                if (btn.innerText === 'Sign In') {
                     btn.innerText = 'Sign Up'; sw.innerText = 'Sign In'; title.innerText = 'Create Account';
                     nameGroup.classList.remove('hide');
                 } else {
@@ -1022,7 +1488,7 @@
             loadBanners: async () => {
                 try {
                     const snap = await getDocs(getCollectionRef('banners'));
-                    if(!snap.empty) {
+                    if (!snap.empty) {
                         const banner = snap.docs[0].data(); // Get first banner for simple MVP
                         const container = document.getElementById('home-banner-container');
                         container.innerHTML = `
@@ -1040,7 +1506,7 @@
                             </div>
                         `;
                     }
-                } catch(e) {}
+                } catch (e) { }
             },
 
             adminSaveBanner: async (e) => {
@@ -1055,22 +1521,22 @@
                 };
                 try {
                     const snap = await getDocs(getCollectionRef('banners'));
-                    if(snap.empty) {
+                    if (snap.empty) {
                         await addDoc(getCollectionRef('banners'), data);
                     } else {
                         // Update existing first doc for simplicity
                         await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'banners', snap.docs[0].id), data);
                     }
                     app.toast("Banner Updated!", "success");
-                } catch(e) { app.toast(e.message, "error"); }
+                } catch (e) { app.toast(e.message, "error"); }
                 finally { app.toggleLoader(false); }
             },
-            
+
             // Dynamic Categories on Home
             loadHomeCategories: () => {
                 const con = document.getElementById('home-categories-scroll');
                 con.innerHTML = '<button onclick="app.filterCategory(\'all\')" class="clay-btn clay-btn-primary px-6 py-2 text-sm rounded-full flex items-center gap-2"><i data-lucide="grid" class="w-4 h-4"></i> All</button>';
-                
+
                 app.categories.forEach(cat => {
                     // Simple color mapping
                     let btnClass = 'clay-btn clay-btn-secondary';
@@ -1103,34 +1569,35 @@
                 const grid = document.getElementById('product-grid');
                 // Skeleton Loader
                 grid.innerHTML = '';
-                for(let i=0; i<4; i++) {
+                for (let i = 0; i < 4; i++) {
                     grid.innerHTML += `
-                        <div class="clay-card h-80 relative overflow-hidden">
-                            <div class="skeleton w-full h-40 absolute top-0"></div>
-                            <div class="p-6 absolute bottom-0 w-full space-y-3">
-                                <div class="skeleton h-4 w-1/3 rounded"></div>
-                                <div class="skeleton h-6 w-3/4 rounded"></div>
-                                <div class="flex justify-between mt-2">
-                                    <div class="skeleton h-8 w-1/4 rounded"></div>
-                                    <div class="skeleton h-8 w-8 rounded-full"></div>
-                                </div>
-                            </div>
-                        </div>`;
+                        <div class="clay-card h-8 relative overflow-hidden">
+    <div class="skeleton w-full h-40 absolute top-0"></div>
+    <div class="p-4 absolute bottom-0 w-full space-y-2">
+        <div class="skeleton h-4 w-1/3 rounded"></div>
+        <div class="skeleton h-6 w-3/4 rounded"></div>
+        <div class="flex justify-between mt-2">
+            <div class="skeleton h-8 w-1/4 rounded"></div>
+            <div class="skeleton h-8 w-8 rounded-full"></div>
+        </div>
+    </div>
+</div>
+`;
                 }
 
                 try {
                     const snap = await getDocs(getCollectionRef('products'));
                     app.products = [];
-                    snap.forEach(d => app.products.push({id: d.id, ...d.data()}));
+                    snap.forEach(d => app.products.push({ id: d.id, ...d.data() }));
                     app.renderProductGrid(app.products);
-                } catch(e) { grid.innerHTML = '<p class="col-span-4 text-center text-slate-400">Loading failed</p>'; }
+                } catch (e) { grid.innerHTML = '<p class="col-span-4 text-center text-slate-400">Loading failed</p>'; }
             },
 
             renderProductGrid: (products) => {
                 const grid = document.getElementById('product-grid');
                 grid.innerHTML = '';
-                if(products.length === 0) { grid.innerHTML = '<p class="col-span-4 text-center text-slate-400 py-12">No products found.</p>'; return; }
-                
+                if (products.length === 0) { grid.innerHTML = '<p class="col-span-4 text-center text-slate-400 py-12">No products found.</p>'; return; }
+
                 products.forEach(p => {
                     const isLiked = app.wishlist.includes(p.id);
                     grid.innerHTML += createProductCardHTML(p, isLiked);
@@ -1140,22 +1607,22 @@
 
             loadProductDetails: (pid) => {
                 const p = app.products.find(x => x.id === pid);
-                if(!p) return;
+                if (!p) return;
                 app.currentProductDetailId = pid;
                 document.getElementById('detail-img').src = p.image;
                 document.getElementById('detail-name').innerText = p.name;
                 document.getElementById('detail-desc').innerText = p.desc;
                 document.getElementById('detail-cat').innerText = p.category;
-                
+
                 const discount = p.discount ? parseInt(p.discount) : 0;
                 const price = parseInt(p.price);
                 const finalPrice = discount > 0 ? Math.round(price - (price * discount / 100)) : price;
-                
+
                 document.getElementById('detail-price').innerText = '₹' + finalPrice;
                 const oldPriceEl = document.getElementById('detail-old-price');
                 const badge = document.getElementById('detail-badge');
-                
-                if(discount > 0) {
+
+                if (discount > 0) {
                     oldPriceEl.innerText = '₹' + price;
                     oldPriceEl.classList.remove('hide');
                     badge.classList.remove('hide');
@@ -1164,60 +1631,60 @@
                     oldPriceEl.classList.add('hide');
                     badge.classList.add('hide');
                 }
-                
+
                 document.getElementById('detail-reviews').innerHTML = generateRandomReviews();
 
                 // Update Wishlist Icon state
                 const isLiked = app.wishlist.includes(pid);
                 const heartIcon = document.getElementById('detail-wishlist-icon');
-                if(isLiked) {
+                if (isLiked) {
                     heartIcon.classList.add('fill-current');
                     heartIcon.parentElement.classList.add('text-danger');
                 } else {
                     heartIcon.classList.remove('fill-current');
                     heartIcon.parentElement.classList.remove('text-danger');
                 }
-                
+
                 app.router('product-details');
             },
-            
+
             // --- WISHLIST LOGIC ---
             loadWishlist: () => {
                 const grid = document.getElementById('wishlist-grid');
                 grid.innerHTML = '';
                 const wishedProducts = app.products.filter(p => app.wishlist.includes(p.id));
-                
-                if(wishedProducts.length === 0) {
+
+                if (wishedProducts.length === 0) {
                     grid.innerHTML = '<div class="col-span-full text-center py-20 text-slate-400">Your wishlist is empty</div>';
                     return;
                 }
                 wishedProducts.forEach(p => {
-                     grid.innerHTML += createProductCardHTML(p, true);
+                    grid.innerHTML += createProductCardHTML(p, true);
                 });
                 app.updateIcons();
             },
 
             toggleWishlist: (pid) => {
-                if(app.wishlist.includes(pid)) {
+                if (app.wishlist.includes(pid)) {
                     app.wishlist = app.wishlist.filter(id => id !== pid);
                     app.toast("Removed from Wishlist");
                 } else {
                     app.wishlist.push(pid);
                     app.toast("Added to Wishlist", "success");
-                    
+
                     // Add ping animation
                     const btn = document.activeElement;
-                    if(btn) {
+                    if (btn) {
                         btn.style.animation = 'heartPing 0.4s';
-                        setTimeout(()=> btn.style.animation = '', 400);
+                        setTimeout(() => btn.style.animation = '', 400);
                     }
                 }
                 localStorage.setItem('wishlist', JSON.stringify(app.wishlist));
-                
-                if(!document.getElementById('view-home').classList.contains('hide')) {
-                    app.renderProductGrid(app.products); 
+
+                if (!document.getElementById('view-home').classList.contains('hide')) {
+                    app.renderProductGrid(app.products);
                 } else if (!document.getElementById('view-product-details').classList.contains('hide')) {
-                    app.loadProductDetails(pid); 
+                    app.loadProductDetails(pid);
                 } else if (!document.getElementById('view-search-results').classList.contains('hide')) {
                     const query = document.getElementById('search-query-display').innerText;
                     app.performSearch(query);
@@ -1234,7 +1701,7 @@
             },
 
             filterProducts: () => {
-                const term = document.getElementById('search-input') ? document.getElementById('search-input').value.toLowerCase() : ''; 
+                const term = document.getElementById('search-input') ? document.getElementById('search-input').value.toLowerCase() : '';
                 const filtered = app.products.filter(p => {
                     const matchSearch = p.name.toLowerCase().includes(term);
                     const matchCat = app.activeCategory === 'all' || p.category === app.activeCategory;
@@ -1245,18 +1712,18 @@
 
             addToCart: (pid) => {
                 const p = app.products.find(x => x.id === pid);
-                if(!p) return;
-                
+                if (!p) return;
+
                 const discount = p.discount ? parseInt(p.discount) : 0;
                 const finalPrice = discount > 0 ? Math.round(p.price - (p.price * discount / 100)) : p.price;
-                const itemToAdd = { ...p, price: finalPrice, originalPrice: p.price }; 
+                const itemToAdd = { ...p, price: finalPrice, originalPrice: p.price };
 
                 const exist = app.cart.find(x => x.id === pid);
-                if(exist) exist.qty++; else app.cart.push({...itemToAdd, qty: 1});
-                
+                if (exist) exist.qty++; else app.cart.push({ ...itemToAdd, qty: 1 });
+
                 // Animation
                 const btn = document.getElementById('fab-cart-btn') || document.querySelector('button[onclick="app.toggleCart()"]');
-                if(btn) {
+                if (btn) {
                     btn.style.animation = 'none';
                     setTimeout(() => btn.style.animation = 'cartBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)', 10);
                 }
@@ -1275,7 +1742,7 @@
                 const checkoutItems = document.getElementById('checkout-items');
                 con.innerHTML = ''; checkoutItems.innerHTML = '';
                 let total = 0, count = 0;
-                
+
                 app.cart.forEach((item, idx) => {
                     total += item.price * item.qty; count += item.qty;
                     const html = `
@@ -1292,7 +1759,7 @@
                         </div>
                     `;
                     con.innerHTML += html;
-                    checkoutItems.innerHTML += `<div class="flex justify-between text-sm mb-2"><span class="font-bold text-slate-600">${item.name} x${item.qty}</span> <span>₹${item.price*item.qty}</span></div>`;
+                    checkoutItems.innerHTML += `<div class="flex justify-between text-sm mb-2"><span class="font-bold text-slate-600">${item.name} x${item.qty}</span> <span>₹${item.price * item.qty}</span></div>`;
                 });
 
                 document.getElementById('cart-count-desktop').innerText = count;
@@ -1300,22 +1767,22 @@
                 document.getElementById('cart-total').innerText = '₹' + total;
                 document.getElementById('checkout-total').innerText = '₹' + total;
                 document.getElementById('checkout-subtotal').innerText = '₹' + total;
-                if(document.getElementById('cart-badge-desktop')) document.getElementById('cart-badge-desktop').innerText = count;
+                if (document.getElementById('cart-badge-desktop')) document.getElementById('cart-badge-desktop').innerText = count;
                 app.cartTotalValue = total;
-                
+
                 // Persist
                 localStorage.setItem('cart', JSON.stringify(app.cart));
             },
 
             changeQty: (idx, d) => {
                 app.cart[idx].qty += d;
-                if(app.cart[idx].qty <= 0) app.cart.splice(idx, 1);
+                if (app.cart[idx].qty <= 0) app.cart.splice(idx, 1);
                 app.updateCartUI();
             },
 
             goToCheckout: () => {
-                if(app.cart.length === 0) return app.toast("Cart empty", "info");
-                if(!app.currentUser) { app.toast("Login required", "info"); return app.router('login'); }
+                if (app.cart.length === 0) return app.toast("Cart empty", "info");
+                if (!app.currentUser) { app.toast("Login required", "info"); return app.router('login'); }
                 app.toggleCart();
                 app.router('checkout');
                 app.loadSavedAddresses();
@@ -1340,11 +1807,11 @@
                     document.getElementById('new-address-form').classList.add('hide');
                     app.loadSavedAddresses();
                     app.toast("Address Saved", "success");
-                } catch(e) { app.toast("Save failed", "error"); }
+                } catch (e) { app.toast("Save failed", "error"); }
             },
-            
+
             deleteAddress: async (idx) => {
-                if(!confirm("Remove this address?")) return;
+                if (!confirm("Remove this address?")) return;
                 try {
                     const ref = getUserRef(app.currentUser.uid);
                     const snap = await getDoc(ref);
@@ -1352,9 +1819,9 @@
                     list.splice(idx, 1);
                     await updateDoc(ref, { addressList: list });
                     app.loadSavedAddresses();
-                    if(!document.getElementById('view-profile').classList.contains('hide')) app.loadProfile();
+                    if (!document.getElementById('view-profile').classList.contains('hide')) app.loadProfile();
                     app.toast("Address Removed", "info");
-                } catch(e) { app.toast("Error removing", "error"); }
+                } catch (e) { app.toast("Error removing", "error"); }
             },
 
             loadSavedAddresses: async () => {
@@ -1362,7 +1829,7 @@
                 const list = snap.data().addressList || [];
                 const con = document.getElementById('saved-addresses');
                 con.innerHTML = '';
-                
+
                 list.forEach((a, i) => {
                     // Automatically check the last added address if it's the newest, or just use index
                     const isChecked = i === list.length - 1 ? 'checked' : '';
@@ -1380,28 +1847,28 @@
                         </div>
                     `;
                 });
-                if(list.length===0) con.innerHTML = '<p class="text-sm text-slate-400 italic">No addresses.</p>';
+                if (list.length === 0) con.innerHTML = '<p class="text-sm text-slate-400 italic">No addresses.</p>';
                 app.updateIcons();
             },
 
             placeOrder: async () => {
-                if(!app.currentUser) return;
+                if (!app.currentUser) return;
                 app.toggleLoader(true);
                 try {
                     const snap = await getDoc(getUserRef(app.currentUser.uid));
                     const list = snap.data().addressList || [];
                     const sel = document.querySelector('input[name="selected-address"]:checked');
-                    
-                    if(!sel && list.length === 0) throw new Error("Add address first");
-                    
+
+                    if (!sel && list.length === 0) throw new Error("Add address first");
+
                     // Fallback to first address if list exists but radio not checked (edge case)
                     let addr = null;
-                    if(sel) {
+                    if (sel) {
                         addr = list[sel.value];
                     } else if (list.length > 0) {
-                        addr = list[list.length-1]; // Use latest
+                        addr = list[list.length - 1]; // Use latest
                     } else {
-                         throw new Error("Please select an address");
+                        throw new Error("Please select an address");
                     }
 
                     const payMethod = document.querySelector('input[name="payment"]:checked').value;
@@ -1422,45 +1889,45 @@
                     await addDoc(getCollectionRef('orders'), order);
                     app.cart = []; app.updateCartUI();
                     app.router('success');
-                } catch(e) { app.toast(e.message, "error"); }
+                } catch (e) { app.toast(e.message, "error"); }
                 finally { app.toggleLoader(false); }
             },
 
             loadCustomerOrders: async () => {
-                if(!app.currentUser) { app.toast("Login required", "info"); return app.router('login'); }
+                if (!app.currentUser) { app.toast("Login required", "info"); return app.router('login'); }
                 app.toggleLoader(true);
                 const con = document.getElementById('orders-list');
                 con.innerHTML = '';
                 try {
                     const snap = await getDocs(getCollectionRef('orders'));
                     const myOrders = [];
-                    snap.forEach(d => { if(d.data().customerId === app.currentUser.uid) myOrders.push({id: d.id, ...d.data()}); });
-                    
-                    if(myOrders.length === 0) { con.innerHTML = '<div class="clay-card p-8 text-center text-slate-400">No orders yet</div>'; return; }
+                    snap.forEach(d => { if (d.data().customerId === app.currentUser.uid) myOrders.push({ id: d.id, ...d.data() }); });
 
-                    myOrders.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                    if (myOrders.length === 0) { con.innerHTML = '<div class="clay-card p-8 text-center text-slate-400">No orders yet</div>'; return; }
+
+                    myOrders.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
                     myOrders.forEach(o => {
                         const steps = ['Order Placed', 'Verified', 'Packed', 'Shipped', 'Delivered'];
                         let stepIdx = steps.indexOf(o.status);
-                        if(o.status === 'Pending Verification') stepIdx = 0;
-                        if(stepIdx === -1) stepIdx = 0;
+                        if (o.status === 'Pending Verification') stepIdx = 0;
+                        if (stepIdx === -1) stepIdx = 0;
 
                         // Visual Tracker Logic
                         let trackerHTML = `<div class="flex justify-between items-center mt-6 mb-2 text-xs relative px-2">
                             <div class="absolute top-1.5 left-0 w-full h-1 bg-gray-100 -z-10 rounded-full"></div>
                             <div class="absolute top-1.5 left-0 h-1 bg-success -z-10 transition-all duration-1000 rounded-full" style="width: ${(stepIdx / (steps.length - 1)) * 100}%"></div>`;
-                        
+
                         steps.forEach((s, idx) => {
-                             const active = idx <= stepIdx;
-                             trackerHTML += `
+                            const active = idx <= stepIdx;
+                            trackerHTML += `
                                 <div class="flex flex-col items-center z-10">
                                     <div class="w-3 h-3 rounded-full border-2 ${active ? 'bg-success border-success' : 'bg-white border-gray-300'} mb-1 shadow-sm transition-colors"></div>
-                                    <span class="${active ? 'text-success font-bold' : 'text-gray-300'} text-[9px] uppercase tracking-widest ${idx===stepIdx ? 'scale-110' : ''}">${s.split(' ')[0]}</span>
+                                    <span class="${active ? 'text-success font-bold' : 'text-gray-300'} text-[9px] uppercase tracking-widest ${idx === stepIdx ? 'scale-110' : ''}">${s.split(' ')[0]}</span>
                                 </div>`;
                         });
                         trackerHTML += `</div>`;
-                        
+
                         // Cancellation Logic (24h)
                         const orderTime = o.createdAt ? o.createdAt.toDate().getTime() : 0;
                         const canCancel = (Date.now() - orderTime) < (24 * 60 * 60 * 1000) && o.status !== 'Cancelled' && o.status !== 'Delivered';
@@ -1468,11 +1935,11 @@
                         con.innerHTML += `
                             <div class="clay-card p-6 mb-4">
                                 <div class="flex justify-between items-center mb-4 pb-4 border-b border-slate-100">
-                                    <div class="font-bold text-textMain text-sm">#${o.id.substr(0,8)}</div>
+                                    <div class="font-bold text-textMain text-sm">#${o.id.substr(0, 8)}</div>
                                     <span class="bg-slate-100 px-3 py-1 rounded-full text-xs font-bold text-slate-600 uppercase">${o.status}</span>
                                 </div>
                                 <div class="space-y-2 mb-4">
-                                    ${o.items.map(i => `<div class="flex justify-between text-sm text-slate-500"><span>${i.name} x${i.qty}</span> <span class="font-bold">₹${i.price*i.qty}</span></div>`).join('')}
+                                    ${o.items.map(i => `<div class="flex justify-between text-sm text-slate-500"><span>${i.name} x${i.qty}</span> <span class="font-bold">₹${i.price * i.qty}</span></div>`).join('')}
                                 </div>
                                 <div class="flex justify-between font-extrabold text-textMain pt-2">
                                     <span>Total</span> <span>₹${o.total}</span>
@@ -1488,38 +1955,38 @@
                             </div>
                         `;
                     });
-                } catch(e) {} finally { app.toggleLoader(false); }
+                } catch (e) { } finally { app.toggleLoader(false); }
             },
-            
+
             cancelOrder: async (oid) => {
-                if(!confirm("Are you sure you want to cancel this order?")) return;
+                if (!confirm("Are you sure you want to cancel this order?")) return;
                 app.toggleLoader(true);
                 try {
                     await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'orders', oid), { status: 'Cancelled' });
                     app.toast("Order Cancelled", "info");
                     app.loadCustomerOrders();
-                } catch(e) { app.toast("Error cancelling", "error"); }
+                } catch (e) { app.toast("Error cancelling", "error"); }
                 finally { app.toggleLoader(false); }
             },
 
             loadProfile: async () => {
-                if(!app.currentUser) return app.router('login');
+                if (!app.currentUser) return app.router('login');
                 const snap = await getDoc(getUserRef(app.currentUser.uid));
                 const d = snap.data();
                 document.getElementById('profile-name').innerText = d.name;
                 document.getElementById('profile-email').innerText = d.email;
                 document.getElementById('profile-role').innerText = d.role.toUpperCase();
-                
+
                 // Pre-fill card holder name in checkout if available
                 const cardName = document.getElementById('card-holder-preview');
-                if(cardName) cardName.innerText = d.name.toUpperCase();
-                
+                if (cardName) cardName.innerText = d.name.toUpperCase();
+
                 // Pre-fill edit modal
                 document.getElementById('edit-profile-name').value = d.name;
 
                 const con = document.getElementById('profile-address-list');
                 con.innerHTML = '';
-                (d.addressList||[]).forEach((a, i) => {
+                (d.addressList || []).forEach((a, i) => {
                     con.innerHTML += `
                         <div class="relative group">
                             <div class="clay-input p-4">
@@ -1532,11 +1999,11 @@
                 });
                 app.updateIcons();
             },
-            
+
             openEditProfile: () => {
                 document.getElementById('edit-profile-modal').classList.remove('hide');
             },
-            
+
             updateProfile: async (e) => {
                 e.preventDefault();
                 app.toggleLoader(true);
@@ -1544,13 +2011,13 @@
                 const photo = document.getElementById('edit-profile-photo').value;
                 try {
                     await updateDoc(getUserRef(app.currentUser.uid), { name });
-                    if(photo) {
-                         await updateProfile(auth.currentUser, { photoURL: photo });
+                    if (photo) {
+                        await updateProfile(auth.currentUser, { photoURL: photo });
                     }
                     app.toast("Profile Updated", "success");
                     document.getElementById('edit-profile-modal').classList.add('hide');
                     app.loadProfile();
-                } catch(e) { app.toast(e.message, "error"); }
+                } catch (e) { app.toast(e.message, "error"); }
                 finally { app.toggleLoader(false); }
             },
 
@@ -1559,10 +2026,10 @@
                 const oList = document.getElementById('seller-orders-list');
                 pList.innerHTML = ''; oList.innerHTML = '';
                 let pCount = 0, oCount = 0;
-                
+
                 // Only show own products
                 const myProducts = app.products.filter(p => p.sellerId === app.currentUser.uid);
-                
+
                 myProducts.forEach(p => {
                     pCount++;
                     pList.innerHTML += `
@@ -1571,7 +2038,7 @@
                                 <img src="${p.image}" class="w-10 h-10 rounded-lg bg-slate-50">
                                 <div>
                                     <div class="font-bold text-sm text-textMain">${p.name}</div>
-                                    <div class="text-xs font-bold text-slate-400">₹${p.price} ${p.discount?`(-${p.discount}%)`:''}</div>
+                                    <div class="text-xs font-bold text-slate-400">₹${p.price} ${p.discount ? `(-${p.discount}%)` : ''}</div>
                                 </div>
                             </div>
                             <button onclick="app.deleteProduct('${p.id}')" class="text-danger bg-red-50 p-2 rounded-lg"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
@@ -1583,27 +2050,27 @@
                 snap.forEach(d => {
                     const o = d.data();
                     // Seller sees only processed orders or COD orders, not pending payments
-                    if(o.status !== 'Delivered' && o.status !== 'Pending Verification') { 
+                    if (o.status !== 'Delivered' && o.status !== 'Pending Verification') {
                         oCount++;
                         oList.innerHTML += `
                         <div class="clay-card !rounded-xl !shadow-sm p-4 mb-2 border-none">
                             <div class="flex justify-between mb-2">
-                                <span class="font-bold text-sm">#${d.id.substr(0,6)}</span>
+                                <span class="font-bold text-sm">#${d.id.substr(0, 6)}</span>
                                 <span class="text-xs font-bold text-primary">₹${o.total}</span>
                             </div>
                             <div class="flex justify-between items-center mt-2">
                                 <select onchange="app.updateOrderStatus('${d.id}', this.value)" class="text-xs bg-slate-50 border-none rounded p-1">
                                     <option value="">Status...</option>
-                                    <option value="Packed" ${o.status==='Packed'?'selected':''}>Packed</option>
-                                    <option value="Shipped" ${o.status==='Shipped'?'selected':''}>Shipped</option>
-                                    <option value="Delivered" ${o.status==='Delivered'?'selected':''}>Delivered</option>
+                                    <option value="Packed" ${o.status === 'Packed' ? 'selected' : ''}>Packed</option>
+                                    <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+                                    <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
                                 </select>
                             </div>
                         </div>
                     `;
                     }
                 });
-                
+
                 document.getElementById('seller-stat-products').innerText = pCount;
                 document.getElementById('seller-stat-orders').innerText = oCount;
                 app.updateIcons();
@@ -1628,20 +2095,20 @@
                     document.getElementById('add-product-modal').classList.add('hide');
                     f.reset();
                     await app.loadProducts(); app.loadSellerDashboard();
-                } catch(e) { app.toast(e.message, "error"); }
+                } catch (e) { app.toast(e.message, "error"); }
                 finally { app.toggleLoader(false); }
             },
 
             deleteProduct: async (pid) => {
-                if(confirm("Delete?")) {
+                if (confirm("Delete?")) {
                     await deleteDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'products', pid));
                     await app.loadProducts(); app.loadSellerDashboard();
-                    if(document.getElementById('view-admin-dashboard').classList.contains('hide') === false) app.loadAdminDashboard();
+                    if (document.getElementById('view-admin-dashboard').classList.contains('hide') === false) app.loadAdminDashboard();
                 }
             },
 
             updateOrderStatus: async (oid, status) => {
-                if(!status) return;
+                if (!status) return;
                 await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'orders', oid), { status });
                 app.toast("Status updated", "success");
             },
@@ -1651,15 +2118,15 @@
                 let total = 0, count = 0;
                 const q = document.getElementById('admin-payment-queue');
                 q.innerHTML = '';
-                
+
                 snap.forEach(d => {
                     const o = d.data();
                     total += o.total; count++;
-                    if(o.status === 'Pending Verification') {
+                    if (o.status === 'Pending Verification') {
                         q.innerHTML += `
                             <div class="clay-card !rounded-xl !shadow-sm p-4 mb-2 flex justify-between items-center border-none">
                                 <div>
-                                    <div class="font-bold text-sm">#${d.id.substr(0,8)}</div>
+                                    <div class="font-bold text-sm">#${d.id.substr(0, 8)}</div>
                                     <div class="text-xs text-slate-500">₹${o.total} - ${o.paymentMethod}</div>
                                 </div>
                                 <button onclick="app.adminVerifyPayment('${d.id}')" class="bg-success text-white px-3 py-1 rounded text-xs font-bold">Approve</button>
@@ -1667,17 +2134,17 @@
                         `;
                     }
                 });
-                if(q.innerHTML === '') q.innerHTML = '<p class="text-center text-xs text-slate-400">No pending payments</p>';
+                if (q.innerHTML === '') q.innerHTML = '<p class="text-center text-xs text-slate-400">No pending payments</p>';
                 document.getElementById('admin-total-sales').innerText = '₹' + total;
                 document.getElementById('admin-order-count').innerText = count;
-                
+
                 // Seller Requests
                 const rSnap = await getDocs(getCollectionRef('sellerRequests'));
                 const rCon = document.getElementById('admin-seller-requests');
                 rCon.innerHTML = '';
                 rSnap.forEach(d => {
                     const r = d.data();
-                    if(r.status === 'Pending') {
+                    if (r.status === 'Pending') {
                         rCon.innerHTML += `
                             <div class="clay-card !rounded-xl !shadow-sm p-4 mb-2 flex justify-between items-center border-none">
                                 <div><div class="font-bold text-sm">${r.company}</div><div class="text-xs">${r.name}</div></div>
@@ -1723,7 +2190,7 @@
                 f.p_price.value = 12000; f.p_discount.value = 10; f.p_img.value = "https://placehold.co/400?text=Lock";
                 document.getElementById('product-preview').src = f.p_img.value;
             },
-            
+
             // --- SERVICE CHAT (ADDED) ---
             loadServiceDashboard: async () => {
                 const list = document.getElementById('support-tickets-list');
@@ -1735,25 +2202,25 @@
                         const last = t.messages[t.messages.length - 1];
                         list.innerHTML += `
                              <div onclick="app.openServiceChat('${d.id}')" class="p-3 hover:bg-white/50 cursor-pointer rounded-xl transition border-b border-dashed border-gray-200">
-                                <div class="flex justify-between mb-1"><span class="font-bold text-xs text-primary">#${t.orderId.substr(0,6)}</span></div>
+                                <div class="flex justify-between mb-1"><span class="font-bold text-xs text-primary">#${t.orderId.substr(0, 6)}</span></div>
                                 <div class="text-xs text-slate-500 truncate">${last ? last.text : 'New Ticket'}</div>
                              </div>
                         `;
                     });
-                    if(list.innerHTML === '') list.innerHTML = '<div class="text-slate-400 p-6 text-sm text-center">No active tickets</div>';
-                } catch(e) {}
+                    if (list.innerHTML === '') list.innerHTML = '<div class="text-slate-400 p-6 text-sm text-center">No active tickets</div>';
+                } catch (e) { }
             },
 
             openServiceChat: (ticketId) => {
                 app.currentTicketId = ticketId;
-                document.getElementById('service-chat-header-text').innerText = `Ticket #${ticketId.substr(0,6)}`;
+                document.getElementById('service-chat-header-text').innerText = `Ticket #${ticketId.substr(0, 6)}`;
                 document.getElementById('service-chat-input').disabled = false;
                 document.getElementById('service-chat-send-btn').disabled = false;
-                
+
                 const chatRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'supportChats', ticketId);
-                if(app.chatUnsubscribe) app.chatUnsubscribe();
+                if (app.chatUnsubscribe) app.chatUnsubscribe();
                 app.chatUnsubscribe = onSnapshot(chatRef, (doc) => {
-                    if(doc.exists()) {
+                    if (doc.exists()) {
                         const msgs = doc.data().messages || [];
                         const container = document.getElementById('service-chat-messages');
                         container.innerHTML = '';
@@ -1780,7 +2247,7 @@
                 e.preventDefault();
                 const input = document.getElementById('service-chat-input');
                 const text = input.value;
-                if(!text) return;
+                if (!text) return;
                 const chatRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'supportChats', app.currentTicketId);
                 const chatSnap = await getDoc(chatRef);
                 const messages = chatSnap.data().messages;
@@ -1790,16 +2257,16 @@
             },
 
             toggleLoader: (s) => document.getElementById('global-loader').classList.toggle('hide', !s),
-            
+
             init: () => {
-                 // Load cart from local storage
-                 const savedCart = localStorage.getItem('cart');
-                 if(savedCart) {
-                     window.app.cart = JSON.parse(savedCart);
-                     window.app.updateCartUI();
-                 }
-                 const savedWishlist = localStorage.getItem('wishlist');
-                 if(savedWishlist) window.app.wishlist = JSON.parse(savedWishlist);
+                // Load cart from local storage
+                const savedCart = localStorage.getItem('cart');
+                if (savedCart) {
+                    window.app.cart = JSON.parse(savedCart);
+                    window.app.updateCartUI();
+                }
+                const savedWishlist = localStorage.getItem('wishlist');
+                if (savedWishlist) window.app.wishlist = JSON.parse(savedWishlist);
             }
         };
 
@@ -1810,30 +2277,31 @@
 
         // Load Wishlist from LocalStorage
         const savedWishlist = localStorage.getItem('wishlist');
-        if(savedWishlist) window.app.wishlist = JSON.parse(savedWishlist);
-        
+        if (savedWishlist) window.app.wishlist = JSON.parse(savedWishlist);
+
         // Init Cart
         const savedCart = localStorage.getItem('cart');
-        if(savedCart) {
-             window.app.cart = JSON.parse(savedCart);
-             window.app.updateCartUI();
+        if (savedCart) {
+            window.app.cart = JSON.parse(savedCart);
+            window.app.updateCartUI();
         }
 
         onAuthStateChanged(auth, async (user) => {
-            if(user) {
+            if (user) {
                 app.currentUser = user;
                 const snap = await getDoc(getUserRef(user.uid));
-                if(snap.exists()) app.userRole = snap.data().role;
+                if (snap.exists()) app.userRole = snap.data().role;
                 app.updateAuthUI();
             } else {
                 app.currentUser = null; app.userRole = 'guest';
                 app.updateAuthUI();
             }
-            if(app.products.length === 0) app.loadProducts();
+            if (app.products.length === 0) app.loadProducts();
             app.updateIcons();
         });
 
         app.router('home');
     </script>
 </body>
+
 </html>
