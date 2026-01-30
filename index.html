@@ -196,6 +196,15 @@
                 <span class="text-xl font-extrabold tracking-tight text-primary">SecureThing</span>
             </div>
             
+            <div class="hidden md:flex items-center space-x-4">
+                <button onclick="app.router('home')" class="text-primary/80 hover:text-primary font-bold text-sm transition">Shop</button>
+                <button onclick="app.router('orders')" class="text-primary/80 hover:text-primary font-bold text-sm transition">Tracking</button>
+                <button onclick="app.router('seller-dashboard')" class="text-warning font-bold text-sm transition hide" id="nav-seller">Seller</button>
+                <button onclick="app.router('admin-dashboard')" class="text-primary font-bold text-sm transition hide" id="nav-admin">Admin</button>
+                <button onclick="app.router('service-dashboard')" class="text-accent font-bold text-sm transition hide" id="nav-service">Service</button>
+                <div id="auth-section-desktop"></div>
+            </div>
+
             <div class="flex items-center gap-4">
                 <button onclick="app.toggleHeaderSearch()" class="text-primary hover:bg-white/50 p-2.5 rounded-full transition relative group">
                     <i data-lucide="search" class="w-6 h-6"></i>
@@ -313,20 +322,34 @@
             </div>
         </section>
 
-        <!-- VIEW: LOGIN -->
+        <!-- VIEW: LOGIN (UPDATED WITH DEMO BUTTONS) -->
         <section id="view-login" class="view-section hide max-w-sm mx-auto mt-12">
             <div class="clay-card p-8 md:p-10 text-center">
                 <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-primary"><i data-lucide="lock" class="w-10 h-10"></i></div>
                 <h2 class="text-3xl font-extrabold text-textMain mb-2" id="auth-title">Sign in</h2>
+                
                 <form id="auth-form" onsubmit="app.handleAuth(event)" class="space-y-5 text-left mt-8">
                     <input type="email" id="auth-email" class="clay-input w-full py-4 px-5" placeholder="Email" required>
                     <input type="password" id="auth-pass" class="clay-input w-full py-4 px-5" placeholder="Password" required>
                     <button type="submit" class="clay-btn clay-btn-primary w-full py-4 mt-4 shadow-lg text-lg"><span id="auth-btn-text">Sign In</span></button>
                 </form>
+                
                 <div class="flex gap-4 mt-6 justify-center">
                     <button onclick="app.handleGoogleAuth()" class="clay-btn clay-btn-secondary w-12 h-12 flex items-center justify-center rounded-full text-danger"><i class="fab fa-google"></i></button>
                 </div>
+                
                 <p class="mt-8 text-sm font-bold text-slate-400">Don't have an account? <a href="#" onclick="app.toggleAuthMode()" class="text-primary hover:underline" id="auth-switch-text">Sign up</a></p>
+
+                <!-- DEMO ACCESS SECTION -->
+                <div class="mt-10 pt-8 border-t border-slate-200">
+                    <h3 class="text-xs font-extrabold text-slate-400 uppercase tracking-widest mb-4">Developer / Demo Access</h3>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button onclick="app.demoLogin('admin')" class="clay-btn py-3 text-xs bg-purple-100 text-purple-600 hover:bg-purple-200">Admin</button>
+                        <button onclick="app.demoLogin('seller')" class="clay-btn py-3 text-xs bg-orange-100 text-orange-600 hover:bg-orange-200">Seller</button>
+                        <button onclick="app.demoLogin('service')" class="clay-btn py-3 text-xs bg-blue-100 text-blue-600 hover:bg-blue-200">Service</button>
+                        <button onclick="app.demoLogin('customer')" class="clay-btn py-3 text-xs bg-green-100 text-green-600 hover:bg-green-200">Customer</button>
+                    </div>
+                </div>
             </div>
         </section>
 
@@ -391,7 +414,60 @@
                     <button type="submit" class="clay-btn clay-btn-primary p-4 md:col-span-2">Update Home Banner</button>
                 </form>
             </div>
-            <!-- ... (Admin Stats Grid - reused from previous) ... -->
+            
+            <!-- Admin Stats Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="clay-card p-8 bg-primary text-white border-none relative overflow-hidden">
+                    <div class="relative z-10"><div class="text-white/60 text-xs font-bold uppercase mb-2">Total Sales</div><div class="text-5xl font-extrabold" id="admin-total-sales">₹0</div></div>
+                    <i data-lucide="trending-up" class="absolute right-4 bottom-4 w-24 h-24 text-white/10"></i>
+                </div>
+                <div class="clay-card p-8">
+                    <div class="text-slate-400 text-xs font-bold uppercase mb-2">Total Orders</div><div class="text-5xl font-extrabold text-textMain" id="admin-order-count">0</div>
+                </div>
+            </div>
+            
+            <div class="clay-card p-8 mb-8">
+                <h3 class="font-bold text-lg mb-4">Payment Queue</h3>
+                <div id="admin-payment-queue" class="space-y-3"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="clay-card p-8">
+                    <h3 class="font-bold text-lg mb-4">Seller Requests</h3>
+                    <div id="admin-seller-requests" class="space-y-3"></div>
+                </div>
+                <div class="space-y-6">
+                    <div class="clay-card p-8">
+                        <h3 class="font-bold text-lg mb-4">Create Service Agent</h3>
+                        <form onsubmit="app.createServiceAccount(event)" class="flex gap-3">
+                            <input type="email" id="service-email-input" class="clay-input flex-grow px-4" placeholder="Agent Email" required>
+                            <button class="clay-btn clay-btn-primary px-6">Create</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: SERVICE DASHBOARD (ADDED) -->
+        <section id="view-service-dashboard" class="view-section hide">
+            <h2 class="text-3xl font-extrabold mb-8 text-textMain">Support Desk</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 h-[700px]">
+                <div class="clay-card p-6 h-full flex flex-col">
+                    <h3 class="font-bold mb-6 text-slate-400 text-xs uppercase tracking-widest">Active Tickets</h3>
+                    <div id="support-tickets-list" class="space-y-2 flex-grow overflow-y-auto custom-scrollbar"></div>
+                </div>
+                <div class="clay-card p-6 md:col-span-2 flex flex-col h-full relative">
+                    <div class="border-b border-gray-100 pb-4 mb-4 font-bold text-slate-800 flex justify-between">
+                        <span id="service-chat-header-text">Select a ticket</span>
+                        <i data-lucide="message-square" class="text-gray-300"></i>
+                    </div>
+                    <div id="service-chat-messages" class="flex-grow bg-slate-50 rounded-xl p-4 overflow-y-auto mb-4 border border-gray-100"></div>
+                    <form onsubmit="app.sendServiceMessage(event)" class="flex gap-4">
+                        <input type="text" id="service-chat-input" class="clay-input flex-grow px-4" placeholder="Reply..." disabled>
+                        <button type="submit" id="service-chat-send-btn" class="clay-btn clay-btn-primary w-12 h-12 flex items-center justify-center" disabled><i data-lucide="send" class="w-4 h-4"></i></button>
+                    </form>
+                </div>
+            </div>
         </section>
 
         <!-- VIEW: PROFILE -->
@@ -573,6 +649,7 @@
         const appInst = initializeApp(firebaseConfig);
         const auth = getAuth(appInst);
         const db = getFirestore(appInst);
+        const ADMIN_EMAIL = "joykumbhakar101@gmail.com";
         const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'secure-thing-store';
         
         const getCollectionRef = (name) => collection(db, 'artifacts', APP_ID, 'public', 'data', name);
@@ -606,12 +683,47 @@
                 if (viewId === 'profile') await app.loadProfile();
                 if (viewId === 'seller-dashboard') await app.loadSellerDashboard();
                 if (viewId === 'admin-dashboard') await app.loadAdminDashboard();
+                if (viewId === 'service-dashboard') await app.loadServiceDashboard();
+                if (viewId === 'seller-apply' && !app.currentUser) { app.toast("Login first", "info"); app.router('login'); }
                 
                 document.querySelectorAll('.nav-icon-mobile').forEach(el => el.classList.remove('active'));
                 const activeNav = document.getElementById(`mob-nav-${viewId}`);
                 if (activeNav) activeNav.classList.add('active');
                 window.scrollTo(0,0);
                 app.updateIcons();
+            },
+
+            updateAuthUI: () => {
+                const logoutBtn = `<button onclick="app.logout()" class="bg-white/10 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-white/20 transition">Logout</button>`;
+                document.getElementById('auth-section-desktop').innerHTML = app.currentUser ? logoutBtn : `<button onclick="app.router('login')" class="bg-white text-primary px-5 py-2 rounded-xl text-sm font-bold shadow-lg hover:bg-gray-100 transition">Login</button>`;
+                
+                ['nav-admin', 'nav-seller', 'nav-service'].forEach(id => document.getElementById(id).classList.add('hide'));
+                if(app.userRole === 'admin') document.getElementById('nav-admin').classList.remove('hide');
+                if(app.userRole === 'seller') document.getElementById('nav-seller').classList.remove('hide');
+                if(app.userRole === 'service') document.getElementById('nav-service').classList.remove('hide');
+                
+                if(app.currentUser && app.currentUser.photoURL) document.getElementById('header-avatar').src = app.currentUser.photoURL;
+            },
+
+            demoLogin: async (role) => {
+                app.toggleLoader(true);
+                await new Promise(r => setTimeout(r, 800)); // Simulate net
+                app.currentUser = { 
+                    uid: 'demo-'+role, 
+                    email: role+'@securething.com', 
+                    displayName: 'Demo '+role.charAt(0).toUpperCase() + role.slice(1),
+                    photoURL: `https://ui-avatars.com/api/?name=${role}&background=583FBC&color=fff`
+                };
+                app.userRole = role;
+                app.updateAuthUI();
+                app.toast(`Logged in as ${role.toUpperCase()} (Demo)`, 'success');
+                
+                if(role === 'admin') app.router('admin-dashboard');
+                else if(role === 'seller') app.router('seller-dashboard');
+                else if(role === 'service') app.router('service-dashboard');
+                else app.router('home');
+                
+                app.toggleLoader(false);
             },
 
             toggleHeaderSearch: () => {
@@ -681,7 +793,9 @@
 
             logout: () => {
                 signOut(auth).then(() => {
-                    app.cart = []; app.updateCartUI(); app.router('home'); app.toast("Logged out", "info");
+                    app.cart = []; app.updateCartUI(); 
+                    app.userRole = 'guest'; app.currentUser = null; app.updateAuthUI();
+                    app.router('home'); app.toast("Logged out", "info");
                 });
             },
 
@@ -1220,6 +1334,69 @@
                 f.p_name.value = "Smart Lock Pro"; f.p_desc.value = "Fingerprint entry, WiFi enabled.";
                 f.p_price.value = 12000; f.p_discount.value = 10; f.p_img.value = "https://placehold.co/400?text=Lock";
             },
+            
+            // --- SERVICE CHAT (ADDED) ---
+            loadServiceDashboard: async () => {
+                const list = document.getElementById('support-tickets-list');
+                list.innerHTML = '';
+                try {
+                    const snap = await getDocs(getCollectionRef('supportChats'));
+                    snap.forEach(d => {
+                        const t = d.data();
+                        const last = t.messages[t.messages.length - 1];
+                        list.innerHTML += `
+                             <div onclick="app.openServiceChat('${d.id}')" class="p-3 hover:bg-white/50 cursor-pointer rounded-xl transition border-b border-dashed border-gray-200">
+                                <div class="flex justify-between mb-1"><span class="font-bold text-xs text-primary">#${t.orderId.substr(0,6)}</span></div>
+                                <div class="text-xs text-slate-500 truncate">${last ? last.text : 'New Ticket'}</div>
+                             </div>
+                        `;
+                    });
+                    if(list.innerHTML === '') list.innerHTML = '<div class="text-slate-400 p-6 text-sm text-center">No active tickets</div>';
+                } catch(e) {}
+            },
+
+            openServiceChat: (ticketId) => {
+                app.currentTicketId = ticketId;
+                document.getElementById('service-chat-header-text').innerText = `Ticket #${ticketId.substr(0,6)}`;
+                document.getElementById('service-chat-input').disabled = false;
+                document.getElementById('service-chat-send-btn').disabled = false;
+                
+                const chatRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'supportChats', ticketId);
+                if(app.chatUnsubscribe) app.chatUnsubscribe();
+                app.chatUnsubscribe = onSnapshot(chatRef, (doc) => {
+                    if(doc.exists()) {
+                        const msgs = doc.data().messages || [];
+                        const container = document.getElementById('service-chat-messages');
+                        container.innerHTML = '';
+                        msgs.forEach(m => {
+                            const isMe = m.sender !== 'Customer' && m.sender !== 'System';
+                            container.innerHTML += `
+                                <div class="flex ${isMe ? 'justify-end' : 'justify-start'} mb-2">
+                                    <div class="${isMe ? 'bg-primary text-white' : 'bg-white text-slate-800'} px-4 py-2 rounded-xl text-xs shadow-sm max-w-[80%]">
+                                        <div class="text-[9px] opacity-70 mb-0.5 font-bold uppercase">${m.sender}</div>
+                                        ${m.text}
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        container.scrollTop = container.scrollHeight;
+                    }
+                });
+            },
+
+            sendServiceMessage: async (e) => {
+                e.preventDefault();
+                const input = document.getElementById('service-chat-input');
+                const text = input.value;
+                if(!text) return;
+                const chatRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'supportChats', app.currentTicketId);
+                const chatSnap = await getDoc(chatRef);
+                const messages = chatSnap.data().messages;
+                messages.push({ sender: 'Support', text: text, time: new Date().toISOString() });
+                await updateDoc(chatRef, { messages });
+                input.value = '';
+            },
+
             toggleLoader: (s) => document.getElementById('global-loader').classList.toggle('hide', !s)
         };
 
@@ -1237,20 +1414,10 @@
                 app.currentUser = user;
                 const snap = await getDoc(getUserRef(user.uid));
                 if(snap.exists()) app.userRole = snap.data().role;
-                
-                const logoutBtn = `<button onclick="app.logout()" class="bg-white/10 text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-white/20 transition">Logout</button>`;
-                document.getElementById('auth-section-desktop').innerHTML = logoutBtn;
-                
-                // Set Avatar if available
-                if(user.photoURL) document.getElementById('header-avatar').src = user.photoURL;
-                
-                if(app.userRole === 'admin') document.getElementById('nav-admin').classList.remove('hide');
-                if(app.userRole === 'seller') document.getElementById('nav-seller').classList.remove('hide');
+                app.updateAuthUI();
             } else {
                 app.currentUser = null; app.userRole = 'guest';
-                const loginBtn = `<button onclick="app.router('login')" class="bg-white text-primary px-5 py-2 rounded-xl text-sm font-bold shadow-lg hover:bg-gray-100 transition">Login</button>`;
-                document.getElementById('auth-section-desktop').innerHTML = loginBtn;
-                ['nav-admin', 'nav-seller'].forEach(id => document.getElementById(id).classList.add('hide'));
+                app.updateAuthUI();
             }
             if(app.products.length === 0) app.loadProducts();
             app.updateIcons();
