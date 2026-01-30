@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#EBF0F6">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>SecureThing | Smart Security Store</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -216,7 +217,6 @@
             border-radius: 18px 18px 18px 0; padding: 10px 16px; box-shadow: var(--tw-shadow-clay-bubble-other);
         }
         
-        /* Disable hover effects to keep UI static as requested */
         .category-card:active { transform: scale(0.98); }
     </style>
 </head>
@@ -239,12 +239,14 @@
                 <span class="text-xl font-extrabold tracking-tight text-primary hidden md:block">SecureThing</span>
             </div>
             
+            <!-- Desktop Navigation Tabs -->
             <div class="hidden md:flex items-center space-x-2">
                 <button onclick="app.router('home')" id="nav-home" class="nav-link-desktop">Shop</button>
                 <button onclick="app.router('categories')" id="nav-categories" class="nav-link-desktop">Categories</button>
                 <button onclick="app.router('orders')" id="nav-orders" class="nav-link-desktop">Orders</button>
                 <button onclick="app.router('wishlist')" id="nav-wishlist" class="nav-link-desktop flex items-center gap-1"><i data-lucide="heart" class="w-4 h-4 text-accent"></i> Wishlist</button>
                 <button onclick="app.router('profile')" id="nav-profile" class="nav-link-desktop">Profile</button>
+                <button onclick="app.toggleCart()" id="nav-cart" class="nav-link-desktop flex items-center gap-1 text-primary"><i data-lucide="shopping-bag" class="w-4 h-4"></i> Cart <span id="cart-badge-desktop" class="bg-danger text-white text-[10px] px-1.5 rounded-full ml-1">0</span></button>
                 
                 <button onclick="app.router('service-dashboard')" class="nav-link-desktop text-accent hide" id="nav-service">Support</button>
                 <button onclick="app.router('seller-dashboard')" class="nav-link-desktop text-warning hide" id="nav-seller">Seller Portal</button>
@@ -841,6 +843,17 @@
                 setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
             },
 
+            init: () => {
+                 // Load cart from local storage
+                 const savedCart = localStorage.getItem('cart');
+                 if(savedCart) {
+                     window.app.cart = JSON.parse(savedCart);
+                     window.app.updateCartUI();
+                 }
+                 const savedWishlist = localStorage.getItem('wishlist');
+                 if(savedWishlist) window.app.wishlist = JSON.parse(savedWishlist);
+            },
+
             router: async (viewId) => {
                 if(app.chatUnsubscribe) { app.chatUnsubscribe(); app.chatUnsubscribe = null; }
                 document.querySelectorAll('.view-section').forEach(el => el.classList.add('hide'));
@@ -986,7 +999,8 @@
 
             logout: () => {
                 signOut(auth).then(() => {
-                    app.cart = []; app.updateCartUI(); 
+                    // app.cart = []; // Optional: Clear cart on logout? Usually better to keep if possible, but local storage logic handles persistence.
+                    // app.updateCartUI(); 
                     app.userRole = 'guest'; app.currentUser = null; app.updateAuthUI();
                     app.router('home'); app.toast("Logged out", "info");
                 });
@@ -1288,7 +1302,11 @@
                 document.getElementById('cart-total').innerText = '₹' + total;
                 document.getElementById('checkout-total').innerText = '₹' + total;
                 document.getElementById('checkout-subtotal').innerText = '₹' + total;
+                if(document.getElementById('cart-badge-desktop')) document.getElementById('cart-badge-desktop').innerText = count;
                 app.cartTotalValue = total;
+                
+                // Persist
+                localStorage.setItem('cart', JSON.stringify(app.cart));
             },
 
             changeQty: (idx, d) => {
@@ -1348,10 +1366,12 @@
                 con.innerHTML = '';
                 
                 list.forEach((a, i) => {
+                    // Automatically check the last added address if it's the newest, or just use index
+                    const isChecked = i === list.length - 1 ? 'checked' : '';
                     con.innerHTML += `
                         <div class="relative group">
                             <label class="clay-input p-4 block cursor-pointer flex items-start gap-3">
-                                <input type="radio" name="selected-address" value="${i}" ${i===0?'checked':''} class="mt-1 text-primary">
+                                <input type="radio" name="selected-address" value="${i}" ${isChecked} class="mt-1 text-primary">
                                 <div class="text-sm">
                                     <div class="font-bold text-textMain">${a.name}</div>
                                     <div class="text-slate-500">${a.line}, ${a.area}, ${a.city} - ${a.pin}</div>
@@ -1381,7 +1401,7 @@
                     if(sel) {
                         addr = list[sel.value];
                     } else if (list.length > 0) {
-                        addr = list[0];
+                        addr = list[list.length-1]; // Use latest
                     } else {
                          throw new Error("Please select an address");
                     }
@@ -1542,7 +1562,10 @@
                 pList.innerHTML = ''; oList.innerHTML = '';
                 let pCount = 0, oCount = 0;
                 
-                app.products.forEach(p => {
+                // Only show own products
+                const myProducts = app.products.filter(p => p.sellerId === app.currentUser.uid);
+                
+                myProducts.forEach(p => {
                     pCount++;
                     pList.innerHTML += `
                         <div class="clay-card !rounded-xl !shadow-sm p-4 mb-2 flex justify-between items-center border-none">
@@ -1768,7 +1791,18 @@
                 input.value = '';
             },
 
-            toggleLoader: (s) => document.getElementById('global-loader').classList.toggle('hide', !s)
+            toggleLoader: (s) => document.getElementById('global-loader').classList.toggle('hide', !s),
+            
+            init: () => {
+                 // Load cart from local storage
+                 const savedCart = localStorage.getItem('cart');
+                 if(savedCart) {
+                     window.app.cart = JSON.parse(savedCart);
+                     window.app.updateCartUI();
+                 }
+                 const savedWishlist = localStorage.getItem('wishlist');
+                 if(savedWishlist) window.app.wishlist = JSON.parse(savedWishlist);
+            }
         };
 
         // Clip-path styles for hexagon
@@ -1779,6 +1813,13 @@
         // Load Wishlist from LocalStorage
         const savedWishlist = localStorage.getItem('wishlist');
         if(savedWishlist) window.app.wishlist = JSON.parse(savedWishlist);
+        
+        // Init Cart
+        const savedCart = localStorage.getItem('cart');
+        if(savedCart) {
+             window.app.cart = JSON.parse(savedCart);
+             window.app.updateCartUI();
+        }
 
         onAuthStateChanged(auth, async (user) => {
             if(user) {
