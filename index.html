@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#EBF0F6">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>SecureThing | Smart Security Store</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -472,9 +471,9 @@
                 <div class="clay-card p-8 mb-8">
                     <h3 class="font-bold text-xl mb-6 text-textMain">Store Banners</h3>
                     <form onsubmit="app.adminSaveBanner(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                        <input type="text" id="banner-title" placeholder="Title" class="clay-input p-4" required>
+                        <input type="text" id="banner-title" placeholder="Title (e.g. Diwali Sale)" class="clay-input p-4" required>
                         <input type="text" id="banner-subtitle" placeholder="Subtitle" class="clay-input p-4">
-                        <input type="text" id="banner-img" placeholder="Image URL" class="clay-input p-4" required>
+                        <input type="text" id="banner-img" placeholder="Image URL (Horizontal)" class="clay-input p-4" required>
                         <input type="text" id="banner-cta" placeholder="Button Text" class="clay-input p-4" value="Shop Now">
                         <button type="submit" class="clay-btn clay-btn-primary p-4 md:col-span-2">Update Home Banner</button>
                     </form>
