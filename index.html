@@ -77,6 +77,7 @@
     </script>
 
     <style>
+        /* APP SHELL STRUCTURE */
         body { 
             background-color: #EBF0F6; 
             color: #2D2D44;
@@ -84,8 +85,25 @@
                 radial-gradient(at 0% 0%, rgba(127, 90, 240, 0.1) 0px, transparent 50%),
                 radial-gradient(at 100% 100%, rgba(245, 110, 145, 0.1) 0px, transparent 50%);
             background-attachment: fixed;
-            padding-bottom: 120px;
+            
+            /* The Container Setup */
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; /* Prevent body scroll, handle in main */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            
             -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* SCROLLABLE CONTENT AREA */
+        main {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 140px; /* Ensure bottom content is visible above floating nav */
+            position: relative;
         }
         
         .hide { display: none !important; }
@@ -141,8 +159,10 @@
             animation: shimmer 1s infinite linear forwards;
         }
 
-        #toast-container { position: fixed; bottom: 120px; right: 24px; z-index: 100; display: flex; flex-direction: column; gap: 12px; }
+        /* ABSOLUTE POSITIONING FOR UI SHELL */
+        #toast-container { position: absolute; bottom: 120px; right: 24px; z-index: 100; display: flex; flex-direction: column; gap: 12px; pointer-events: none; }
         .toast {
+            pointer-events: auto;
             min-width: 300px; padding: 16px; border-radius: 20px;
             background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
@@ -224,12 +244,12 @@
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="flex flex-col h-screen w-screen relative overflow-hidden">
 
     <div id="toast-container"></div>
 
-    <!-- Top Bar -->
-    <nav class="sticky top-0 z-40 transition-all duration-300">
+    <!-- Top Bar (Sticky within flex col) -->
+    <nav class="z-40 transition-all duration-300 w-full shrink-0">
         <div class="px-6 py-6 flex justify-between items-center">
             <!-- Grid Icon -> Open Categories -->
             <button onclick="app.router('categories')" class="text-primary p-2 hover:bg-white/50 rounded-xl transition md:hidden">
@@ -276,8 +296,8 @@
         </div>
     </nav>
 
-    <!-- Mobile Bottom Navigation -->
-    <div class="fixed bottom-0 left-0 w-full z-50 md:hidden pointer-events-none">
+    <!-- Mobile Bottom Navigation (Absolute to container) -->
+    <div class="absolute bottom-0 left-0 w-full z-50 md:hidden pointer-events-none">
         <div class="relative w-full h-[90px] pointer-events-auto">
             <svg class="absolute bottom-0 left-0 w-full h-full drop-shadow-[0_-10px_20px_rgba(88,63,188,0.2)]" viewBox="0 0 100 24" preserveAspectRatio="none">
                 <path d="M0,5 Q0,0 5,0 H32 Q42,0 50,9 Q58,0 68,0 H95 Q100,0 100,5 V24 H0 Z" fill="#583FBC" vector-effect="non-scaling-stroke" />
@@ -299,395 +319,399 @@
         </div>
     </div>
 
-    <main class="flex-grow container mx-auto px-4 py-4 relative">
-        <!-- Global Loader (Initial Only) -->
-        <div id="global-loader" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-[60] flex flex-col items-center justify-center hide">
-            <div class="clay-card p-6 flex flex-col items-center">
-                <div class="w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-3"></div>
-                <p class="text-primary font-bold text-xs tracking-widest uppercase">Loading...</p>
-            </div>
-        </div>
-
-        <!-- VIEW: HOME -->
-        <section id="view-home" class="view-section">
-            <div id="home-banner-container" class="clay-card p-8 md:p-12 mb-12 relative overflow-hidden group min-h-[300px] flex items-center">
-                <div class="skeleton w-full h-full absolute inset-0 rounded-3xl"></div>
-            </div>
-
-            <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 sticky top-24 z-30 py-4 rounded-3xl backdrop-blur-sm transition-all">
-                <div class="flex gap-3 overflow-x-auto pb-2 w-full md:w-auto no-scrollbar" id="home-categories-scroll">
-                    <!-- Dynamic Categories -->
+    <!-- MAIN SCROLLABLE AREA -->
+    <main class="flex-grow w-full relative">
+        <div class="container mx-auto px-4 py-4 min-h-full">
+            
+            <!-- Global Loader (Initial Only) -->
+            <div id="global-loader" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-[60] flex flex-col items-center justify-center hide">
+                <div class="clay-card p-6 flex flex-col items-center">
+                    <div class="w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin mb-3"></div>
+                    <p class="text-primary font-bold text-xs tracking-widest uppercase">Loading...</p>
                 </div>
             </div>
 
-            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12"></div>
-        </section>
+            <!-- VIEW: HOME -->
+            <section id="view-home" class="view-section">
+                <div id="home-banner-container" class="clay-card p-8 md:p-12 mb-12 relative overflow-hidden group min-h-[300px] flex items-center">
+                    <div class="skeleton w-full h-full absolute inset-0 rounded-3xl"></div>
+                </div>
 
-        <!-- VIEW: CATEGORIES -->
-        <section id="view-categories" class="view-section hide">
-             <div class="mb-8">
-                 <h2 class="text-3xl font-extrabold text-textMain">Browse Categories</h2>
-                 <p class="text-textMuted text-sm mt-1">Explore our wide range of products.</p>
-             </div>
-             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="categories-grid">
-                 <!-- Injected via JS -->
-             </div>
-        </section>
+                <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 sticky top-0 z-30 py-4 rounded-3xl backdrop-blur-sm transition-all bg-white/5">
+                    <div class="flex gap-3 overflow-x-auto pb-2 w-full md:w-auto no-scrollbar" id="home-categories-scroll">
+                        <!-- Dynamic Categories -->
+                    </div>
+                </div>
 
-        <!-- VIEW: WISHLIST -->
-        <section id="view-wishlist" class="view-section hide">
-             <div class="mb-8 flex items-center gap-3">
-                 <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-danger"><i data-lucide="heart" class="w-5 h-5 fill-current"></i></div>
-                 <div>
-                     <h2 class="text-3xl font-extrabold text-textMain">My Wishlist</h2>
-                     <p class="text-textMuted text-sm mt-1">Saved items for later.</p>
+                <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12"></div>
+            </section>
+
+            <!-- VIEW: CATEGORIES -->
+            <section id="view-categories" class="view-section hide">
+                 <div class="mb-8">
+                     <h2 class="text-3xl font-extrabold text-textMain">Browse Categories</h2>
+                     <p class="text-textMuted text-sm mt-1">Explore our wide range of products.</p>
                  </div>
-             </div>
-             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12" id="wishlist-grid">
-                 <!-- Injected via JS -->
-             </div>
-        </section>
-
-        <!-- VIEW: SEARCH RESULTS -->
-        <section id="view-search-results" class="view-section hide">
-            <div class="flex items-center gap-4 mb-8">
-                 <button onclick="app.router('home')" class="clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-full"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
-                 <div>
-                     <h2 class="text-2xl font-extrabold text-textMain">Search Results</h2>
-                     <p class="text-slate-500 text-sm">Showing results for "<span id="search-query-display" class="font-bold text-primary"></span>"</p>
+                 <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="categories-grid">
+                     <!-- Injected via JS -->
                  </div>
-            </div>
-            <div id="search-results-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12"></div>
-        </section>
+            </section>
 
-        <!-- VIEW: PRODUCT DETAILS -->
-        <section id="view-product-details" class="view-section hide">
-            <button onclick="app.router('home')" class="mb-6 clay-btn clay-btn-secondary px-4 py-2 text-xs flex items-center gap-2 w-fit"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back</button>
-            <div class="clay-card p-0 overflow-hidden grid grid-cols-1 md:grid-cols-2">
-                <div class="bg-gray-50 p-12 flex items-center justify-center relative">
-                    <div id="detail-badge" class="hide sale-badge !top-6 !left-6 !text-sm !px-3 !py-2">SALE</div>
-                    <button onclick="app.toggleWishlist(app.currentProductDetailId)" class="absolute top-6 right-6 clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-full text-danger transition hover:scale-110">
-                        <i data-lucide="heart" class="w-5 h-5" id="detail-wishlist-icon"></i>
-                    </button>
-                    <img id="detail-img" src="" class="max-h-80 w-full object-contain drop-shadow-xl transition-transform duration-500 hover:scale-105">
-                </div>
-                <div class="p-10 flex flex-col justify-center bg-white/50">
-                    <span id="detail-cat" class="text-accent font-extrabold text-xs uppercase tracking-widest mb-2">Category</span>
-                    <h2 id="detail-name" class="text-3xl font-extrabold text-textMain mb-4">Product Name</h2>
-                    <p id="detail-desc" class="text-textMuted leading-relaxed mb-8">Description...</p>
-                    
-                    <div class="mt-auto">
-                        <div class="pt-6 border-t border-slate-200">
-                            <div class="flex flex-col mb-6">
-                                <span class="text-sm font-bold text-slate-400 uppercase">Price</span>
-                                <div class="flex items-baseline gap-3">
-                                    <span id="detail-price" class="text-4xl font-extrabold text-primary">₹0</span>
-                                    <span id="detail-old-price" class="old-price text-xl text-slate-400 decoration-danger hide">₹0</span>
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-4">
-                                <button onclick="app.addToCart(app.currentProductDetailId)" class="clay-btn clay-btn-secondary py-4 flex items-center justify-center gap-2">
-                                    <i data-lucide="shopping-bag" class="w-4 h-4"></i> Add
-                                </button>
-                                <button onclick="app.buyNow(app.currentProductDetailId)" class="clay-btn clay-btn-primary py-4 flex items-center justify-center">Buy Now</button>
-                            </div>
-                        </div>
-
-                        <!-- Reviews Section -->
-                        <div class="mt-8 pt-8 border-t border-slate-200">
-                             <h3 class="font-bold text-lg mb-4 text-textMain flex items-center gap-2"><i data-lucide="message-circle" class="w-4 h-4"></i> Reviews</h3>
-                             <div class="space-y-4">
-                                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                                     <div class="flex items-center justify-between mb-2">
-                                         <div class="flex items-center gap-2">
-                                             <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-xs">JD</div>
-                                             <span class="text-sm font-bold text-slate-700">John Doe</span>
-                                         </div>
-                                         <div class="flex text-warning text-xs"><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i></div>
-                                     </div>
-                                     <p class="text-xs text-slate-500">Amazing product! The delivery was super fast and the quality is top notch.</p>
-                                 </div>
-                                 <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
-                                     <div class="flex items-center justify-between mb-2">
-                                         <div class="flex items-center gap-2">
-                                             <div class="w-8 h-8 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 font-bold text-xs">AS</div>
-                                             <span class="text-sm font-bold text-slate-700">Alice Smith</span>
-                                         </div>
-                                         <div class="flex text-warning text-xs"><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 text-slate-200"></i></div>
-                                     </div>
-                                     <p class="text-xs text-slate-500">Good value for money. Works as expected.</p>
-                                 </div>
-                             </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW: LOGIN -->
-        <section id="view-login" class="view-section hide max-w-sm mx-auto mt-12">
-            <div class="clay-card p-8 md:p-10 text-center">
-                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-primary"><i data-lucide="lock" class="w-10 h-10"></i></div>
-                <h2 class="text-3xl font-extrabold text-textMain mb-2" id="auth-title">Sign in</h2>
-                <form id="auth-form" onsubmit="app.handleAuth(event)" class="space-y-5 text-left mt-8">
-                    <!-- Name field only shows up in Register mode via JS toggle -->
-                    <div id="auth-name-group" class="hide">
-                         <input type="text" id="auth-name" class="clay-input w-full py-4 px-5" placeholder="Full Name">
-                    </div>
-                    <input type="email" id="auth-email" class="clay-input w-full py-4 px-5" placeholder="Email" required>
-                    <input type="password" id="auth-pass" class="clay-input w-full py-4 px-5" placeholder="Password" required>
-                    <button type="submit" class="clay-btn clay-btn-primary w-full py-4 mt-4 shadow-lg text-lg"><span id="auth-btn-text">Sign In</span></button>
-                </form>
-                <div class="flex gap-4 mt-6 justify-center">
-                    <button onclick="app.handleGoogleAuth()" class="clay-btn clay-btn-secondary w-12 h-12 flex items-center justify-center rounded-full text-danger"><i class="fab fa-google"></i></button>
-                </div>
-                <p class="mt-8 text-sm font-bold text-slate-400">Don't have an account? <a href="#" onclick="app.toggleAuthMode()" class="text-primary hover:underline" id="auth-switch-text">Sign up</a></p>
-                
-                <div class="mt-8 text-center border-t border-slate-200 pt-4">
-                    <button onclick="app.router('seller-login')" class="text-xs font-bold text-slate-400 hover:text-primary uppercase tracking-wide">Seller Portal Login</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW: SELLER LOGIN -->
-        <section id="view-seller-login" class="view-section hide max-w-sm mx-auto mt-12">
-            <div class="clay-card p-10 bg-primary text-white relative overflow-hidden border-none">
-                <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
-                <div class="relative z-10">
-                    <div class="mb-8"><h2 class="text-3xl font-bold">Seller Portal</h2></div>
-                    <form onsubmit="app.handleSellerAuth(event)" class="space-y-5">
-                        <input type="email" id="seller-auth-email" class="w-full bg-black/20 border-none rounded-xl px-5 py-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-warning" placeholder="Seller Email" required>
-                        <input type="password" id="seller-auth-pass" class="w-full bg-black/20 border-none rounded-xl px-5 py-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-warning" placeholder="Password" required>
-                        <button type="submit" class="w-full bg-warning text-white font-bold py-4 rounded-xl hover:bg-yellow-400 transition shadow-lg mt-4 flex justify-center items-center">Access Dashboard</button>
-                    </form>
-                    <div class="mt-8 text-center"><a href="#" onclick="app.router('seller-apply')" class="text-xs text-white/70 hover:text-white font-bold uppercase tracking-wide">Apply for Seller Account</a></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW: SELLER DASHBOARD -->
-        <section id="view-seller-dashboard" class="view-section hide">
-            <div class="flex justify-between items-center mb-8">
-                <h2 class="text-3xl font-extrabold text-textMain">Seller Dashboard</h2>
-                <button onclick="app.openAddProductModal()" class="clay-btn bg-success text-white px-6 py-3 shadow-lg flex items-center"><i data-lucide="plus" class="mr-2 w-4 h-4"></i> Add Product</button>
-            </div>
-            <div class="clay-card p-6 mb-8">
-                <h3 class="font-bold text-lg mb-4 text-textMain">Sales Overview</h3>
-                <div class="flex items-end justify-between h-32 gap-2">
-                    <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 40%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
-                    <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 65%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
-                    <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 30%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
-                    <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 85%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
-                    <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 50%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
-                    <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 90%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
-                    <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 70%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
-                </div>
-            </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="clay-card p-6 h-[600px] flex flex-col">
-                    <h3 class="font-bold text-lg mb-4 text-textMain">Inventory</h3>
-                    <div id="seller-products-list" class="overflow-y-auto pr-2 space-y-3 flex-grow"></div>
-                </div>
-                <div class="clay-card p-6 h-[600px] flex flex-col">
-                    <h3 class="font-bold text-lg mb-4 text-textMain">Orders</h3>
-                    <div id="seller-orders-list" class="overflow-y-auto pr-2 space-y-3 flex-grow"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW: ADMIN DASHBOARD -->
-        <section id="view-admin-dashboard" class="view-section hide">
-            <h2 class="text-3xl font-extrabold mb-8 text-textMain">Admin Control</h2>
-            <div class="clay-card p-8 mb-8">
-                <h3 class="font-bold text-xl mb-6 text-textMain">Store Banners</h3>
-                <form onsubmit="app.adminSaveBanner(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <input type="text" id="banner-title" placeholder="Title (e.g. Diwali Sale)" class="clay-input p-4" required>
-                    <input type="text" id="banner-subtitle" placeholder="Subtitle" class="clay-input p-4">
-                    <input type="text" id="banner-img" placeholder="Image URL (Horizontal)" class="clay-input p-4" required>
-                    <input type="text" id="banner-cta" placeholder="Button Text" class="clay-input p-4" value="Shop Now">
-                    <button type="submit" class="clay-btn clay-btn-primary p-4 md:col-span-2">Update Home Banner</button>
-                </form>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="clay-card p-8 bg-primary text-white border-none relative overflow-hidden">
-                    <div class="relative z-10"><div class="text-white/60 text-xs font-bold uppercase mb-2">Total Sales</div><div class="text-5xl font-extrabold" id="admin-total-sales">₹0</div></div>
-                    <i data-lucide="trending-up" class="absolute right-4 bottom-4 w-24 h-24 text-white/10"></i>
-                </div>
-                <div class="clay-card p-8">
-                    <div class="text-slate-400 text-xs font-bold uppercase mb-2">Total Orders</div><div class="text-5xl font-extrabold text-textMain" id="admin-order-count">0</div>
-                </div>
-            </div>
-            <div class="clay-card p-8 mb-8">
-                <h3 class="font-bold text-lg mb-4">Payment Queue</h3>
-                <div id="admin-payment-queue" class="space-y-3"></div>
-            </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="clay-card p-8 h-[500px] flex flex-col">
-                    <h3 class="font-bold text-lg mb-4">Manage All Products</h3>
-                    <div id="admin-all-products" class="overflow-y-auto pr-2 space-y-3 flex-grow"></div>
-                </div>
-                <div class="space-y-6">
-                    <div class="clay-card p-8">
-                        <h3 class="font-bold text-lg mb-4">Seller Requests</h3>
-                        <div id="admin-seller-requests" class="space-y-3"></div>
-                    </div>
-                    <div class="clay-card p-8">
-                        <h3 class="font-bold text-lg mb-4">Create Service Agent</h3>
-                        <form onsubmit="app.createServiceAccount(event)" class="flex gap-3">
-                            <input type="email" id="service-email-input" class="clay-input flex-grow px-4" placeholder="Agent Email" required>
-                            <button class="clay-btn clay-btn-primary px-6">Create</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW: SERVICE DASHBOARD -->
-        <section id="view-service-dashboard" class="view-section hide">
-            <h2 class="text-3xl font-extrabold mb-8 text-textMain">Support Desk</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 h-[700px]">
-                <div class="clay-card p-6 h-full flex flex-col">
-                    <h3 class="font-bold mb-6 text-slate-400 text-xs uppercase tracking-widest">Active Tickets</h3>
-                    <div id="support-tickets-list" class="space-y-2 flex-grow overflow-y-auto custom-scrollbar"></div>
-                </div>
-                <div class="clay-card p-6 md:col-span-2 flex flex-col h-full relative">
-                    <div class="border-b border-gray-100 pb-4 mb-4 font-bold text-slate-800 flex justify-between items-center">
-                        <span id="service-chat-header-text">Select a ticket</span>
-                        <div class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span> Live</div>
-                    </div>
-                    <div id="service-chat-messages" class="flex-grow bg-slate-50 rounded-xl p-4 overflow-y-auto mb-4 border border-gray-100 shadow-inner"></div>
-                    <form onsubmit="app.sendServiceMessage(event)" class="flex gap-4">
-                        <input type="text" id="service-chat-input" class="clay-input flex-grow px-4" placeholder="Reply..." disabled>
-                        <button type="submit" id="service-chat-send-btn" class="clay-btn clay-btn-primary w-12 h-12 flex items-center justify-center" disabled><i data-lucide="send" class="w-4 h-4"></i></button>
-                    </form>
-                </div>
-            </div>
-        </section>
-
-        <!-- VIEW: PROFILE -->
-        <section id="view-profile" class="view-section hide max-w-lg mx-auto">
-            <div class="clay-card p-8 text-center relative mt-16">
-                <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
-                    <div class="w-32 h-32 bg-primary rounded-[40px] flex items-center justify-center shadow-lg rotate-45 border-4 border-[#EBF0F6]">
-                        <div class="transform -rotate-45 text-white"><i data-lucide="user" class="w-12 h-12"></i></div>
-                    </div>
-                </div>
-                <div class="mt-16">
-                    <h2 class="text-2xl font-extrabold text-textMain" id="profile-name">User</h2>
-                    <p class="text-textMuted text-sm font-bold uppercase tracking-wide mt-1" id="profile-role">Customer</p>
-                    <p class="text-slate-400 text-xs mt-1" id="profile-email">email@example.com</p>
-                    <button onclick="app.openEditProfile()" class="text-xs text-accent font-bold mt-2 hover:underline">Edit Profile</button>
-                </div>
-                <div class="mt-8 space-y-4 text-left">
-                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Saved Addresses</h3>
-                    <div id="profile-address-list" class="space-y-3"></div>
-                </div>
-                <button onclick="app.logout()" class="clay-btn w-full py-3 mt-8 bg-red-50 text-danger hover:bg-red-100 transition">Log Out</button>
-            </div>
-        </section>
-
-        <!-- VIEW: CHECKOUT -->
-        <section id="view-checkout" class="view-section hide">
-            <h2 class="text-3xl font-extrabold mb-8 text-textMain ml-2">Checkout</h2>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="lg:col-span-2 space-y-6">
-                    <div class="clay-card p-8">
-                        <h3 class="font-bold text-xl mb-6 flex items-center text-primary"><i data-lucide="map-pin" class="mr-3"></i> Shipping Details</h3>
-                        <div id="saved-addresses" class="grid grid-cols-1 gap-4 mb-6"></div>
-                        <button onclick="document.getElementById('new-address-form').classList.toggle('hide')" class="clay-btn clay-btn-secondary w-full py-3 border-2 border-dashed border-slate-200">+ Add New Address</button>
-                        <form id="new-address-form" class="hide mt-6 space-y-4" onsubmit="event.preventDefault(); app.saveAddress();">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <input type="text" id="addr-name" placeholder="Full Name" class="clay-input p-4 w-full" required>
-                                <input type="text" id="addr-mobile" placeholder="Mobile" class="clay-input p-4 w-full" required>
-                                <input type="text" id="addr-line" placeholder="Address Line" class="clay-input p-4 w-full md:col-span-2" required>
-                                <input type="text" id="addr-area" placeholder="Area" class="clay-input p-4 w-full" required>
-                                <input type="text" id="addr-city" placeholder="City" class="clay-input p-4 w-full" required>
-                                <input type="text" id="addr-pin" placeholder="Pincode" class="clay-input p-4 w-full" required>
-                            </div>
-                            <button type="submit" class="clay-btn clay-btn-primary py-3 px-6">Save Address</button>
-                        </form>
-                    </div>
-                    <div class="clay-card p-8">
-                        <h3 class="font-bold text-xl mb-6 flex items-center text-primary"><i data-lucide="credit-card" class="mr-3"></i> Payment</h3>
-                        <div class="mb-8 w-full max-w-sm mx-auto bg-gradient-to-br from-primary to-primaryLight rounded-[25px] p-6 text-white shadow-xl relative overflow-hidden h-56 flex flex-col justify-between">
-                            <div class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
-                            <div class="flex justify-between items-start z-10">
-                                <i data-lucide="nfc" class="w-8 h-8 opacity-80"></i>
-                                <span class="font-bold tracking-widest text-lg italic opacity-80">VISA</span>
-                            </div>
-                            <div class="z-10">
-                                <div class="text-xl tracking-[4px] font-mono mb-4 text-white/90">**** **** **** 4242</div>
-                                <div class="flex justify-between text-xs uppercase tracking-wider opacity-75">
-                                    <span>Card Holder</span>
-                                    <span>Expires</span>
-                                </div>
-                                <div class="flex justify-between font-bold tracking-wide">
-                                    <span id="card-holder-preview">JOY KUMBHAKAR</span>
-                                    <span>12/28</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="space-y-4">
-                            <label class="flex items-center p-4 rounded-2xl border border-transparent hover:bg-white hover:shadow-sm cursor-pointer transition clay-input">
-                                <input type="radio" name="payment" value="upi" checked class="text-primary w-5 h-5 mr-4">
-                                <div><div class="font-bold text-textMain">UPI / Online</div><div class="text-xs text-textMuted">GPay, PhonePe, Card</div></div>
-                            </label>
-                            <label class="flex items-center p-4 rounded-2xl border border-transparent hover:bg-white hover:shadow-sm cursor-pointer transition clay-input">
-                                <input type="radio" name="payment" value="cod" class="text-primary w-5 h-5 mr-4">
-                                <div><div class="font-bold text-textMain">Cash on Delivery</div><div class="text-xs text-textMuted">Pay at doorstep</div></div>
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                <div class="clay-card p-8 h-fit lg:sticky lg:top-28">
-                    <h3 class="font-bold text-xl mb-6 text-textMain">Order Summary</h3>
-                    <div id="checkout-items" class="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2"></div>
-                    <div class="pt-6 border-t border-slate-200 space-y-2">
-                        <div class="flex justify-between text-sm text-textMuted"><span>Subtotal</span><span id="checkout-subtotal" class="font-bold">₹0</span></div>
-                        <div class="flex justify-between text-lg font-extrabold text-textMain mt-4"><span>Total</span><span id="checkout-total" class="text-primary">₹0</span></div>
-                    </div>
-                    <button onclick="app.placeOrder()" class="clay-btn clay-btn-primary w-full py-4 mt-8 shadow-xl text-lg">Place Order</button>
-                </div>
-            </div>
-        </section>
-
-        <section id="view-success" class="view-section hide text-center pt-24 max-w-md mx-auto">
-            <div class="clay-card p-12">
-                <div class="w-24 h-24 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-6 text-success"><i data-lucide="check-circle" class="w-12 h-12"></i></div>
-                <h2 class="text-3xl font-extrabold text-textMain mb-4">Order Confirmed!</h2>
-                <p class="text-textMuted mb-8">Your order has been placed successfully.</p>
-                <button onclick="app.router('orders')" class="clay-btn clay-btn-primary w-full py-3 mb-4">Track Order</button>
-                <button onclick="app.router('home')" class="clay-btn clay-btn-secondary w-full py-3">Continue Shopping</button>
-            </div>
-        </section>
-
-        <!-- CUSTOMER CHAT VIEW -->
-        <section id="view-customer-chat" class="view-section hide max-w-3xl mx-auto">
-             <button onclick="app.router('orders')" class="mb-4 text-textMuted hover:text-accent flex items-center text-sm font-bold"><i data-lucide="arrow-left" class="mr-2"></i> Back to Orders</button>
-             <div class="clay-card p-6 h-[600px] flex flex-col relative overflow-hidden">
-                 <div class="border-b border-gray-100 pb-4 mb-4 flex justify-between items-center z-10 bg-white/90 backdrop-blur-sm">
+            <!-- VIEW: WISHLIST -->
+            <section id="view-wishlist" class="view-section hide">
+                 <div class="mb-8 flex items-center gap-3">
+                     <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-danger"><i data-lucide="heart" class="w-5 h-5 fill-current"></i></div>
                      <div>
-                         <h3 class="font-bold text-slate-800 text-base">Support Chat</h3>
-                         <p class="text-xs text-slate-400 font-mono mt-0.5" id="customer-chat-id">Ticket #...</p>
+                         <h2 class="text-3xl font-extrabold text-textMain">My Wishlist</h2>
+                         <p class="text-textMuted text-sm mt-1">Saved items for later.</p>
                      </div>
-                     <span class="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-bold flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span> Online</span>
                  </div>
-                 <div id="customer-chat-messages" class="flex-grow p-4 overflow-y-auto space-y-3 bg-slate-50/50 rounded-xl mb-4 border border-slate-100"></div>
-                 <form onsubmit="app.sendCustomerMessage(event)" class="flex gap-3 items-center">
-                     <input type="text" id="customer-chat-input" class="clay-input flex-grow px-4 py-3" placeholder="Type your message..." required>
-                     <button type="submit" class="clay-btn clay-btn-primary w-12 h-12 flex items-center justify-center flex-shrink-0"><i data-lucide="send" class="w-5 h-5"></i></button>
-                 </form>
-             </div>
-        </section>
+                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12" id="wishlist-grid">
+                     <!-- Injected via JS -->
+                 </div>
+            </section>
 
-        <section id="view-orders" class="view-section hide max-w-4xl mx-auto">
-            <h2 class="text-3xl font-extrabold mb-8 text-textMain ml-2">My Orders</h2>
-            <div id="orders-list" class="space-y-6"></div>
-        </section>
+            <!-- VIEW: SEARCH RESULTS -->
+            <section id="view-search-results" class="view-section hide">
+                <div class="flex items-center gap-4 mb-8">
+                     <button onclick="app.router('home')" class="clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-full"><i data-lucide="arrow-left" class="w-5 h-5"></i></button>
+                     <div>
+                         <h2 class="text-2xl font-extrabold text-textMain">Search Results</h2>
+                         <p class="text-slate-500 text-sm">Showing results for "<span id="search-query-display" class="font-bold text-primary"></span>"</p>
+                     </div>
+                </div>
+                <div id="search-results-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12"></div>
+            </section>
+
+            <!-- VIEW: PRODUCT DETAILS -->
+            <section id="view-product-details" class="view-section hide">
+                <button onclick="app.router('home')" class="mb-6 clay-btn clay-btn-secondary px-4 py-2 text-xs flex items-center gap-2 w-fit"><i data-lucide="arrow-left" class="w-4 h-4"></i> Back</button>
+                <div class="clay-card p-0 overflow-hidden grid grid-cols-1 md:grid-cols-2">
+                    <div class="bg-gray-50 p-12 flex items-center justify-center relative">
+                        <div id="detail-badge" class="hide sale-badge !top-6 !left-6 !text-sm !px-3 !py-2">SALE</div>
+                        <button onclick="app.toggleWishlist(app.currentProductDetailId)" class="absolute top-6 right-6 clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-full text-danger transition hover:scale-110">
+                            <i data-lucide="heart" class="w-5 h-5" id="detail-wishlist-icon"></i>
+                        </button>
+                        <img id="detail-img" src="" class="max-h-80 w-full object-contain drop-shadow-xl transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-10 flex flex-col justify-center bg-white/50">
+                        <span id="detail-cat" class="text-accent font-extrabold text-xs uppercase tracking-widest mb-2">Category</span>
+                        <h2 id="detail-name" class="text-3xl font-extrabold text-textMain mb-4">Product Name</h2>
+                        <p id="detail-desc" class="text-textMuted leading-relaxed mb-8">Description...</p>
+                        
+                        <div class="mt-auto">
+                            <div class="pt-6 border-t border-slate-200">
+                                <div class="flex flex-col mb-6">
+                                    <span class="text-sm font-bold text-slate-400 uppercase">Price</span>
+                                    <div class="flex items-baseline gap-3">
+                                        <span id="detail-price" class="text-4xl font-extrabold text-primary">₹0</span>
+                                        <span id="detail-old-price" class="old-price text-xl text-slate-400 decoration-danger hide">₹0</span>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <button onclick="app.addToCart(app.currentProductDetailId)" class="clay-btn clay-btn-secondary py-4 flex items-center justify-center gap-2">
+                                        <i data-lucide="shopping-bag" class="w-4 h-4"></i> Add
+                                    </button>
+                                    <button onclick="app.buyNow(app.currentProductDetailId)" class="clay-btn clay-btn-primary py-4 flex items-center justify-center">Buy Now</button>
+                                </div>
+                            </div>
+
+                            <!-- Reviews Section -->
+                            <div class="mt-8 pt-8 border-t border-slate-200">
+                                 <h3 class="font-bold text-lg mb-4 text-textMain flex items-center gap-2"><i data-lucide="message-circle" class="w-4 h-4"></i> Reviews</h3>
+                                 <div class="space-y-4">
+                                     <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                                         <div class="flex items-center justify-between mb-2">
+                                             <div class="flex items-center gap-2">
+                                                 <div class="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-xs">JD</div>
+                                                 <span class="text-sm font-bold text-slate-700">John Doe</span>
+                                             </div>
+                                             <div class="flex text-warning text-xs"><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i></div>
+                                         </div>
+                                         <p class="text-xs text-slate-500">Amazing product! The delivery was super fast and the quality is top notch.</p>
+                                     </div>
+                                     <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                                         <div class="flex items-center justify-between mb-2">
+                                             <div class="flex items-center gap-2">
+                                                 <div class="w-8 h-8 bg-pink-100 rounded-full flex items-center justify-center text-pink-600 font-bold text-xs">AS</div>
+                                                 <span class="text-sm font-bold text-slate-700">Alice Smith</span>
+                                             </div>
+                                             <div class="flex text-warning text-xs"><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 text-slate-200"></i></div>
+                                         </div>
+                                         <p class="text-xs text-slate-500">Good value for money. Works as expected.</p>
+                                     </div>
+                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: LOGIN -->
+            <section id="view-login" class="view-section hide max-w-sm mx-auto mt-12">
+                <div class="clay-card p-8 md:p-10 text-center">
+                    <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-primary"><i data-lucide="lock" class="w-10 h-10"></i></div>
+                    <h2 class="text-3xl font-extrabold text-textMain mb-2" id="auth-title">Sign in</h2>
+                    <form id="auth-form" onsubmit="app.handleAuth(event)" class="space-y-5 text-left mt-8">
+                        <!-- Name field only shows up in Register mode via JS toggle -->
+                        <div id="auth-name-group" class="hide">
+                             <input type="text" id="auth-name" class="clay-input w-full py-4 px-5" placeholder="Full Name">
+                        </div>
+                        <input type="email" id="auth-email" class="clay-input w-full py-4 px-5" placeholder="Email" required>
+                        <input type="password" id="auth-pass" class="clay-input w-full py-4 px-5" placeholder="Password" required>
+                        <button type="submit" class="clay-btn clay-btn-primary w-full py-4 mt-4 shadow-lg text-lg"><span id="auth-btn-text">Sign In</span></button>
+                    </form>
+                    <div class="flex gap-4 mt-6 justify-center">
+                        <button onclick="app.handleGoogleAuth()" class="clay-btn clay-btn-secondary w-12 h-12 flex items-center justify-center rounded-full text-danger"><i class="fab fa-google"></i></button>
+                    </div>
+                    <p class="mt-8 text-sm font-bold text-slate-400">Don't have an account? <a href="#" onclick="app.toggleAuthMode()" class="text-primary hover:underline" id="auth-switch-text">Sign up</a></p>
+                    
+                    <div class="mt-8 text-center border-t border-slate-200 pt-4">
+                        <button onclick="app.router('seller-login')" class="text-xs font-bold text-slate-400 hover:text-primary uppercase tracking-wide">Seller Portal Login</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: SELLER LOGIN -->
+            <section id="view-seller-login" class="view-section hide max-w-sm mx-auto mt-12">
+                <div class="clay-card p-10 bg-primary text-white relative overflow-hidden border-none">
+                    <div class="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
+                    <div class="relative z-10">
+                        <div class="mb-8"><h2 class="text-3xl font-bold">Seller Portal</h2></div>
+                        <form onsubmit="app.handleSellerAuth(event)" class="space-y-5">
+                            <input type="email" id="seller-auth-email" class="w-full bg-black/20 border-none rounded-xl px-5 py-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-warning" placeholder="Seller Email" required>
+                            <input type="password" id="seller-auth-pass" class="w-full bg-black/20 border-none rounded-xl px-5 py-4 text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-warning" placeholder="Password" required>
+                            <button type="submit" class="w-full bg-warning text-white font-bold py-4 rounded-xl hover:bg-yellow-400 transition shadow-lg mt-4 flex justify-center items-center">Access Dashboard</button>
+                        </form>
+                        <div class="mt-8 text-center"><a href="#" onclick="app.router('seller-apply')" class="text-xs text-white/70 hover:text-white font-bold uppercase tracking-wide">Apply for Seller Account</a></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: SELLER DASHBOARD -->
+            <section id="view-seller-dashboard" class="view-section hide">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-extrabold text-textMain">Seller Dashboard</h2>
+                    <button onclick="app.openAddProductModal()" class="clay-btn bg-success text-white px-6 py-3 shadow-lg flex items-center"><i data-lucide="plus" class="mr-2 w-4 h-4"></i> Add Product</button>
+                </div>
+                <div class="clay-card p-6 mb-8">
+                    <h3 class="font-bold text-lg mb-4 text-textMain">Sales Overview</h3>
+                    <div class="flex items-end justify-between h-32 gap-2">
+                        <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 40%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
+                        <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 65%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
+                        <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 30%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
+                        <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 85%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
+                        <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 50%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
+                        <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 90%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
+                        <div class="w-full bg-primary/10 rounded-t-lg relative group h-full"><div style="height: 70%;" class="absolute bottom-0 w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:bg-primaryLight"></div></div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="clay-card p-6 h-[600px] flex flex-col">
+                        <h3 class="font-bold text-lg mb-4 text-textMain">Inventory</h3>
+                        <div id="seller-products-list" class="overflow-y-auto pr-2 space-y-3 flex-grow"></div>
+                    </div>
+                    <div class="clay-card p-6 h-[600px] flex flex-col">
+                        <h3 class="font-bold text-lg mb-4 text-textMain">Orders</h3>
+                        <div id="seller-orders-list" class="overflow-y-auto pr-2 space-y-3 flex-grow"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: ADMIN DASHBOARD -->
+            <section id="view-admin-dashboard" class="view-section hide">
+                <h2 class="text-3xl font-extrabold mb-8 text-textMain">Admin Control</h2>
+                <div class="clay-card p-8 mb-8">
+                    <h3 class="font-bold text-xl mb-6 text-textMain">Store Banners</h3>
+                    <form onsubmit="app.adminSaveBanner(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                        <input type="text" id="banner-title" placeholder="Title (e.g. Diwali Sale)" class="clay-input p-4" required>
+                        <input type="text" id="banner-subtitle" placeholder="Subtitle" class="clay-input p-4">
+                        <input type="text" id="banner-img" placeholder="Image URL (Horizontal)" class="clay-input p-4" required>
+                        <input type="text" id="banner-cta" placeholder="Button Text" class="clay-input p-4" value="Shop Now">
+                        <button type="submit" class="clay-btn clay-btn-primary p-4 md:col-span-2">Update Home Banner</button>
+                    </form>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                    <div class="clay-card p-8 bg-primary text-white border-none relative overflow-hidden">
+                        <div class="relative z-10"><div class="text-white/60 text-xs font-bold uppercase mb-2">Total Sales</div><div class="text-5xl font-extrabold" id="admin-total-sales">₹0</div></div>
+                        <i data-lucide="trending-up" class="absolute right-4 bottom-4 w-24 h-24 text-white/10"></i>
+                    </div>
+                    <div class="clay-card p-8">
+                        <div class="text-slate-400 text-xs font-bold uppercase mb-2">Total Orders</div><div class="text-5xl font-extrabold text-textMain" id="admin-order-count">0</div>
+                    </div>
+                </div>
+                <div class="clay-card p-8 mb-8">
+                    <h3 class="font-bold text-lg mb-4">Payment Queue</h3>
+                    <div id="admin-payment-queue" class="space-y-3"></div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="clay-card p-8 h-[500px] flex flex-col">
+                        <h3 class="font-bold text-lg mb-4">Manage All Products</h3>
+                        <div id="admin-all-products" class="overflow-y-auto pr-2 space-y-3 flex-grow"></div>
+                    </div>
+                    <div class="space-y-6">
+                        <div class="clay-card p-8">
+                            <h3 class="font-bold text-lg mb-4">Seller Requests</h3>
+                            <div id="admin-seller-requests" class="space-y-3"></div>
+                        </div>
+                        <div class="clay-card p-8">
+                            <h3 class="font-bold text-lg mb-4">Create Service Agent</h3>
+                            <form onsubmit="app.createServiceAccount(event)" class="flex gap-3">
+                                <input type="email" id="service-email-input" class="clay-input flex-grow px-4" placeholder="Agent Email" required>
+                                <button class="clay-btn clay-btn-primary px-6">Create</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: SERVICE DASHBOARD -->
+            <section id="view-service-dashboard" class="view-section hide">
+                <h2 class="text-3xl font-extrabold mb-8 text-textMain">Support Desk</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 h-[700px]">
+                    <div class="clay-card p-6 h-full flex flex-col">
+                        <h3 class="font-bold mb-6 text-slate-400 text-xs uppercase tracking-widest">Active Tickets</h3>
+                        <div id="support-tickets-list" class="space-y-2 flex-grow overflow-y-auto custom-scrollbar"></div>
+                    </div>
+                    <div class="clay-card p-6 md:col-span-2 flex flex-col h-full relative">
+                        <div class="border-b border-gray-100 pb-4 mb-4 font-bold text-slate-800 flex justify-between items-center">
+                            <span id="service-chat-header-text">Select a ticket</span>
+                            <div class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span> Live</div>
+                        </div>
+                        <div id="service-chat-messages" class="flex-grow bg-slate-50 rounded-xl p-4 overflow-y-auto mb-4 border border-gray-100 shadow-inner"></div>
+                        <form onsubmit="app.sendServiceMessage(event)" class="flex gap-4">
+                            <input type="text" id="service-chat-input" class="clay-input flex-grow px-4" placeholder="Reply..." disabled>
+                            <button type="submit" id="service-chat-send-btn" class="clay-btn clay-btn-primary w-12 h-12 flex items-center justify-center" disabled><i data-lucide="send" class="w-4 h-4"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VIEW: PROFILE -->
+            <section id="view-profile" class="view-section hide max-w-lg mx-auto">
+                <div class="clay-card p-8 text-center relative mt-16">
+                    <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
+                        <div class="w-32 h-32 bg-primary rounded-[40px] flex items-center justify-center shadow-lg rotate-45 border-4 border-[#EBF0F6]">
+                            <div class="transform -rotate-45 text-white"><i data-lucide="user" class="w-12 h-12"></i></div>
+                        </div>
+                    </div>
+                    <div class="mt-16">
+                        <h2 class="text-2xl font-extrabold text-textMain" id="profile-name">User</h2>
+                        <p class="text-textMuted text-sm font-bold uppercase tracking-wide mt-1" id="profile-role">Customer</p>
+                        <p class="text-slate-400 text-xs mt-1" id="profile-email">email@example.com</p>
+                        <button onclick="app.openEditProfile()" class="text-xs text-accent font-bold mt-2 hover:underline">Edit Profile</button>
+                    </div>
+                    <div class="mt-8 space-y-4 text-left">
+                        <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Saved Addresses</h3>
+                        <div id="profile-address-list" class="space-y-3"></div>
+                    </div>
+                    <button onclick="app.logout()" class="clay-btn w-full py-3 mt-8 bg-red-50 text-danger hover:bg-red-100 transition">Log Out</button>
+                </div>
+            </section>
+
+            <!-- VIEW: CHECKOUT -->
+            <section id="view-checkout" class="view-section hide">
+                <h2 class="text-3xl font-extrabold mb-8 text-textMain ml-2">Checkout</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="clay-card p-8">
+                            <h3 class="font-bold text-xl mb-6 flex items-center text-primary"><i data-lucide="map-pin" class="mr-3"></i> Shipping Details</h3>
+                            <div id="saved-addresses" class="grid grid-cols-1 gap-4 mb-6"></div>
+                            <button onclick="document.getElementById('new-address-form').classList.toggle('hide')" class="clay-btn clay-btn-secondary w-full py-3 border-2 border-dashed border-slate-200">+ Add New Address</button>
+                            <form id="new-address-form" class="hide mt-6 space-y-4" onsubmit="event.preventDefault(); app.saveAddress();">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <input type="text" id="addr-name" placeholder="Full Name" class="clay-input p-4 w-full" required>
+                                    <input type="text" id="addr-mobile" placeholder="Mobile" class="clay-input p-4 w-full" required>
+                                    <input type="text" id="addr-line" placeholder="Address Line" class="clay-input p-4 w-full md:col-span-2" required>
+                                    <input type="text" id="addr-area" placeholder="Area" class="clay-input p-4 w-full" required>
+                                    <input type="text" id="addr-city" placeholder="City" class="clay-input p-4 w-full" required>
+                                    <input type="text" id="addr-pin" placeholder="Pincode" class="clay-input p-4 w-full" required>
+                                </div>
+                                <button type="submit" class="clay-btn clay-btn-primary py-3 px-6">Save Address</button>
+                            </form>
+                        </div>
+                        <div class="clay-card p-8">
+                            <h3 class="font-bold text-xl mb-6 flex items-center text-primary"><i data-lucide="credit-card" class="mr-3"></i> Payment</h3>
+                            <div class="mb-8 w-full max-w-sm mx-auto bg-gradient-to-br from-primary to-primaryLight rounded-[25px] p-6 text-white shadow-xl relative overflow-hidden h-56 flex flex-col justify-between">
+                                <div class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl -mr-10 -mt-10"></div>
+                                <div class="flex justify-between items-start z-10">
+                                    <i data-lucide="nfc" class="w-8 h-8 opacity-80"></i>
+                                    <span class="font-bold tracking-widest text-lg italic opacity-80">VISA</span>
+                                </div>
+                                <div class="z-10">
+                                    <div class="text-xl tracking-[4px] font-mono mb-4 text-white/90">**** **** **** 4242</div>
+                                    <div class="flex justify-between text-xs uppercase tracking-wider opacity-75">
+                                        <span>Card Holder</span>
+                                        <span>Expires</span>
+                                    </div>
+                                    <div class="flex justify-between font-bold tracking-wide">
+                                        <span id="card-holder-preview">JOY KUMBHAKAR</span>
+                                        <span>12/28</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-4">
+                                <label class="flex items-center p-4 rounded-2xl border border-transparent hover:bg-white hover:shadow-sm cursor-pointer transition clay-input">
+                                    <input type="radio" name="payment" value="upi" checked class="text-primary w-5 h-5 mr-4">
+                                    <div><div class="font-bold text-textMain">UPI / Online</div><div class="text-xs text-textMuted">GPay, PhonePe, Card</div></div>
+                                </label>
+                                <label class="flex items-center p-4 rounded-2xl border border-transparent hover:bg-white hover:shadow-sm cursor-pointer transition clay-input">
+                                    <input type="radio" name="payment" value="cod" class="text-primary w-5 h-5 mr-4">
+                                    <div><div class="font-bold text-textMain">Cash on Delivery</div><div class="text-xs text-textMuted">Pay at doorstep</div></div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clay-card p-8 h-fit lg:sticky lg:top-28">
+                        <h3 class="font-bold text-xl mb-6 text-textMain">Order Summary</h3>
+                        <div id="checkout-items" class="space-y-4 mb-6 max-h-60 overflow-y-auto pr-2"></div>
+                        <div class="pt-6 border-t border-slate-200 space-y-2">
+                            <div class="flex justify-between text-sm text-textMuted"><span>Subtotal</span><span id="checkout-subtotal" class="font-bold">₹0</span></div>
+                            <div class="flex justify-between text-lg font-extrabold text-textMain mt-4"><span>Total</span><span id="checkout-total" class="text-primary">₹0</span></div>
+                        </div>
+                        <button onclick="app.placeOrder()" class="clay-btn clay-btn-primary w-full py-4 mt-8 shadow-xl text-lg">Place Order</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="view-success" class="view-section hide text-center pt-24 max-w-md mx-auto">
+                <div class="clay-card p-12">
+                    <div class="w-24 h-24 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-6 text-success"><i data-lucide="check-circle" class="w-12 h-12"></i></div>
+                    <h2 class="text-3xl font-extrabold text-textMain mb-4">Order Confirmed!</h2>
+                    <p class="text-textMuted mb-8">Your order has been placed successfully.</p>
+                    <button onclick="app.router('orders')" class="clay-btn clay-btn-primary w-full py-3 mb-4">Track Order</button>
+                    <button onclick="app.router('home')" class="clay-btn clay-btn-secondary w-full py-3">Continue Shopping</button>
+                </div>
+            </section>
+
+            <!-- CUSTOMER CHAT VIEW -->
+            <section id="view-customer-chat" class="view-section hide max-w-3xl mx-auto">
+                 <button onclick="app.router('orders')" class="mb-4 text-textMuted hover:text-accent flex items-center text-sm font-bold"><i data-lucide="arrow-left" class="mr-2"></i> Back to Orders</button>
+                 <div class="clay-card p-6 h-[600px] flex flex-col relative overflow-hidden">
+                     <div class="border-b border-gray-100 pb-4 mb-4 flex justify-between items-center z-10 bg-white/90 backdrop-blur-sm">
+                         <div>
+                             <h3 class="font-bold text-slate-800 text-base">Support Chat</h3>
+                             <p class="text-xs text-slate-400 font-mono mt-0.5" id="customer-chat-id">Ticket #...</p>
+                         </div>
+                         <span class="bg-green-100 text-green-700 text-xs px-3 py-1 rounded-full font-bold flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span> Online</span>
+                     </div>
+                     <div id="customer-chat-messages" class="flex-grow p-4 overflow-y-auto space-y-3 bg-slate-50/50 rounded-xl mb-4 border border-slate-100"></div>
+                     <form onsubmit="app.sendCustomerMessage(event)" class="flex gap-3 items-center">
+                         <input type="text" id="customer-chat-input" class="clay-input flex-grow px-4 py-3" placeholder="Type your message..." required>
+                         <button type="submit" class="clay-btn clay-btn-primary w-12 h-12 flex items-center justify-center flex-shrink-0"><i data-lucide="send" class="w-5 h-5"></i></button>
+                     </form>
+                 </div>
+            </section>
+
+            <section id="view-orders" class="view-section hide max-w-4xl mx-auto">
+                <h2 class="text-3xl font-extrabold mb-8 text-textMain ml-2">My Orders</h2>
+                <div id="orders-list" class="space-y-6"></div>
+            </section>
+        </div>
     </main>
 
-    <!-- Cart Sidebar -->
-    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full sm:w-96 bg-white/90 backdrop-blur-xl shadow-2xl transform translate-x-full transition-transform duration-300 z-[60] flex flex-col">
+    <!-- Cart Sidebar (Right) -->
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full sm:w-96 bg-white/90 backdrop-blur-xl shadow-2xl transform translate-x-full transition-transform duration-300 z-[60] flex flex-col absolute top-0">
         <div class="p-6 border-b border-slate-100 flex justify-between items-center">
             <h3 class="font-bold text-xl text-textMain">Cart</h3>
             <button onclick="app.toggleCart()" class="clay-btn clay-btn-secondary w-8 h-8 flex items-center justify-center rounded-full"><i data-lucide="x" class="w-4 h-4"></i></button>
@@ -700,7 +724,7 @@
     </div>
 
     <!-- ADD PRODUCT MODAL -->
-    <div id="add-product-modal" class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-50 flex items-center justify-center hide p-4">
+    <div id="add-product-modal" class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-50 flex items-center justify-center hide p-4 absolute">
         <div class="clay-card w-full max-w-lg p-8 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-2xl font-bold" id="modal-title">Add Product</h3>
@@ -735,7 +759,7 @@
     </div>
 
     <!-- EDIT PROFILE MODAL -->
-    <div id="edit-profile-modal" class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-50 flex items-center justify-center hide p-4">
+    <div id="edit-profile-modal" class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-50 flex items-center justify-center hide p-4 absolute">
         <div class="clay-card w-full max-w-sm p-8">
             <div class="flex justify-between items-center mb-6">
                 <h3 class="text-xl font-bold">Edit Profile</h3>
@@ -750,7 +774,7 @@
     </div>
 
     <!-- ORDER DETAILS MODAL -->
-    <div id="order-details-modal" class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-50 flex items-center justify-center hide p-4">
+    <div id="order-details-modal" class="fixed inset-0 bg-primary/20 backdrop-blur-sm z-50 flex items-center justify-center hide p-4 absolute">
         <div class="clay-card w-full max-w-2xl p-8 max-h-[90vh] overflow-y-auto relative">
             <button onclick="document.getElementById('order-details-modal').classList.add('hide')" class="absolute top-6 right-6 text-slate-400"><i data-lucide="x"></i></button>
             <h3 class="text-2xl font-bold mb-6">Order Details</h3>
