@@ -242,117 +242,203 @@
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
         
-        /* Banner Scroller */
-        .banner-scroller {
-            scrollbar-width: thin;
-            scrollbar-color: #7F5AF0 transparent;
+        /* Banner Horizontal Scroller */
+        .banner-horizontal-container {
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
         }
         
-        .banner-scroller::-webkit-scrollbar {
-            width: 4px;
+        .banner-horizontal-container::-webkit-scrollbar {
+            display: none;
         }
         
-        .banner-scroller::-webkit-scrollbar-track {
-            background: transparent;
+        .banner-horizontal-slide {
+            flex: 0 0 280px;
+            scroll-snap-align: start;
         }
         
-        .banner-scroller::-webkit-scrollbar-thumb {
+        .banner-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+        
+        .banner-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(127, 90, 240, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .banner-dot.active {
+            width: 24px;
             background: #7F5AF0;
-            border-radius: 10px;
+            border-radius: 12px;
+        }
+        
+        /* Navigation Styles */
+        .nav-link-desktop {
+            @apply px-4 py-2 text-sm font-bold text-textMain hover:text-accent transition-colors relative after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-0 after:h-0.5 after:bg-accent after:transition-all after:duration-300 hover:after:w-4/5;
+        }
+        
+        .nav-icon-mobile {
+            @apply flex flex-col items-center justify-center text-white transition-all duration-300 relative z-20;
+        }
+        
+        .nav-icon-mobile.active {
+            @apply transform -translate-y-2;
+        }
+        
+        .nav-icon-mobile i {
+            @apply transition-all duration-300;
+        }
+        
+        .nav-icon-mobile.active i {
+            @apply transform scale-110;
+        }
+        
+        .nav-icon-mobile span {
+            @apply text-[10px] font-bold mt-1 opacity-80 transition-opacity;
+        }
+        
+        .nav-icon-mobile.active span {
+            @apply opacity-100;
+        }
+        
+        .fab-pulse {
+            animation: pulse-glow 2s infinite;
+        }
+        
+        .pb-safe {
+            padding-bottom: env(safe-area-inset-bottom);
         }
         
         @keyframes pulse-glow {
-            0% {
-                box-shadow: 0 0 0 0 rgba(127, 90, 240, 0.4);
-            }
-            70% {
-                box-shadow: 0 0 0 10px rgba(127, 90, 240, 0);
-            }
-            100% {
-                box-shadow: 0 0 0 0 rgba(127, 90, 240, 0);
-            }
+            0%, 100% { box-shadow: 0 0 0 0 rgba(127, 90, 240, 0.4), 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+            50% { box-shadow: 0 0 0 10px rgba(127, 90, 240, 0), 0 10px 25px -5px rgba(0, 0, 0, 0.1); }
+        }
+        
+        .shadow-clay-float {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 16px -8px rgba(0, 0, 0, 0.05);
+        }
+        
+        .shadow-clay-inner {
+            box-shadow: inset 5px 5px 10px #d1d9e6, inset -5px -5px 10px #ffffff;
+        }
+        
+        /* Mobile Navigation SVG Curve */
+        .mobile-nav-curve {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 90px;
+            z-index: 40;
+            pointer-events: none;
+        }
+        
+        .mobile-nav-content {
+            position: absolute;
+            inset: 0;
+            pointer-events: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding: 0 1rem 0.5rem 1rem;
+        }
+        
+        .cart-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #EF4444;
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #583FBC;
         }
     </style>
 </head>
-<body class="text-slate-800 flex flex-col min-h-screen bg-clayBg">
+<body class="text-textMain flex flex-col min-h-screen bg-clayBg pb-24 md:pb-0">
 
     <div id="toast-container"></div>
 
     <!-- Top Navigation -->
-    <nav class="bg-surface/90 border-b border-gray-200 sticky top-0 z-50 backdrop-blur-md transition-all duration-300">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-2 cursor-pointer group" onclick="app.router('home')">
-                <div class="clay-card p-2 group-hover:shadow-clay-card-lg transition-all duration-300">
-                    <i data-lucide="shield-check" class="lucide-lg text-accent"></i>
-                </div>
-                <span class="text-xl font-extrabold tracking-tight text-primary group-hover:text-accent transition-colors">SecureThing</span>
-            </div>
-            
-            <div class="hidden md:flex items-center space-x-1">
-                <button onclick="app.router('home')" class="hover:bg-gray-100 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:text-primary">Shop</button>
-                <button onclick="app.router('categories')" class="hover:bg-gray-100 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:text-primary">Categories</button>
-                <button onclick="app.router('orders')" class="hover:bg-gray-100 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:text-primary" id="nav-orders">Orders</button>
-                <button onclick="app.router('wishlist')" class="hover:bg-gray-100 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:text-primary" id="nav-wishlist">Wishlist</button>
-                <button onclick="app.router('profile')" class="hover:bg-gray-100 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:text-primary" id="nav-profile">Profile</button>
-                
-                <button onclick="app.router('seller-dashboard')" class="bg-warning/10 text-warning-700 hover:bg-warning/20 px-3 py-2 rounded-lg text-sm font-bold transition-colors hide" id="nav-seller">Seller Portal</button>
-                <button onclick="app.router('admin-dashboard')" class="bg-primary/10 text-primary hover:bg-primary/20 px-3 py-2 rounded-lg text-sm font-bold transition-colors hide" id="nav-admin">Admin</button>
-                <button onclick="app.router('service-dashboard')" class="hover:bg-gray-100 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:text-primary hide" id="nav-service">Service</button>
-                
-                <div class="w-px h-6 bg-gray-200 mx-2"></div>
-
-                <button onclick="app.toggleCart()" class="clay-btn clay-btn-secondary p-2.5 relative hover:shadow-clay-card-lg transition-all">
-                    <i data-lucide="shopping-bag" class="text-accent"></i>
-                    <span id="cart-count" class="absolute top-0 right-0 bg-danger text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full ring-2 ring-white transform translate-x-1/4 -translate-y-1/4">0</span>
-                </button>
-
-                <div id="auth-section" class="ml-2">
-                    <button onclick="app.router('login')" class="clay-btn clay-btn-primary px-5 py-2 text-sm font-bold hover:shadow-clay-card-lg">Login</button>
-                </div>
-            </div>
-            
-            <button class="md:hidden text-slate-600 p-2 clay-btn clay-btn-secondary" onclick="document.getElementById('mobile-menu').classList.toggle('hide')">
-                <i data-lucide="menu"></i>
+    <nav class="z-40 transition-all duration-300 w-full shrink-0 bg-clayBg sticky top-0">
+        <div class="px-6 py-6 flex justify-between items-center">
+            <!-- Mobile Menu Toggle (Links to Categories) -->
+            <button onclick="app.router('categories')"
+                class="text-primary p-2 bg-white rounded-xl shadow-clay-float md:hidden">
+                <i data-lucide="layout-grid" class="w-6 h-6"></i>
             </button>
+
+            <div class="flex items-center space-x-3 cursor-pointer group" onclick="app.router('home')">
+                <div class="bg-primary text-white p-2 rounded-xl border border-white/10 shadow-lg">
+                    <i data-lucide="shield-check" class="w-6 h-6"></i>
+                </div>
+                <span class="text-xl font-extrabold tracking-tight text-primary hidden md:block">SecureThing</span>
+            </div>
+
+            <div class="hidden md:flex items-center space-x-2">
+                <button onclick="app.router('home')" id="nav-home" class="nav-link-desktop">Shop</button>
+                <button onclick="app.router('categories')" id="nav-categories"
+                    class="nav-link-desktop">Categories</button>
+                <button onclick="app.router('orders')" id="nav-orders" class="nav-link-desktop">Orders</button>
+                <button onclick="app.router('wishlist')" id="nav-wishlist"
+                    class="nav-link-desktop flex items-center gap-1"><i data-lucide="heart"
+                        class="w-4 h-4 text-accent"></i> Wishlist</button>
+                <button onclick="app.router('profile')" id="nav-profile" class="nav-link-desktop">Profile</button>
+
+                <button onclick="app.router('service-dashboard')" class="nav-link-desktop text-accent hide"
+                    id="nav-service">Support</button>
+                <button onclick="app.router('seller-dashboard')" class="nav-link-desktop text-warning hide"
+                    id="nav-seller">Seller Portal</button>
+                <button onclick="app.router('admin-dashboard')" class="nav-link-desktop text-primary hide"
+                    id="nav-admin">Admin</button>
+                <div id="auth-section-desktop" class="ml-4"></div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <button onclick="app.toggleHeaderSearch()"
+                    class="text-primary bg-white p-2.5 rounded-full shadow-clay-float relative group">
+                    <i data-lucide="search" class="w-5 h-5"></i>
+                </button>
+                <button onclick="app.router('profile')"
+                    class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-primary shadow-clay-float border-2 border-white overflow-hidden relative">
+                    <img id="header-avatar" src="https://ui-avatars.com/api/?name=User&background=583FBC&color=fff"
+                        class="w-full h-full object-cover">
+                </button>
+            </div>
         </div>
-        <div id="mobile-menu" class="hide md:hidden bg-white border-b border-gray-100 px-4 py-3 space-y-2 shadow-lg absolute w-full left-0 top-full">
-            <button onclick="app.router('home')" class="flex items-center w-full text-left py-3 px-3 hover:bg-gray-50 rounded-lg text-slate-600 font-medium"><i data-lucide="store" class="mr-3 lucide-sm"></i> Shop</button>
-            <button onclick="app.router('categories')" class="flex items-center w-full text-left py-3 px-3 hover:bg-gray-50 rounded-lg text-slate-600 font-medium"><i data-lucide="grid" class="mr-3 lucide-sm"></i> Categories</button>
-            <button onclick="app.router('orders')" class="flex items-center w-full text-left py-3 px-3 hover:bg-gray-50 rounded-lg text-slate-600 font-medium"><i data-lucide="package" class="mr-3 lucide-sm"></i> Orders</button>
-            <button onclick="app.router('wishlist')" class="flex items-center w-full text-left py-3 px-3 hover:bg-gray-50 rounded-lg text-slate-600 font-medium"><i data-lucide="heart" class="mr-3 lucide-sm"></i> Wishlist</button>
-            <button onclick="app.router('profile')" class="flex items-center w-full text-left py-3 px-3 hover:bg-gray-50 rounded-lg text-slate-600 font-medium hide" id="mobile-nav-profile"><i data-lucide="user" class="mr-3 lucide-sm"></i> Profile</button>
-            <button onclick="app.toggleCart()" class="flex items-center w-full text-left py-3 px-3 hover:bg-gray-50 rounded-lg text-slate-600 font-medium"><i data-lucide="shopping-bag" class="mr-3 lucide-sm"></i> Cart</button>
-            <div id="mobile-auth-section" class="pt-2 mt-2 border-t border-gray-100"></div>
+
+        <div id="header-search-bar" class="px-6 pb-2 hide">
+            <div class="relative">
+                <input type="text" id="global-search-input"
+                    onkeydown="if(event.key === 'Enter') app.performSearch(this.value)"
+                    placeholder="Search products & press Enter..."
+                    class="clay-input w-full py-4 pl-12 pr-12 text-sm font-bold shadow-clay-inner">
+                <i data-lucide="search" class="absolute left-4 top-4 text-primary w-5 h-5"></i>
+                <button onclick="app.clearSearch()" class="absolute right-4 top-4 text-slate-400 hover:text-danger"><i
+                        data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
         </div>
     </nav>
 
-    <!-- Mobile Bottom Navigation -->
-    <div class="fixed bottom-0 left-0 w-full z-40 md:hidden bg-white border-t border-gray-200 py-3 px-6 flex justify-between items-center">
-        <button onclick="app.router('home')" class="flex flex-col items-center text-slate-600">
-            <i data-lucide="home" class="lucide-sm mb-1"></i>
-            <span class="text-xs">Shop</span>
-        </button>
-        <button onclick="app.router('wishlist')" class="flex flex-col items-center text-slate-600">
-            <i data-lucide="heart" class="lucide-sm mb-1"></i>
-            <span class="text-xs">Wishlist</span>
-        </button>
-        <button onclick="app.toggleCart()" class="flex flex-col items-center text-slate-600 relative">
-            <i data-lucide="shopping-bag" class="lucide-sm mb-1"></i>
-            <span class="text-xs">Cart</span>
-            <span id="cart-count-mobile" class="absolute -top-2 -right-2 bg-danger text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center">0</span>
-        </button>
-        <button onclick="app.router('orders')" class="flex flex-col items-center text-slate-600">
-            <i data-lucide="package" class="lucide-sm mb-1"></i>
-            <span class="text-xs">Orders</span>
-        </button>
-        <button onclick="app.router('profile')" class="flex flex-col items-center text-slate-600">
-            <i data-lucide="user" class="lucide-sm mb-1"></i>
-            <span class="text-xs">Profile</span>
-        </button>
-    </div>
-
     <!-- Main Content -->
-    <main class="flex-grow container mx-auto px-4 py-6 relative mb-16 md:mb-0">
+    <main class="flex-grow container mx-auto px-4 py-6 mb-16 md:mb-0">
         
         <div id="global-loader" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center hide transition-all">
             <div class="loader mb-4"></div>
@@ -361,140 +447,157 @@
 
         <!-- VIEW: HOME -->
         <section id="view-home" class="view-section">
-            <!-- Claymorphism Hero Section with Banner Scroller -->
+            <!-- Claymorphism Hero Section with Horizontal Banner Scroller -->
             <div class="relative mb-12">
-                <div class="clay-card p-8 lg:p-12 grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+                <div class="clay-card p-8 lg:p-12">
                     <!-- Main Content Area -->
-                    <div class="lg:col-span-2 flex flex-col justify-center">
-                        <div class="inline-flex items-center gap-2 clay-tag mb-6 w-fit animate-float">
-                            <span class="flex h-2 w-2 rounded-full bg-accent"></span>
-                            <span class="text-xs font-bold text-accent tracking-wide uppercase">Next Gen Security</span>
-                        </div>
-                        
-                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-textMain mb-6 leading-tight">
-                            Protect What <br/>
-                            <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">Matters Most</span>
-                        </h1>
-                        
-                        <p class="text-textMuted text-lg mb-8 leading-relaxed max-w-xl">
-                            Advanced smart locks, AI-powered cameras, and sensors that keep your home safe 24/7. Monitoring made simple.
-                        </p>
-                        
-                        <div class="flex flex-col sm:flex-row gap-4">
-                            <button onclick="document.getElementById('product-grid').scrollIntoView({behavior: 'smooth'})" 
-                                    class="clay-btn clay-btn-primary px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:shadow-clay-card-lg transition-all duration-300">
-                                Start Shopping <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                            </button>
-                            <button onclick="app.filterCategory('Security')" 
-                                    class="clay-btn clay-btn-secondary px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:shadow-clay-card-lg transition-all duration-300">
-                                <i data-lucide="shield" class="w-4 h-4"></i> Explore Systems
-                            </button>
-                        </div>
-                        
-                        <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div class="clay-card-inner p-4 text-center">
-                                <div class="text-2xl font-extrabold text-accent mb-1">24/7</div>
-                                <div class="text-xs font-bold text-textMuted uppercase tracking-wide">Monitoring</div>
+                    <div class="flex flex-col lg:flex-row gap-8 lg:gap-12">
+                        <div class="lg:w-2/3 flex flex-col justify-center">
+                            <div class="inline-flex items-center gap-2 clay-tag mb-6 w-fit animate-float">
+                                <span class="flex h-2 w-2 rounded-full bg-accent animate-pulse"></span>
+                                <span class="text-xs font-bold text-accent tracking-wide uppercase">Next Gen Security</span>
                             </div>
-                            <div class="clay-card-inner p-4 text-center">
-                                <div class="text-2xl font-extrabold text-accent mb-1">AI</div>
-                                <div class="text-xs font-bold text-textMuted uppercase tracking-wide">Powered</div>
-                            </div>
-                            <div class="clay-card-inner p-4 text-center">
-                                <div class="text-2xl font-extrabold text-accent mb-1">100%</div>
-                                <div class="text-xs font-bold text-textMuted uppercase tracking-wide">Secure</div>
-                            </div>
-                            <div class="clay-card-inner p-4 text-center">
-                                <div class="text-2xl font-extrabold text-accent mb-1">1Y</div>
-                                <div class="text-xs font-bold text-textMuted uppercase tracking-wide">Warranty</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Banner Scroller Area -->
-                    <div class="relative">
-                        <div class="clay-card-inner p-6 h-[500px] relative overflow-hidden">
-                            <!-- Navigation Arrows -->
-                            <button onclick="scrollBanners('up')" 
-                                    class="absolute top-4 left-1/2 transform -translate-x-1/2 z-10 clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-full hover:shadow-clay-card-lg transition-all">
-                                <i data-lucide="chevron-up" class="w-5 h-5 text-accent"></i>
-                            </button>
                             
-                            <button onclick="scrollBanners('down')" 
-                                    class="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-full hover:shadow-clay-card-lg transition-all">
-                                <i data-lucide="chevron-down" class="w-5 h-5 text-accent"></i>
-                            </button>
+                            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-textMain mb-6 leading-tight">
+                                Protect What <br/>
+                                <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">Matters Most</span>
+                            </h1>
                             
-                            <!-- Banner Scroller -->
-                            <div id="banner-scroller" class="h-full overflow-y-auto banner-scroller space-y-6 pr-2">
-                                <!-- Banner 1 -->
-                                <div class="clay-card p-6 transition-all duration-300 hover:shadow-clay-card-lg cursor-pointer group">
-                                    <div class="flex items-start gap-4">
-                                        <div class="clay-card-inner p-4 flex-shrink-0 group-hover:animate-float">
-                                            <i data-lucide="shield" class="w-8 h-8 text-accent"></i>
+                            <p class="text-textMuted text-lg mb-8 leading-relaxed max-w-xl">
+                                Advanced smart locks, AI-powered cameras, and sensors that keep your home safe 24/7. Monitoring made simple.
+                            </p>
+                            
+                            <div class="flex flex-col sm:flex-row gap-4">
+                                <button onclick="document.getElementById('product-grid').scrollIntoView({behavior: 'smooth'})" 
+                                        class="clay-btn clay-btn-primary px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:shadow-clay-card-lg transition-all duration-300">
+                                    Start Shopping <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                                </button>
+                                <button onclick="app.filterCategory('Security')" 
+                                        class="clay-btn clay-btn-secondary px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:shadow-clay-card-lg transition-all duration-300">
+                                    <i data-lucide="shield" class="w-4 h-4"></i> Explore Systems
+                                </button>
+                            </div>
+                            
+                            <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div class="clay-card-inner p-4 text-center">
+                                    <div class="text-2xl font-extrabold text-accent mb-1">24/7</div>
+                                    <div class="text-xs font-bold text-textMuted uppercase tracking-wide">Monitoring</div>
+                                </div>
+                                <div class="clay-card-inner p-4 text-center">
+                                    <div class="text-2xl font-extrabold text-accent mb-1">AI</div>
+                                    <div class="text-xs font-bold text-textMuted uppercase tracking-wide">Powered</div>
+                                </div>
+                                <div class="clay-card-inner p-4 text-center">
+                                    <div class="text-2xl font-extrabold text-accent mb-1">100%</div>
+                                    <div class="text-xs font-bold text-textMuted uppercase tracking-wide">Secure</div>
+                                </div>
+                                <div class="clay-card-inner p-4 text-center">
+                                    <div class="text-2xl font-extrabold text-accent mb-1">1Y</div>
+                                    <div class="text-xs font-bold text-textMuted uppercase tracking-wide">Warranty</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Horizontal Banner Scroller Area -->
+                        <div class="lg:w-1/3">
+                            <div class="clay-card-inner p-6">
+                                <h3 class="font-bold text-textMain text-lg mb-4 flex items-center gap-2">
+                                    <i data-lucide="sparkles" class="w-5 h-5 text-accent"></i>
+                                    Featured Categories
+                                </h3>
+                                
+                                <!-- Horizontal Scroller Container -->
+                                <div class="banner-horizontal-container flex gap-4 pb-4" id="banner-horizontal-scroller">
+                                    <!-- Banner 1 -->
+                                    <div class="banner-horizontal-slide">
+                                        <div class="clay-card p-6 transition-all duration-300 hover:shadow-clay-card-lg cursor-pointer group h-full" onclick="app.filterCategory('Security')">
+                                            <div class="flex flex-col items-center text-center">
+                                                <div class="clay-card-inner p-4 mb-4 group-hover:animate-float">
+                                                    <i data-lucide="shield" class="w-10 h-10 text-accent"></i>
+                                                </div>
+                                                <h3 class="font-bold text-textMain mb-2 text-lg">Smart Locks</h3>
+                                                <p class="text-sm text-textMuted mb-4">Biometric & remote access control systems</p>
+                                                <div class="clay-tag inline-block text-xs">NEW</div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 class="font-bold text-textMain mb-2">Smart Locks</h3>
-                                            <p class="text-sm text-textMuted">Biometric & remote access control systems</p>
-                                            <div class="mt-3 clay-tag inline-block text-xs">NEW</div>
+                                    </div>
+                                    
+                                    <!-- Banner 2 -->
+                                    <div class="banner-horizontal-slide">
+                                        <div class="clay-card p-6 transition-all duration-300 hover:shadow-clay-card-lg cursor-pointer group h-full" onclick="app.filterCategory('Electronics')">
+                                            <div class="flex flex-col items-center text-center">
+                                                <div class="clay-card-inner p-4 mb-4 group-hover:animate-float">
+                                                    <i data-lucide="camera" class="w-10 h-10 text-accent"></i>
+                                                </div>
+                                                <h3 class="font-bold text-textMain mb-2 text-lg">AI Cameras</h3>
+                                                <p class="text-sm text-textMuted mb-4">4K resolution with facial recognition</p>
+                                                <div class="clay-tag inline-block text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white">BEST SELLER</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Banner 3 -->
+                                    <div class="banner-horizontal-slide">
+                                        <div class="clay-card p-6 transition-all duration-300 hover:shadow-clay-card-lg cursor-pointer group h-full" onclick="app.filterCategory('Security')">
+                                            <div class="flex flex-col items-center text-center">
+                                                <div class="clay-card-inner p-4 mb-4 group-hover:animate-float">
+                                                    <i data-lucide="siren" class="w-10 h-10 text-accent"></i>
+                                                </div>
+                                                <h3 class="font-bold text-textMain mb-2 text-lg">Alarm Systems</h3>
+                                                <p class="text-sm text-textMuted mb-4">Wireless sensors with instant alerts</p>
+                                                <div class="clay-tag inline-block text-xs">SALE</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Banner 4 -->
+                                    <div class="banner-horizontal-slide">
+                                        <div class="clay-card p-6 transition-all duration-300 hover:shadow-clay-card-lg cursor-pointer group h-full" onclick="app.filterCategory('Home')">
+                                            <div class="flex flex-col items-center text-center">
+                                                <div class="clay-card-inner p-4 mb-4 group-hover:animate-float">
+                                                    <i data-lucide="wifi" class="w-10 h-10 text-accent"></i>
+                                                </div>
+                                                <h3 class="font-bold text-textMain mb-2 text-lg">Smart Home</h3>
+                                                <p class="text-sm text-textMuted mb-4">Complete home automation packages</p>
+                                                <div class="clay-tag inline-block text-xs">TRENDING</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Banner 5 -->
+                                    <div class="banner-horizontal-slide">
+                                        <div class="clay-card p-6 transition-all duration-300 hover:shadow-clay-card-lg cursor-pointer group h-full" onclick="app.filterCategory('Electronics')">
+                                            <div class="flex flex-col items-center text-center">
+                                                <div class="clay-card-inner p-4 mb-4 group-hover:animate-float">
+                                                    <i data-lucide="monitor" class="w-10 h-10 text-accent"></i>
+                                                </div>
+                                                <h3 class="font-bold text-textMain mb-2 text-lg">Monitoring</h3>
+                                                <p class="text-sm text-textMuted mb-4">24/7 professional security monitoring</p>
+                                                <div class="clay-tag inline-block text-xs">PREMIUM</div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                                 
-                                <!-- Banner 2 -->
-                                <div class="clay-card p-6 transition-all duration-300 hover:shadow-clay-card-lg cursor-pointer group">
-                                    <div class="flex items-start gap-4">
-                                        <div class="clay-card-inner p-4 flex-shrink-0 group-hover:animate-float">
-                                            <i data-lucide="camera" class="w-8 h-8 text-accent"></i>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-bold text-textMain mb-2">AI Cameras</h3>
-                                            <p class="text-sm text-textMuted">4K resolution with facial recognition</p>
-                                            <div class="mt-3 clay-tag inline-block text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white">BEST SELLER</div>
-                                        </div>
-                                    </div>
+                                <!-- Dots Indicator -->
+                                <div class="banner-dots" id="banner-dots">
+                                    <div class="banner-dot active" onclick="scrollToBanner(0)"></div>
+                                    <div class="banner-dot" onclick="scrollToBanner(1)"></div>
+                                    <div class="banner-dot" onclick="scrollToBanner(2)"></div>
+                                    <div class="banner-dot" onclick="scrollToBanner(3)"></div>
+                                    <div class="banner-dot" onclick="scrollToBanner(4)"></div>
                                 </div>
                                 
-                                <!-- Banner 3 -->
-                                <div class="clay-card p-6 transition-all duration-300 hover:shadow-clay-card-lg cursor-pointer group">
-                                    <div class="flex items-start gap-4">
-                                        <div class="clay-card-inner p-4 flex-shrink-0 group-hover:animate-float">
-                                            <i data-lucide="siren" class="w-8 h-8 text-accent"></i>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-bold text-textMain mb-2">Alarm Systems</h3>
-                                            <p class="text-sm text-textMuted">Wireless sensors with instant alerts</p>
-                                            <div class="mt-3 clay-tag inline-block text-xs">SALE</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Banner 4 -->
-                                <div class="clay-card p-6 transition-all duration-300 hover:shadow-clay-card-lg cursor-pointer group">
-                                    <div class="flex items-start gap-4">
-                                        <div class="clay-card-inner p-4 flex-shrink-0 group-hover:animate-float">
-                                            <i data-lucide="wifi" class="w-8 h-8 text-accent"></i>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-bold text-textMain mb-2">Smart Home</h3>
-                                            <p class="text-sm text-textMuted">Complete home automation packages</p>
-                                            <div class="mt-3 clay-tag inline-block text-xs">TRENDING</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Banner 5 -->
-                                <div class="clay-card p-6 transition-all duration-300 hover:shadow-clay-card-lg cursor-pointer group">
-                                    <div class="flex items-start gap-4">
-                                        <div class="clay-card-inner p-4 flex-shrink-0 group-hover:animate-float">
-                                            <i data-lucide="monitor" class="w-8 h-8 text-accent"></i>
-                                        </div>
-                                        <div>
-                                            <h3 class="font-bold text-textMain mb-2">Monitoring</h3>
-                                            <p class="text-sm text-textMuted">24/7 professional security monitoring</p>
-                                            <div class="mt-3 clay-tag inline-block text-xs">PREMIUM</div>
-                                        </div>
-                                    </div>
+                                <!-- Navigation Arrows -->
+                                <div class="flex justify-center gap-4 mt-4">
+                                    <button onclick="scrollBanners('left')" 
+                                            class="clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-full hover:shadow-clay-card-lg transition-all">
+                                        <i data-lucide="chevron-left" class="w-5 h-5 text-accent"></i>
+                                    </button>
+                                    <button onclick="scrollBanners('right')" 
+                                            class="clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-full hover:shadow-clay-card-lg transition-all">
+                                        <i data-lucide="chevron-right" class="w-5 h-5 text-accent"></i>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -505,10 +608,7 @@
             <!-- Categories Filter -->
             <div class="clay-card p-8 mb-8 sticky top-20 z-30">
                 <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-6">
-                    <div>
-                        <h2 class="text-3xl font-bold text-textMain tracking-tight">Trending Products</h2>
-                        <p class="text-textMuted mt-1 text-sm">Best selling security gear selected for you.</p>
-                    </div>
+                    
                     
                     <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
                         <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar w-full sm:w-auto" id="category-chips">
@@ -516,22 +616,16 @@
                             <!-- Dynamic categories will be loaded here -->
                         </div>
 
-                        <div class="relative w-full sm:w-64 group">
-                            <input type="text" id="search-input" onkeyup="app.filterProducts()" placeholder="Search products..." 
-                                   class="clay-input w-full pl-10 pr-4 py-2.5 text-sm focus:outline-none">
-                            <i data-lucide="search" class="absolute left-3 top-3 text-gray-400 group-focus-within:text-accent transition-colors lucide-sm"></i>
-                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Product Grid -->
-            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12">
+            <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 pb-32">
                 <!-- Products will be loaded here -->
             </div>
         </section>
 
-        <!-- Rest of the views remain the same -->
         <!-- VIEW: CATEGORIES -->
         <section id="view-categories" class="view-section hide">
             <div class="mb-8">
@@ -555,13 +649,484 @@
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 pb-12" id="wishlist-grid"></div>
         </section>
 
-        <!-- Continue with the rest of your views... -->
-        <!-- They should be updated with claymorphism styling as well -->
-        
+        <!-- VIEW: LOGIN -->
+        <section id="view-login" class="view-section hide max-w-sm mx-auto mt-20">
+            <div class="clay-card p-10">
+                <div class="text-center mb-8">
+                    <div class="clay-card-inner w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5 text-accent">
+                        <i data-lucide="lock" class="lucide-lg"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-textMain" id="auth-title">Welcome Back</h2>
+                    <p class="text-textMuted text-sm mt-2">Sign in to access your secure dashboard</p>
+                </div>
+                
+                <form id="auth-form" onsubmit="app.handleAuth(event)">
+                    <div id="auth-name-group" class="hide mb-5">
+                        <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Full Name</label>
+                        <div class="relative group">
+                            <input type="text" id="auth-name" class="clay-input w-full px-4 py-3.5 pl-11 text-sm font-medium" placeholder="John Doe" required>
+                            <i data-lucide="user" class="absolute left-3.5 top-3.5 text-textMuted group-focus-within:text-accent transition-colors lucide-sm"></i>
+                        </div>
+                    </div>
+                    <div class="space-y-5">
+                        <div>
+                            <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Email Address</label>
+                            <div class="relative group">
+                                <input type="email" id="auth-email" class="clay-input w-full px-4 py-3.5 pl-11 text-sm font-medium" placeholder="name@company.com" required>
+                                <i data-lucide="mail" class="absolute left-3.5 top-3.5 text-textMuted group-focus-within:text-accent transition-colors lucide-sm"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Password</label>
+                            <div class="relative group">
+                                <input type="password" id="auth-pass" class="clay-input w-full px-4 py-3.5 pl-11 text-sm font-medium" placeholder="••••••••" required>
+                                <i data-lucide="key" class="absolute left-3.5 top-3.5 text-textMuted group-focus-within:text-accent transition-colors lucide-sm"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="clay-btn clay-btn-primary w-full font-bold py-3.5 rounded-xl mt-8 flex justify-center items-center">
+                        <span id="auth-btn-text">Sign In</span> <i data-lucide="arrow-right" class="ml-2 lucide-sm"></i>
+                    </button>
+                </form>
+
+                <div class="mt-8 text-center">
+                    <button onclick="app.toggleAuthMode()" class="text-xs text-accent hover:text-accentHover font-bold transition uppercase tracking-wide" id="auth-switch-text">Create an account</button>
+                </div>
+                
+                <div class="relative mt-8 mb-6">
+                    <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-textMuted/20"></div></div>
+                    <div class="relative flex justify-center text-xs text-textMuted uppercase font-bold tracking-wider"><span class="px-3 bg-clayBg">Or continue with</span></div>
+                </div>
+
+                <button onclick="app.handleGoogleAuth()" class="clay-btn clay-btn-secondary w-full py-3 font-bold text-textMain text-sm flex items-center justify-center">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5 mr-3" alt="Google">
+                    Google Account
+                </button>
+            </div>
+        </section>
+
+        <!-- VIEW: PRODUCT DETAILS -->
+        <section id="view-product-details" class="view-section hide">
+            <button onclick="app.router('home')" class="mb-6 flex items-center text-textMuted hover:text-accent transition-colors text-sm font-bold"><i data-lucide="arrow-left" class="mr-2 lucide-sm"></i> Back to Shop</button>
+            <div class="clay-card p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="flex items-center justify-center p-8">
+                    <div class="relative">
+                        <div id="detail-badge" class="sale-badge hide"></div>
+                        <img id="detail-img" src="" class="w-full max-h-96 object-contain">
+                    </div>
+                </div>
+                <div class="flex flex-col justify-center">
+                    <div class="mb-6">
+                        <span id="detail-cat" class="clay-tag text-xs mb-4">Electronics</span>
+                        <h2 id="detail-name" class="text-4xl font-extrabold text-textMain mb-6 leading-tight">Product Name</h2>
+                        <p id="detail-desc" class="text-textMuted leading-relaxed mb-8 text-base"></p>
+                    </div>
+                    
+                    <div class="flex items-center gap-3 mb-8">
+                        <div class="flex items-center text-warning">
+                            <i data-lucide="star" class="lucide-sm fill-current mr-1"></i>
+                            <span id="detail-rating" class="text-textMain font-bold">4.5</span>
+                        </div>
+                        <button onclick="app.toggleWishlist(app.currentProductDetailId)" class="clay-btn clay-btn-secondary p-2">
+                            <i data-lucide="heart" id="detail-wishlist-icon" class="lucide-sm"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="mt-auto">
+                        <div class="flex justify-between items-end mb-8">
+                            <div>
+                                <span class="text-textMuted text-xs font-bold uppercase tracking-wider">Total Price</span>
+                                <div class="flex items-baseline gap-2 mt-1">
+                                    <span id="detail-old-price" class="old-price hide"></span>
+                                    <span id="detail-price" class="text-5xl font-extrabold text-textMain tracking-tight">₹2,499</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <button onclick="app.addToCart(app.currentProductDetailId)" class="clay-btn clay-btn-secondary py-4 font-bold flex justify-center items-center">
+                                <i data-lucide="shopping-bag" class="mr-2 lucide-sm"></i> Add to Cart
+                            </button>
+                            <button onclick="app.buyNow(app.currentProductDetailId)" class="clay-btn clay-btn-primary py-4 font-bold flex justify-center items-center hover:shadow-clay-card-lg">
+                                Buy Now <i data-lucide="arrow-right" class="ml-2 lucide-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: CHECKOUT -->
+        <section id="view-checkout" class="view-section hide">
+            <h2 class="text-3xl font-bold mb-8 text-textMain">Secure Checkout</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="clay-card p-8">
+                        <h3 class="font-bold text-lg mb-6 flex items-center text-textMain"><i data-lucide="map" class="text-accent mr-3"></i> Shipping Details</h3>
+                        <div id="saved-addresses" class="grid grid-cols-1 gap-3 mb-6"></div>
+                        
+                        <button onclick="document.getElementById('new-address-form').classList.toggle('hide')" class="clay-btn clay-btn-secondary w-full py-4 font-bold flex justify-center items-center">
+                            <i data-lucide="plus" class="mr-2 lucide-sm"></i> Add New Address
+                        </button>
+                        
+                        <form id="new-address-form" class="hide mt-6 clay-card-inner p-6">
+                            <h4 class="text-xs font-bold text-textMuted mb-4 uppercase tracking-widest">Address Information</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <input type="text" id="addr-name" placeholder="Full Name" class="clay-input p-3.5 text-sm font-medium" required>
+                                <input type="text" id="addr-mobile" placeholder="Mobile Number" class="clay-input p-3.5 text-sm font-medium" required>
+                                <input type="text" id="addr-line" placeholder="Street Address / Flat No" class="clay-input p-3.5 md:col-span-2 text-sm font-medium" required>
+                                <input type="text" id="addr-area" placeholder="Area / Colony" class="clay-input p-3.5 text-sm font-medium" required>
+                                <input type="text" id="addr-city" placeholder="City" class="clay-input p-3.5 text-sm font-medium" required>
+                                <input type="text" id="addr-pin" placeholder="Pincode" class="clay-input p-3.5 text-sm font-medium" required>
+                                <button type="button" onclick="app.saveAddress()" class="clay-btn clay-btn-primary py-3.5 md:col-span-2 text-sm font-bold">Save This Address</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="clay-card p-8">
+                        <h3 class="font-bold text-lg mb-6 flex items-center text-textMain"><i data-lucide="credit-card" class="text-accent mr-3"></i> Payment Method</h3>
+                        <div class="space-y-4">
+                            <label class="flex items-center space-x-4 p-5 clay-card cursor-pointer hover:shadow-clay-card-lg transition-all has-[:checked]:border-2 has-[:checked]:border-accent">
+                                <input type="radio" name="payment" value="upi" checked class="text-accent focus:ring-accent w-5 h-5">
+                                <div class="clay-card-inner w-12 h-12 rounded-xl flex items-center justify-center text-success">
+                                    <i data-lucide="smartphone"></i>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-textMain block text-base">UPI Payment</span>
+                                    <span class="text-xs text-textMuted block mt-1">GPay / PhonePe / Paytm</span>
+                                </div>
+                            </label>
+                            <label class="flex items-center space-x-4 p-5 clay-card cursor-pointer hover:shadow-clay-card-lg transition-all has-[:checked]:border-2 has-[:checked]:border-accent">
+                                <input type="radio" name="payment" value="cod" class="text-accent focus:ring-accent w-5 h-5">
+                                <div class="clay-card-inner w-12 h-12 rounded-xl flex items-center justify-center text-warning">
+                                    <i data-lucide="banknote"></i>
+                                </div>
+                                <div>
+                                    <span class="font-bold text-textMain block text-base">Cash on Delivery</span>
+                                    <span class="text-xs text-textMuted block mt-1">Pay comfortably at your doorstep</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clay-card p-8 h-fit sticky top-28">
+                    <h3 class="font-bold text-lg mb-6 text-textMain">Order Summary</h3>
+                    <div id="checkout-items" class="space-y-4 mb-8 text-sm max-h-60 overflow-y-auto pr-2"></div>
+                    
+                    <div class="border-t border-dashed border-textMuted/20 pt-6 mt-4 space-y-3">
+                        <div class="flex justify-between items-center text-textMuted text-sm">
+                            <span>Subtotal</span>
+                            <span id="checkout-subtotal" class="font-medium">₹0</span>
+                        </div>
+                        <div class="flex justify-between items-center text-textMuted text-sm">
+                            <span>Shipping</span>
+                            <span class="text-success font-bold text-xs clay-tag">FREE</span>
+                        </div>
+                        <div class="flex justify-between font-extrabold text-2xl text-textMain pt-4 border-t border-textMuted/20 mt-4">
+                            <span>Total</span>
+                            <span id="checkout-total" class="text-accent">₹0</span>
+                        </div>
+                    </div>
+                    
+                    <button onclick="app.placeOrder()" class="clay-btn clay-btn-primary w-full font-bold py-4 rounded-xl mt-8 hover:shadow-clay-card-lg flex justify-center items-center">
+                        <span>Place Order</span> <i data-lucide="check" class="ml-2 lucide-sm"></i>
+                    </button>
+                    <div class="text-center mt-6 text-xs text-textMuted flex justify-center items-center">
+                        <i data-lucide="lock" class="lucide-xs mr-1.5"></i> SSL Encrypted Transaction
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: SUCCESS -->
+        <section id="view-success" class="view-section hide text-center pt-24 max-w-md mx-auto">
+            <div class="clay-card p-12">
+                <div class="flex justify-center mb-8">
+                    <i data-lucide="check-circle" class="check-icon w-20 h-20"></i>
+                </div>
+                <h2 class="text-3xl font-extrabold text-textMain mb-4">Order Confirmed!</h2>
+                <p class="text-textMuted mb-10 leading-relaxed">Thank you for your purchase. Your order has been securely placed and is being processed.</p>
+                <div class="flex flex-col gap-4">
+                    <button onclick="app.router('orders')" class="clay-btn clay-btn-primary w-full py-4 font-bold hover:shadow-clay-card-lg">Track Your Order</button>
+                    <button onclick="app.router('home')" class="clay-btn clay-btn-secondary w-full py-4 font-bold">Continue Shopping</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: ORDERS -->
+        <section id="view-orders" class="view-section hide max-w-4xl mx-auto">
+            <h2 class="text-3xl font-bold mb-8 text-textMain flex items-center"><i data-lucide="package" class="mr-3 text-accent"></i> Order History</h2>
+            <div id="orders-list" class="space-y-6"></div>
+        </section>
+
+        <!-- VIEW: PROFILE -->
+        <section id="view-profile" class="view-section hide max-w-4xl mx-auto">
+             <h2 class="text-3xl font-bold mb-8 text-textMain">My Profile</h2>
+             <div class="clay-card p-8 mb-8 flex flex-col md:flex-row items-center gap-8">
+                 <div class="clay-card-inner w-24 h-24 rounded-full flex items-center justify-center text-accent text-4xl">
+                     <i data-lucide="user"></i>
+                 </div>
+                 <div class="text-center md:text-left flex-grow">
+                     <h3 class="font-bold text-2xl text-textMain" id="profile-name">User Name</h3>
+                     <p class="text-textMuted text-sm flex items-center justify-center md:justify-start mt-2"><i data-lucide="mail" class="lucide-sm mr-2 text-accent"></i> <span id="profile-email">user@email.com</span></p>
+                 </div>
+                 <span class="clay-tag font-bold uppercase tracking-widest text-xs" id="profile-role">Customer</span>
+             </div>
+
+             <div class="clay-card p-8">
+                 <div class="flex justify-between items-center mb-6 border-b border-textMuted/20 pb-4">
+                    <h3 class="font-bold text-lg text-textMain flex items-center"><i data-lucide="map-pin" class="mr-2 text-accent"></i> Saved Addresses</h3>
+                 </div>
+                 <div id="profile-address-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+             </div>
+        </section>
+
+        <!-- VIEW: CUSTOMER CHAT -->
+        <section id="view-customer-chat" class="view-section hide max-w-3xl mx-auto">
+             <button onclick="app.router('orders')" class="mb-4 text-textMuted hover:text-accent flex items-center text-sm font-bold"><i data-lucide="arrow-left" class="mr-2 lucide-sm"></i> Back to Orders</button>
+             <div class="clay-card flex flex-col h-[600px] overflow-hidden">
+                 <div class="p-5 border-b border-textMuted/20 flex justify-between items-center z-10">
+                     <div class="flex items-center gap-4">
+                         <div class="clay-card-inner p-3 text-accent"><i data-lucide="headset"></i></div>
+                         <div>
+                             <h3 class="font-bold text-textMain text-base">Customer Support</h3>
+                             <p class="text-xs text-textMuted font-mono mt-0.5" id="customer-chat-id">Ticket #...</p>
+                         </div>
+                     </div>
+                     <span class="clay-tag text-success text-[10px] font-bold uppercase tracking-wider flex items-center"><span class="w-2 h-2 bg-success rounded-full mr-2 animate-pulse"></span> Online</span>
+                 </div>
+                 <div id="customer-chat-messages" class="flex-grow p-6 overflow-y-auto space-y-4 clay-card-inner"></div>
+                 <form onsubmit="app.sendCustomerMessage(event)" class="p-5 border-t border-textMuted/20 flex gap-4 items-center">
+                     <div class="relative flex-grow">
+                        <input type="text" id="customer-chat-input" class="clay-input w-full px-5 py-4 font-medium" placeholder="Type your message..." required>
+                     </div>
+                     <button type="submit" class="clay-btn clay-btn-primary p-4 hover:shadow-clay-card-lg"><i data-lucide="send" class="lucide-sm"></i></button>
+                 </form>
+             </div>
+        </section>
+
+        <!-- VIEW: SELLER LOGIN -->
+        <section id="view-seller-login" class="view-section hide max-w-sm mx-auto mt-20 relative">
+            <div class="clay-card p-10 relative overflow-hidden">
+                <div class="mb-8">
+                    <div class="clay-card-inner p-3 mb-4 text-warning">
+                        <i data-lucide="briefcase" class="lucide-lg"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-textMain">Seller Portal</h2>
+                    <p class="text-textMuted text-sm mt-1">Manage inventory & orders</p>
+                </div>
+                
+                <form onsubmit="app.handleSellerAuth(event)" class="space-y-5">
+                    <div>
+                        <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Seller Email</label>
+                        <div class="relative group">
+                            <input type="email" id="seller-auth-email" class="clay-input w-full px-4 py-3.5 pl-11 text-sm font-medium" placeholder="id@securething.com" required>
+                            <i data-lucide="user" class="absolute left-3.5 top-3.5 text-textMuted group-focus-within:text-warning transition-colors lucide-sm"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Password</label>
+                        <div class="relative group">
+                            <input type="password" id="seller-auth-pass" class="clay-input w-full px-4 py-3.5 pl-11 text-sm font-medium" placeholder="••••••••" required>
+                            <i data-lucide="lock" class="absolute left-3.5 top-3.5 text-textMuted group-focus-within:text-warning transition-colors lucide-sm"></i>
+                        </div>
+                    </div>
+                    <button type="submit" class="clay-btn clay-btn-primary w-full font-bold py-3.5 rounded-xl mt-4 flex justify-center items-center bg-warning hover:bg-yellow-400 text-primary">
+                        Access Dashboard <i data-lucide="arrow-right" class="ml-2 lucide-sm"></i>
+                    </button>
+                </form>
+                <div class="mt-8 pt-6 border-t border-textMuted/20 text-center">
+                    <a href="#" onclick="app.router('seller-apply')" class="text-xs text-textMuted hover:text-textMain transition flex items-center justify-center font-bold uppercase tracking-wide"><i data-lucide="file-plus" class="mr-2 lucide-sm"></i> Apply for Seller Account</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: SELLER APPLY -->
+        <section id="view-seller-apply" class="view-section hide max-w-2xl mx-auto">
+            <div class="clay-card p-12">
+                <div class="text-center mb-10">
+                    <div class="clay-card-inner w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-accent">
+                        <i data-lucide="store" class="lucide-xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-extrabold text-textMain">Partner Application</h2>
+                    <p class="text-textMuted mt-2">Join our marketplace. Admin approval required.</p>
+                </div>
+                
+                <form onsubmit="app.submitSellerApplication(event)" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Full Name</label>
+                            <input type="text" name="name" class="clay-input w-full p-3.5" required>
+                        </div>
+                        <div>
+                            <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Date of Birth</label>
+                            <input type="date" name="dob" class="clay-input w-full p-3.5" required>
+                        </div>
+                        <div>
+                            <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Mobile</label>
+                            <input type="tel" name="mobile" class="clay-input w-full p-3.5" required>
+                        </div>
+                        <div>
+                            <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Email</label>
+                            <input type="email" name="email" class="clay-input w-full p-3.5" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Company Name</label>
+                        <input type="text" name="company" class="clay-input w-full p-3.5" required>
+                    </div>
+                    <div>
+                        <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Business Address</label>
+                        <input type="text" name="address" class="clay-input w-full p-3.5" required>
+                    </div>
+                    
+                    <div class="clay-card-inner p-8">
+                        <h4 class="text-sm font-bold text-textMain mb-6 flex items-center"><i data-lucide="upload-cloud" class="mr-2 text-accent"></i> Upload Documents</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <span class="text-xs text-textMuted block mb-2 font-bold uppercase">Government ID</span>
+                                <input type="file" id="doc-file" class="block w-full text-sm text-textMuted file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-accent file:text-white hover:file:bg-accentHover transition">
+                            </div>
+                            <div>
+                                <span class="text-xs text-textMuted block mb-2 font-bold uppercase">Profile Photo</span>
+                                <input type="file" id="photo-file" class="block w-full text-sm text-textMuted file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-accent file:text-white hover:file:bg-accentHover transition">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="clay-btn clay-btn-primary w-full font-bold py-4 hover:shadow-clay-card-lg flex justify-center items-center">
+                        Submit Application <i data-lucide="send" class="ml-2 lucide-sm"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- VIEW: SELLER DASHBOARD -->
+        <section id="view-seller-dashboard" class="view-section hide">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-textMain">Seller Overview</h2>
+                    <p class="text-textMuted text-sm mt-1">Manage your business metrics and orders.</p>
+                </div>
+                <button onclick="app.openAddProductModal()" class="clay-btn clay-btn-primary px-6 py-3 text-sm font-bold flex items-center hover:shadow-clay-card-lg"><i data-lucide="plus" class="mr-2 lucide-sm"></i> Add New Product</button>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+                <div class="clay-card p-8 flex justify-between items-center group">
+                    <div>
+                        <div class="text-textMuted text-xs uppercase font-bold tracking-wider mb-2">Total Products</div>
+                        <div class="text-4xl font-extrabold text-textMain group-hover:text-accent transition-colors" id="seller-stat-products">0</div>
+                    </div>
+                    <div class="clay-card-inner w-16 h-16 rounded-2xl flex items-center justify-center text-accent">
+                        <i data-lucide="box" class="lucide-xl"></i>
+                    </div>
+                </div>
+                <div class="clay-card p-8 flex justify-between items-center group">
+                    <div>
+                        <div class="text-textMuted text-xs uppercase font-bold tracking-wider mb-2">Pending Orders</div>
+                        <div class="text-4xl font-extrabold text-textMain group-hover:text-warning transition-colors" id="seller-stat-orders">0</div>
+                    </div>
+                    <div class="clay-card-inner w-16 h-16 rounded-2xl flex items-center justify-center text-warning">
+                        <i data-lucide="clock" class="lucide-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="clay-card p-8 h-[600px] flex flex-col">
+                    <h3 class="font-bold border-b border-textMuted/20 pb-5 mb-5 text-textMain flex items-center text-lg"><i data-lucide="package" class="mr-3 lucide-sm text-textMuted"></i> My Inventory</h3>
+                    <div id="seller-products-list" class="space-y-3 flex-grow overflow-y-auto pr-2"></div>
+                </div>
+                <div class="clay-card p-8 h-[600px] flex flex-col">
+                    <h3 class="font-bold border-b border-textMuted/20 pb-5 mb-5 text-textMain flex items-center text-lg"><i data-lucide="clipboard-list" class="mr-3 lucide-sm text-textMuted"></i> Manage Orders</h3>
+                    <div id="seller-orders-list" class="space-y-4 flex-grow overflow-y-auto pr-2"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: ADMIN DASHBOARD -->
+        <section id="view-admin-dashboard" class="view-section hide">
+            <div class="flex items-center gap-4 mb-10">
+                <div class="clay-card-inner p-4 text-accent"><i data-lucide="shield-alert" class="lucide-lg"></i></div>
+                <div>
+                    <h2 class="text-3xl font-extrabold text-textMain">Master Control</h2>
+                    <p class="text-sm text-textMuted mt-1">System wide verification and management.</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                <div class="clay-card p-8 relative overflow-hidden group bg-gradient-to-r from-accent to-accentHover text-white">
+                    <div class="relative z-10">
+                        <div class="text-white/80 text-xs font-bold uppercase tracking-widest mb-3">Total Platform Sales</div>
+                        <div class="text-5xl font-extrabold" id="admin-total-sales">₹0</div>
+                    </div>
+                    <i data-lucide="trending-up" class="absolute right-8 top-8 text-white/10 w-32 h-32 group-hover:scale-110 transition duration-700"></i>
+                </div>
+                <div class="clay-card p-8">
+                    <div class="text-textMuted text-xs font-bold uppercase tracking-widest mb-3">Total Orders Processed</div>
+                    <div class="text-5xl font-extrabold text-textMain" id="admin-order-count">0</div>
+                </div>
+            </div>
+            
+            <div class="clay-card p-8 mb-8">
+                <h3 class="font-bold text-lg mb-6 text-textMain flex items-center"><i data-lucide="check-square" class="mr-3 text-warning"></i> Payment Verification Queue</h3>
+                <div id="admin-payment-queue" class="space-y-3"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="clay-card p-8">
+                    <h3 class="font-bold text-lg mb-6 text-textMain flex items-center"><i data-lucide="user-plus" class="mr-3 text-accent"></i> Seller Applications</h3>
+                    <div id="admin-seller-requests" class="space-y-3"></div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="clay-card p-8">
+                        <h3 class="font-bold text-lg mb-6 text-textMain flex items-center"><i data-lucide="users" class="mr-3 text-primary"></i> Create Service Agent</h3>
+                        <form onsubmit="app.createServiceAccount(event)" class="flex gap-3">
+                            <input type="email" id="service-email-input" placeholder="Agent Email Address" class="clay-input p-3.5 flex-grow text-sm" required>
+                            <button type="submit" class="clay-btn clay-btn-primary px-6 font-bold">Create</button>
+                        </form>
+                    </div>
+
+                    <div class="clay-card p-8">
+                        <h3 class="font-bold text-lg mb-6 text-warning-700 flex items-center"><i data-lucide="user-check" class="mr-3 text-warning"></i> Quick Seller Onboarding</h3>
+                        <form onsubmit="app.createSellerManual(event)" class="space-y-4">
+                            <input type="email" id="manual-seller-email" placeholder="Seller Email ID" class="clay-input p-3.5 w-full text-sm" required>
+                            <input type="text" id="manual-seller-name" placeholder="Business Name" class="clay-input p-3.5 w-full text-sm" required>
+                            <button type="submit" class="clay-btn clay-btn-primary px-4 py-3.5 w-full font-bold">Create & Send Credentials</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: SERVICE DASHBOARD -->
+        <section id="view-service-dashboard" class="view-section hide">
+            <h2 class="text-3xl font-extrabold mb-8 text-textMain flex items-center"><i data-lucide="headphones" class="mr-4 text-accent"></i> Support Desk</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 h-[700px]">
+                <div class="clay-card p-6 md:col-span-1 overflow-hidden flex flex-col">
+                    <h3 class="font-bold mb-6 text-textMuted text-xs uppercase tracking-widest px-2">Active Tickets</h3>
+                    <div id="support-tickets-list" class="space-y-2 flex-grow overflow-y-auto px-2 pb-2"></div>
+                </div>
+                <div class="clay-card md:col-span-2 flex flex-col overflow-hidden relative">
+                    <div id="service-chat-header" class="border-b border-textMuted/20 p-6 font-bold text-textMain flex items-center justify-between">
+                        <span class="text-textMuted">Select a ticket to view chat</span>
+                        <i data-lucide="message-square" class="text-textMuted/30"></i>
+                    </div>
+                    <div id="service-chat-messages" class="flex-grow p-8 overflow-y-auto space-y-4 clay-card-inner"></div>
+                    <form onsubmit="app.sendServiceMessage(event)" class="p-6 border-t border-textMuted/20 flex gap-4">
+                        <input type="text" id="service-chat-input" class="clay-input flex-grow px-5 py-4 font-medium" placeholder="Reply to customer..." disabled>
+                        <button type="submit" id="service-chat-send-btn" class="clay-btn clay-btn-primary px-6 font-bold" disabled><i data-lucide="send" class="lucide-sm"></i></button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 pt-20 pb-10 mt-auto">
+    <footer class="bg-white border-t border-textMuted/20 pt-20 pb-10 mt-auto">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-16 mb-16">
                 <div>
@@ -590,7 +1155,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-textMuted font-medium">
+            <div class="border-t border-textMuted/20 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-textMuted font-medium">
                 <p>&copy; 2026 SecureThingStore. All rights reserved.</p>
                 <div class="flex gap-6 mt-4 md:mt-0">
                     <a href="#" class="hover:text-textMain transition-colors">Privacy Policy</a>
@@ -620,8 +1185,128 @@
         </div>
     </div>
 
-    <!-- Add the rest of your modals and scripts here -->
-    <!-- They should also be updated with claymorphism styling -->
+   <div class="fixed bottom-0 left-0 w-full z-50 md:hidden pointer-events-none pb-safe">
+    
+    <div class="relative w-full h-[90px] pointer-events-auto">
+        
+        <svg class="absolute bottom-0 left-0 w-full h-full drop-shadow-[0_-10px_20px_rgba(88,63,188,0.2)]"
+            viewBox="0 0 100 24" preserveAspectRatio="none">
+            <path d="M0,5 Q0,0 5,0 H32 Q42,0 50,9 Q58,0 68,0 H95 Q100,0 100,5 V24 H0 Z" 
+                  fill="#583FBC"
+                  vector-effect="non-scaling-stroke" />
+        </svg>
+
+        <div class="absolute inset-0 flex justify-between items-end px-4 pb-3">
+            
+            <button onclick="app.router('home')" id="mob-nav-home" 
+                class="nav-icon-mobile w-1/5 flex flex-col items-center justify-end pb-2 text-white/70 active:text-white transition-colors group">
+                <i data-lucide="home" class="w-6 h-6 group-active:scale-90 transition-transform"></i>
+                <span class="text-[10px] font-medium mt-1">Home</span>
+            </button>
+
+            <button onclick="app.router('wishlist')" id="mob-nav-wishlist"
+                class="nav-icon-mobile w-1/5 flex flex-col items-center justify-end pb-2 text-white/70 active:text-white transition-colors group">
+                <i data-lucide="heart" class="w-6 h-6 group-active:scale-90 transition-transform"></i>
+                <span class="text-[10px] font-medium mt-1">Wishlist</span>
+            </button>
+
+            <div class="w-1/5 relative flex justify-center h-full pointer-events-none">
+                <button id="fab-cart-btn" onclick="app.toggleCart()" 
+                    class="pointer-events-auto absolute -top-5 w-14 h-14 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border-4 border-white/10 text-white shadow-2xl transition-all active:scale-95 hover:bg-white/20">
+                    
+                    <div class="w-10 h-10 bg-[#6d51d4] rounded-full flex items-center justify-center shadow-inner">
+                        <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+                    </div>
+
+                    <span id="cart-count-mobile" 
+                        class="absolute top-0 right-0 bg-red-500 text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full border border-[#583FBC]">
+                        0
+                    </span>
+                </button>
+            </div>
+
+            <button onclick="app.router('orders')" id="mob-nav-orders"
+                class="nav-icon-mobile w-1/5 flex flex-col items-center justify-end pb-2 text-white/70 active:text-white transition-colors group">
+                <i data-lucide="package" class="w-6 h-6 group-active:scale-90 transition-transform"></i>
+                <span class="text-[10px] font-medium mt-1">Orders</span>
+            </button>
+
+            <button onclick="app.router('profile')" id="mob-nav-profile"
+                class="nav-icon-mobile w-1/5 flex flex-col items-center justify-end pb-2 text-white/70 active:text-white transition-colors group">
+                <i data-lucide="user" class="w-6 h-6 group-active:scale-90 transition-transform"></i>
+                <span class="text-[10px] font-medium mt-1">Profile</span>
+            </button>
+
+        </div>
+    </div>
+</div>
+    <!-- Modals -->
+    <div id="add-product-modal" class="fixed inset-0 bg-primary/80 backdrop-blur-sm z-50 flex items-center justify-center hide transition-opacity p-4">
+        <div class="clay-card p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="text-2xl font-bold text-textMain" id="modal-title">Add New Product</h3>
+                <button onclick="document.getElementById('add-product-modal').classList.add('hide')" class="text-textMuted hover:text-textMain clay-btn clay-btn-secondary p-2 transition"><i data-lucide="x"></i></button>
+            </div>
+            <form onsubmit="app.sellerSaveProduct(event)" class="space-y-5">
+                <input type="hidden" name="p_id">
+                <div>
+                    <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Product Name</label>
+                    <input type="text" name="p_name" class="clay-input w-full p-3.5 font-medium" required>
+                </div>
+                <div>
+                    <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Description</label>
+                    <textarea name="p_desc" class="clay-input w-full p-3.5 font-medium" rows="3" required></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Price (₹)</label>
+                        <input type="number" name="p_price" class="clay-input w-full p-3.5 font-medium" required>
+                    </div>
+                    <div>
+                        <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Discount %</label>
+                        <input type="number" name="p_discount" class="clay-input w-full p-3.5 font-medium" value="0" min="0" max="100">
+                    </div>
+                    <div>
+                        <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Category</label>
+                        <select name="p_cat" class="clay-input w-full p-3.5 text-sm font-medium">
+                            <option value="Electronics">Electronics</option>
+                            <option value="Home">Home</option>
+                            <option value="Security">Security</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Rating</label>
+                        <input type="number" name="p_rating" class="clay-input w-full p-3.5 font-medium" step="0.1" min="0" max="5" value="5.0">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Image URL</label>
+                    <div class="relative group">
+                         <input type="text" name="p_img" class="clay-input w-full p-3.5 pl-11 font-medium">
+                         <i data-lucide="image" class="absolute left-3.5 top-3.5 text-textMuted group-focus-within:text-accent transition-colors lucide-sm"></i>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end space-x-3 mt-8 pt-4 border-t border-textMuted/20">
+                    <button type="button" onclick="app.fillMockProduct(this.form)" class="clay-btn clay-btn-secondary px-5 py-3 text-xs font-bold" id="mock-btn">Auto-Fill</button>
+                    <button type="submit" class="clay-btn clay-btn-primary px-8 py-3 font-bold flex items-center">
+                        <i data-lucide="save" class="mr-2 lucide-sm"></i> Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="order-details-modal" class="fixed inset-0 bg-primary/80 backdrop-blur-sm z-50 flex items-center justify-center hide transition-opacity p-4">
+        <div class="clay-card p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-8 border-b border-textMuted/20 pb-4">
+                <h3 class="text-2xl font-bold text-textMain">Order Details</h3>
+                <button onclick="document.getElementById('order-details-modal').classList.add('hide')" class="text-textMuted hover:text-textMain clay-btn clay-btn-secondary p-2 transition"><i data-lucide="x"></i></button>
+            </div>
+            
+            <div class="space-y-8" id="order-details-content"></div>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "firebase/app";
@@ -743,7 +1428,6 @@
                 if(app.chatUnsubscribe) { app.chatUnsubscribe(); app.chatUnsubscribe = null; }
 
                 document.querySelectorAll('.view-section').forEach(el => el.classList.add('hide'));
-                document.getElementById('mobile-menu').classList.add('hide');
                 
                 const view = document.getElementById(`view-${viewId}`);
                 if (view) view.classList.remove('hide');
@@ -768,40 +1452,102 @@
                     }
                 }
                 
+                // Update mobile nav active state
+                app.updateMobileNavActive(viewId);
+                
                 window.scrollTo(0,0);
                 app.updateIcons();
+            },
+
+            // --- BANNER SCROLLER FUNCTIONS ---
+            scrollBanners: (direction) => {
+                const scroller = document.getElementById('banner-horizontal-scroller');
+                const slideWidth = 280 + 16; // 280px width + 16px gap
+                const scrollAmount = slideWidth;
+                
+                if (direction === 'left') {
+                    scroller.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                } else {
+                    scroller.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                }
+            },
+
+            scrollToBanner: (index) => {
+                const scroller = document.getElementById('banner-horizontal-scroller');
+                const slideWidth = 280 + 16;
+                scroller.scrollTo({
+                    left: index * slideWidth,
+                    behavior: 'smooth'
+                });
+            },
+
+            // Update mobile navigation active state
+            updateMobileNavActive: (view) => {
+                const navItems = ['home', 'wishlist', 'orders', 'profile'];
+                navItems.forEach(item => {
+                    const el = document.getElementById(`mob-nav-${item}`);
+                    if (el) {
+                        if (item === view) {
+                            el.classList.add('active');
+                        } else {
+                            el.classList.remove('active');
+                        }
+                    }
+                });
+            },
+
+            toggleHeaderSearch: function() {
+                const searchBar = document.getElementById('header-search-bar');
+                searchBar.classList.toggle('hide');
+            },
+
+            clearSearch: function() {
+                document.getElementById('global-search-input').value = '';
+                document.getElementById('header-search-bar').classList.add('hide');
+            },
+
+            performSearch: function(query) {
+                if (!query.trim()) return;
+                const term = query.toLowerCase();
+                const filtered = app.products.filter(p => 
+                    p.name.toLowerCase().includes(term) || 
+                    (p.desc && p.desc.toLowerCase().includes(term))
+                );
+
+                // Create a temporary search results view
+                const resultsHTML = filtered.map(p => {
+                    const isLiked = app.wishlist.includes(p.id);
+                    return app.createProductCardHTML(p, isLiked);
+                }).join('');
+
+                // Show search results
+                const homeView = document.getElementById('view-home');
+                const productGrid = document.getElementById('product-grid');
+                
+                if (filtered.length === 0) {
+                    productGrid.innerHTML = `
+                        <div class="col-span-4 flex flex-col items-center justify-center py-24 text-gray-300">
+                            <i data-lucide="search-x" class="w-20 h-20 mb-4 opacity-50"></i>
+                            <p class="text-slate-500 font-bold text-lg">No products found matching "${query}"</p>
+                        </div>`;
+                } else {
+                    productGrid.innerHTML = resultsHTML;
+                }
+                
+                app.updateIcons();
+                document.getElementById('header-search-bar').classList.add('hide');
             },
 
             // --- AUTHENTICATION ---
             updateAuthUI: () => {
                 const logoutBtn = `<div class="flex items-center space-x-2">
-                    <span class="text-xs font-bold text-slate-800 hidden lg:inline-block bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200 uppercase tracking-widest">${app.userRole}</span>
-                    <button onclick="app.logout()" class="text-xs bg-white border border-gray-200 hover:bg-gray-50 text-slate-800 px-4 py-2 rounded-lg transition font-bold shadow-sm">Logout</button>
+                    <span class="text-xs font-bold text-textMain hidden lg:inline-block clay-tag uppercase tracking-widest">${app.userRole}</span>
+                    <button onclick="app.logout()" class="text-xs clay-btn clay-btn-secondary px-4 py-2 font-bold">Logout</button>
                 </div>`;
                 
-                const loginBtn = `<button onclick="app.router('login')" class="bg-primary text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-primaryLight transition shadow-lg shadow-primary/20">Login</button>`;
+                const loginBtn = `<button onclick="app.router('login')" class="clay-btn clay-btn-primary px-5 py-2 text-sm font-bold hover:shadow-clay-card-lg">Login</button>`;
                 
-                document.getElementById('auth-section').innerHTML = app.currentUser ? logoutBtn : loginBtn;
-                document.getElementById('mobile-auth-section').innerHTML = app.currentUser ? `
-                    <div class="px-3 pb-2 pt-2 border-t border-gray-100">
-                        <div class="text-xs text-gray-400 mb-2 uppercase font-bold tracking-wide">${app.currentUser.email}</div>
-                        <button onclick="app.logout()" class="w-full text-left py-3 text-danger hover:bg-red-50 rounded-lg transition px-2 font-bold flex items-center">
-                            <i data-lucide="log-out" class="mr-2 lucide-sm"></i> Logout
-                        </button>
-                    </div>
-                ` : `<button onclick="app.router('login')" class="block w-full text-left py-3 mt-2 border-t border-gray-100 px-3 hover:bg-gray-50 rounded-lg text-slate-800 font-medium">Login / Sign Up</button>`;
-
-                ['nav-admin', 'nav-seller', 'nav-service', 'nav-profile', 'mobile-nav-profile'].forEach(id => 
-                    document.getElementById(id).classList.add('hide'));
-                
-                if (app.userRole === 'admin') document.getElementById('nav-admin').classList.remove('hide');
-                if (app.userRole === 'seller') document.getElementById('nav-seller').classList.remove('hide');
-                if (app.userRole === 'service') document.getElementById('nav-service').classList.remove('hide');
-                
-                if(app.currentUser) {
-                    document.getElementById('nav-profile').classList.remove('hide');
-                    document.getElementById('mobile-nav-profile').classList.remove('hide');
-                }
+                document.getElementById('auth-section-desktop').innerHTML = app.currentUser ? logoutBtn : loginBtn;
             },
 
             handleAuth: async (e) => {
@@ -920,44 +1666,19 @@
                     const snap = await getDocs(getCollectionRef('banners'));
                     if (!snap.empty) {
                         const banner = snap.docs[0].data();
-                        document.getElementById('banner-title').innerHTML = banner.title || 'Protect What <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Matters Most</span>';
-                        document.getElementById('banner-subtitle').innerText = banner.subtitle || 'Next Gen Security';
-                        document.getElementById('hero-banner-img').src = banner.image || 'https://cybercafejoy.netlify.app/Banners.png';
-                        document.getElementById('banner-cta').innerText = banner.cta || 'Start Shopping';
+                        // Update banner content if needed
                     }
                 } catch (e) { }
-            },
-
-            adminSaveBanner: async (e) => {
-                e.preventDefault();
-                app.toggleLoader(true);
-                const data = {
-                    title: document.getElementById('banner-title-input').value,
-                    subtitle: document.getElementById('banner-subtitle-input').value,
-                    image: document.getElementById('banner-img-input').value,
-                    cta: document.getElementById('banner-cta-input').value,
-                    updatedAt: serverTimestamp()
-                };
-                try {
-                    const snap = await getDocs(getCollectionRef('banners'));
-                    if (snap.empty) {
-                        await addDoc(getCollectionRef('banners'), data);
-                    } else {
-                        await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'banners', snap.docs[0].id), data);
-                    }
-                    app.toast("Banner Updated!", "success");
-                } catch (e) { app.toast(e.message, "error"); }
-                finally { app.toggleLoader(false); }
             },
 
             // --- CATEGORIES ---
             loadHomeCategories: () => {
                 const con = document.getElementById('category-chips');
-                con.innerHTML = '<button onclick="app.filterCategory(\'all\')" class="px-5 py-2 bg-primary text-white rounded-full text-sm font-bold shadow-lg shadow-primary/20 transition-all hover:scale-105">All</button>';
+                con.innerHTML = '<button onclick="app.filterCategory(\'all\')" class="clay-btn clay-btn-primary px-5 py-2 text-sm font-bold">All</button>';
 
                 app.categories.forEach(cat => {
                     con.innerHTML += `
-                        <button onclick="app.filterCategory('${cat.id}')" class="px-5 py-2 bg-white border border-gray-200 hover:border-gray-300 text-slate-600 rounded-full text-sm font-medium transition-all hover:scale-105 hover:shadow-md">
+                        <button onclick="app.filterCategory('${cat.id}')" class="clay-btn clay-btn-secondary px-5 py-2 text-sm font-medium">
                             ${cat.name}
                         </button>
                     `;
@@ -970,11 +1691,11 @@
                 grid.innerHTML = '';
                 app.categories.forEach(cat => {
                     grid.innerHTML += `
-                        <div onclick="app.filterCategory('${cat.id}'); app.router('home')" class="bg-white p-6 rounded-3xl shadow-soft border border-gray-100 flex flex-col items-center justify-center text-center cursor-pointer hover:shadow-card transition h-40">
-                            <div class="w-14 h-14 rounded-full flex items-center justify-center ${cat.color} mb-3">
+                        <div onclick="app.filterCategory('${cat.id}'); app.router('home')" class="clay-card p-6 flex flex-col items-center justify-center text-center cursor-pointer h-40">
+                            <div class="clay-card-inner w-14 h-14 rounded-full flex items-center justify-center ${cat.color} mb-3">
                                 <i data-lucide="${cat.icon}" class="w-7 h-7"></i>
                             </div>
-                            <span class="font-bold text-slate-700">${cat.name}</span>
+                            <span class="font-bold text-textMain">${cat.name}</span>
                         </div>
                     `;
                 });
@@ -983,39 +1704,53 @@
 
             // --- PRODUCT LOGIC ---
             createProductCardHTML: (p, isLiked) => {
-                const discount = p.discount ? parseInt(p.discount) : 0;
-                const price = parseInt(p.price);
-                const finalPrice = discount > 0
-                    ? Math.round(price - (price * discount / 100))
-                    : price;
+    const discount = p.discount ? parseInt(p.discount) : 0;
+    const price = parseInt(p.price);
+    const finalPrice = discount > 0
+        ? Math.round(price - (price * discount / 100))
+        : price;
 
-                return `
-                    <div class="bg-white rounded-3xl shadow-soft hover:shadow-card transition-all duration-300 overflow-hidden group border border-gray-100 flex flex-col cursor-pointer hover:-translate-y-1" onclick="app.loadProductDetails('${p.id}')">
-                        <div class="h-64 bg-gray-50 relative overflow-hidden flex items-center justify-center p-6">
-                            ${discount > 0 ? `<div class="sale-badge">SALE -${discount}%</div>` : ''}
-                            <button onclick="event.stopPropagation(); app.toggleWishlist('${p.id}')" class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm w-10 h-10 rounded-xl flex items-center justify-center shadow-sm z-10 ${isLiked ? 'text-red-500' : 'text-gray-400'}">
-                                <i data-lucide="heart" class="${isLiked ? 'fill-current' : ''}"></i>
-                            </button>
-                            <img src="${p.image || 'https://placehold.co/400x300?text=Product'}" class="w-full h-full object-contain group-hover:scale-110 transition duration-700" onerror="this.src='https://placehold.co/400x300?text=No+Image'">
-                        </div>
-                        <div class="p-6 flex-grow flex flex-col">
-                            <span class="text-[10px] uppercase font-bold text-accent tracking-widest mb-1.5 opacity-80">${p.category || 'Item'}</span>
-                            <h3 class="font-bold text-slate-800 text-lg truncate mb-2 leading-tight" title="${p.name}">${p.name}</h3>
-                            <p class="text-sm text-slate-500 line-clamp-2 h-10 mb-6 font-medium">${p.desc}</p>
-                            <div class="mt-auto flex justify-between items-center">
-                                <div>
-                                    ${discount > 0 ? `<span class="old-price text-sm">₹${price}</span>` : ''}
-                                    <span class="text-slate-900 font-extrabold text-2xl">₹${finalPrice}</span>
-                                </div>
-                                <button onclick="event.stopPropagation(); app.addToCart('${p.id}')" class="bg-primary text-white w-12 h-12 rounded-xl hover:bg-primaryLight transition-colors shadow-lg shadow-primary/20 flex items-center justify-center transform active:scale-95">
-                                    <i data-lucide="plus" class="lucide-sm"></i>
-                                </button>
-                            </div>
-                        </div>
+    return `
+        <div class="clay-card group flex flex-col relative overflow-hidden h-full transform transition-all duration-300 hover:-translate-y-1 active:scale-[0.98]" onclick="app.loadProductDetails('${p.id}')">
+            
+            <div class="relative bg-white/60 aspect-[1/1] p-3 flex items-center justify-center overflow-hidden rounded-t-[20px]">
+                
+                ${discount > 0 ? `<span class="absolute top-2 left-2 bg-[#F56E91] text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-md z-10 shadow-sm">-${discount}%</span>` : ''}
+                
+                <button onclick="event.stopPropagation(); app.toggleWishlist('${p.id}')" 
+                    class="absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center bg-white/80 backdrop-blur-sm shadow-sm z-10 transition active:scale-90 ${isLiked ? 'text-danger' : 'text-slate-400 hover:text-danger'}">
+                    <i data-lucide="heart" class="w-3.5 h-3.5 ${isLiked ? 'fill-current' : ''}"></i>
+                </button>
+
+                <img src="${p.image || 'https://placehold.co/400x400?text=Product'}" 
+                    class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110 mix-blend-multiply" 
+                    onerror="this.src='https://placehold.co/400x400?text=No+Image'">
+            </div>
+
+            <div class="p-3 flex flex-col flex-grow">
+                <div class="text-[9px] uppercase font-bold text-accent tracking-wider mb-1 opacity-80 truncate">
+                    ${p.category || 'Item'}
+                </div>
+                
+                <h3 class="font-bold text-textMain text-xs md:text-sm leading-tight mb-2 line-clamp-2 min-h-[2.5em]" title="${p.name}">
+                    ${p.name}
+                </h3>
+
+                <div class="mt-auto pt-2 flex items-end justify-between border-t border-dashed border-gray-200/50">
+                    <div class="flex flex-col">
+                        ${discount > 0 ? `<span class="text-[10px] text-textMuted line-through font-medium leading-none mb-0.5">₹${price}</span>` : ''}
+                        <span class="font-extrabold text-textMain text-sm md:text-lg leading-none">₹${finalPrice}</span>
                     </div>
-                `;
-            },
-
+                    
+                    <button onclick="event.stopPropagation(); app.addToCart('${p.id}')" 
+                        class="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-accent text-white flex items-center justify-center shadow-lg active:scale-90 transition-all hover:bg-accentHover">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+},
             loadProducts: async () => {
                 const grid = document.getElementById('product-grid');
                 
@@ -1023,7 +1758,7 @@
                 grid.innerHTML = '';
                 for(let i=0; i<8; i++) {
                     grid.innerHTML += `
-                        <div class="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
+                        <div class="clay-card p-4">
                             <div class="skeleton h-48 w-full mb-4"></div>
                             <div class="skeleton h-6 w-3/4 mb-2"></div>
                             <div class="skeleton h-4 w-1/2 mb-4"></div>
@@ -1100,9 +1835,9 @@
                 const isLiked = app.wishlist.includes(pid);
                 const heartIcon = document.getElementById('detail-wishlist-icon');
                 if (isLiked) {
-                    heartIcon.classList.add('fill-current', 'text-red-500');
+                    heartIcon.classList.add('fill-current', 'text-danger');
                 } else {
-                    heartIcon.classList.remove('fill-current', 'text-red-500');
+                    heartIcon.classList.remove('fill-current', 'text-danger');
                 }
                 
                 app.router('product-details');
@@ -1115,7 +1850,7 @@
                 const wishedProducts = app.products.filter(p => app.wishlist.includes(p.id));
 
                 if (wishedProducts.length === 0) {
-                    grid.innerHTML = '<div class="col-span-full text-center py-20 text-slate-400">Your wishlist is empty</div>';
+                    grid.innerHTML = '<div class="col-span-full text-center py-20 text-textMuted">Your wishlist is empty</div>';
                     return;
                 }
                 wishedProducts.forEach(p => {
@@ -1146,36 +1881,9 @@
                     app.renderProductGrid(app.products);
                 } else if (!document.getElementById('view-product-details').classList.contains('hide')) {
                     app.loadProductDetails(pid);
-                } else if (!document.getElementById('view-search-results').classList.contains('hide')) {
-                    const query = document.getElementById('search-query-display').innerText;
-                    app.performSearch(query);
                 } else if (!document.getElementById('view-wishlist').classList.contains('hide')) {
                     app.loadWishlist();
                 }
-            },
-
-            // --- SEARCH ---
-            performSearch: (query) => {
-                if (!query.trim()) return;
-                const term = query.toLowerCase();
-                const filtered = app.products.filter(p => 
-                    p.name.toLowerCase().includes(term) || 
-                    (p.desc && p.desc.toLowerCase().includes(term))
-                );
-
-                document.getElementById('search-query-display').innerText = query;
-                const grid = document.getElementById('search-results-grid');
-                grid.innerHTML = '';
-
-                if (filtered.length === 0) {
-                    grid.innerHTML = `<div class="col-span-4 text-center py-20 text-slate-400">No products found matching "${query}"</div>`;
-                } else {
-                    filtered.forEach(p => {
-                        const isLiked = app.wishlist.includes(p.id);
-                        grid.innerHTML += app.createProductCardHTML(p, isLiked);
-                    });
-                }
-                app.router('search-results');
             },
 
             filterCategory: (cat) => {
@@ -1183,11 +1891,11 @@
                 const btns = document.getElementById('category-chips').children;
                 Array.from(btns).forEach(btn => {
                     if(btn.innerText === cat || (cat === 'all' && btn.innerText === 'All')) { 
-                        btn.classList.remove('bg-white', 'text-slate-600', 'border', 'border-gray-200');
-                        btn.classList.add('bg-primary', 'text-white', 'shadow-lg');
+                        btn.classList.remove('clay-btn-secondary');
+                        btn.classList.add('clay-btn-primary');
                     } else { 
-                        btn.classList.add('bg-white', 'text-slate-600', 'border', 'border-gray-200');
-                        btn.classList.remove('bg-primary', 'text-white', 'shadow-lg');
+                        btn.classList.add('clay-btn-secondary');
+                        btn.classList.remove('clay-btn-primary');
                     }
                 });
                 app.filterProducts();
@@ -1279,27 +1987,29 @@
                         
                         // Sidebar Item
                         container.innerHTML += `
-                            <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
-                                <div class="flex-1">
-                                    <div class="font-bold text-sm truncate text-slate-800 mb-1">${item.name}</div>
-                                    <div class="text-xs text-accent font-bold">₹${item.price} x ${item.qty}</div>
-                                </div>
-                                <div class="flex items-center space-x-3 bg-gray-50 rounded-xl p-1.5 border border-gray-100">
-                                    <button onclick="app.changeQty(${index}, -1)" class="text-gray-400 hover:text-danger w-6 h-6 flex items-center justify-center transition"><i data-lucide="minus" class="lucide-xs"></i></button>
-                                    <span class="text-xs font-bold w-4 text-center text-slate-800">${item.qty}</span>
-                                    <button onclick="app.changeQty(${index}, 1)" class="text-gray-400 hover:text-success w-6 h-6 flex items-center justify-center transition"><i data-lucide="plus" class="lucide-xs"></i></button>
+                            <div class="clay-card p-4">
+                                <div class="flex justify-between items-center">
+                                    <div class="flex-1">
+                                        <div class="font-bold text-sm truncate text-textMain mb-1">${item.name}</div>
+                                        <div class="text-xs text-accent font-bold">₹${item.price} x ${item.qty}</div>
+                                    </div>
+                                    <div class="flex items-center space-x-3 clay-card-inner p-1.5">
+                                        <button onclick="app.changeQty(${index}, -1)" class="text-textMuted hover:text-danger w-6 h-6 flex items-center justify-center transition"><i data-lucide="minus" class="lucide-xs"></i></button>
+                                        <span class="text-xs font-bold w-4 text-center text-textMain">${item.qty}</span>
+                                        <button onclick="app.changeQty(${index}, 1)" class="text-textMuted hover:text-success w-6 h-6 flex items-center justify-center transition"><i data-lucide="plus" class="lucide-xs"></i></button>
+                                    </div>
                                 </div>
                             </div>
                         `;
                         
                         // Checkout Item
                         checkoutItems.innerHTML += `
-                            <div class="flex justify-between border-b border-gray-100 pb-4 mb-4 last:border-0 last:pb-0 last:mb-0">
+                            <div class="flex justify-between border-b border-textMuted/20 pb-4 mb-4 last:border-0 last:pb-0 last:mb-0">
                                 <div>
-                                    <span class="text-slate-800 font-bold block text-sm">${item.name}</span>
-                                    <span class="text-slate-400 text-xs">Qty: ${item.qty}</span>
+                                    <span class="text-textMain font-bold block text-sm">${item.name}</span>
+                                    <span class="text-textMuted text-xs">Qty: ${item.qty}</span>
                                 </div>
-                                <span class="font-extrabold text-slate-900">₹${item.price * item.qty}</span>
+                                <span class="font-extrabold text-textMain">₹${item.price * item.qty}</span>
                             </div>
                         `;
                     });
@@ -1384,24 +2094,24 @@
                 if (data.addressList && data.addressList.length > 0) {
                     data.addressList.forEach((addr, idx) => {
                         addrContainer.innerHTML += `
-                            <label class="block border border-gray-200 rounded-xl p-5 cursor-pointer hover:bg-gray-50 transition has-[:checked]:border-accent has-[:checked]:bg-accent/5 has-[:checked]:ring-1 has-[:checked]:ring-accent relative group">
+                            <label class="block clay-card p-5 cursor-pointer hover:shadow-clay-card-lg transition-all has-[:checked]:border-2 has-[:checked]:border-accent relative group">
                                 <div class="flex items-start">
                                     <input type="radio" name="selected-address" value="${idx}" ${idx===0?'checked':''} class="mt-1 text-accent focus:ring-accent w-4 h-4">
                                     <div class="ml-4">
-                                        <div class="font-bold text-slate-800 text-sm">${addr.name} <span class="text-[10px] font-bold text-slate-500 ml-2 bg-gray-100 px-2 py-0.5 rounded-md uppercase tracking-wide border border-gray-200">${addr.type || 'Home'}</span></div>
-                                        <div class="text-sm text-slate-500 mt-1">${addr.line}, ${addr.area}</div>
-                                        <div class="text-sm text-slate-500">${addr.city} - ${addr.pin}</div>
-                                        <div class="text-xs text-slate-400 mt-2 flex items-center font-medium"><i data-lucide="phone" class="lucide-xs mr-1"></i> ${addr.mobile}</div>
+                                        <div class="font-bold text-textMain text-sm">${addr.name} <span class="text-[10px] font-bold text-textMuted ml-2 clay-tag uppercase tracking-wide">${addr.type || 'Home'}</span></div>
+                                        <div class="text-sm text-textMuted mt-1">${addr.line}, ${addr.area}</div>
+                                        <div class="text-sm text-textMuted">${addr.city} - ${addr.pin}</div>
+                                        <div class="text-xs text-textMuted mt-2 flex items-center font-medium"><i data-lucide="phone" class="lucide-xs mr-1"></i> ${addr.mobile}</div>
                                     </div>
                                 </div>
-                                <button onclick="event.preventDefault(); app.deleteAddress(${idx})" class="absolute top-2 right-2 text-slate-300 hover:text-danger p-1 opacity-0 group-hover:opacity-100 transition">
+                                <button onclick="event.preventDefault(); app.deleteAddress(${idx})" class="absolute top-2 right-2 text-textMuted hover:text-danger p-1 opacity-0 group-hover:opacity-100 transition">
                                     <i data-lucide="trash-2" class="lucide-sm"></i>
                                 </button>
                             </label>
                         `;
                     });
                 } else {
-                    addrContainer.innerHTML = '<div class="text-sm text-slate-500 p-6 bg-gray-50 rounded-2xl border border-dashed border-gray-300 text-center font-medium">No saved addresses found. Please add one.</div>';
+                    addrContainer.innerHTML = '<div class="text-sm text-textMuted p-6 clay-card-inner text-center font-medium">No saved addresses found. Please add one.</div>';
                     document.getElementById('new-address-form').classList.remove('hide');
                 }
                 app.updateIcons();
@@ -1470,7 +2180,7 @@
                     });
                     myOrders.sort((a,b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
-                    if (myOrders.length === 0) list.innerHTML = `<div class="text-center py-20 bg-white rounded-3xl border border-gray-100 shadow-sm"><i data-lucide="package-open" class="mx-auto w-16 h-16 text-slate-200 mb-4"></i><p class="text-slate-500 font-bold">No orders yet.</p></div>`;
+                    if (myOrders.length === 0) list.innerHTML = `<div class="text-center py-20 clay-card"><i data-lucide="package-open" class="mx-auto w-16 h-16 text-textMuted/30 mb-4"></i><p class="text-textMuted font-bold">No orders yet.</p></div>`;
 
                     myOrders.forEach(o => {
                         const steps = ['Order Placed', 'Verified', 'Packed', 'Shipped', 'Delivered'];
@@ -1479,15 +2189,15 @@
                         if(stepIdx === -1 && o.status !== 'Pending Verification') stepIdx = 0; 
                         
                         let trackerHTML = `<div class="flex justify-between items-center mt-8 mb-2 text-xs relative px-4">
-                            <div class="absolute top-1.5 left-0 w-full h-1 bg-gray-100 -z-10 rounded-full"></div>
+                            <div class="absolute top-1.5 left-0 w-full h-1 clay-card-inner -z-10 rounded-full"></div>
                             <div class="absolute top-1.5 left-0 h-1 bg-accent -z-10 transition-all rounded-full" style="width: ${((stepIdx)/(steps.length-1))*100}%"></div>`;
                         
                         steps.forEach((s, idx) => {
                             const active = idx <= stepIdx;
                             trackerHTML += `
                                 <div class="flex flex-col items-center z-10">
-                                    <div class="w-4 h-4 rounded-full border-2 ${active ? 'bg-accent border-accent' : 'bg-white border-gray-300'} mb-2 shadow-sm transition-colors"></div>
-                                    <span class="${active ? 'text-accent font-bold' : 'text-gray-400'} text-[10px] uppercase tracking-wider">${s}</span>
+                                    <div class="w-4 h-4 rounded-full border-2 ${active ? 'bg-accent border-accent' : 'clay-card-inner border-textMuted/20'} mb-2"></div>
+                                    <span class="${active ? 'text-accent font-bold' : 'text-textMuted'} text-[10px] uppercase tracking-wider">${s}</span>
                                 </div>
                             `;
                         });
@@ -1498,30 +2208,30 @@
                         const canCancel = (Date.now() - orderTime) < (24 * 60 * 60 * 1000) && o.status !== 'Cancelled' && o.status !== 'Delivered';
 
                         list.innerHTML += `
-                            <div class="bg-white p-8 rounded-3xl shadow-soft border border-gray-100 hover:shadow-card transition-shadow">
-                                <div class="flex flex-col md:flex-row justify-between font-bold mb-6 pb-6 border-b border-gray-50 items-start md:items-center gap-4">
-                                    <div class="flex items-center text-slate-700 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100"><i data-lucide="package" class="mr-2 lucide-sm text-accent"></i> Order #${o.id.substr(0,8)}</div>
-                                    <span class="bg-slate-100 text-slate-800 px-4 py-1.5 rounded-full text-[10px] uppercase font-bold tracking-widest border border-slate-200">${o.status}</span>
+                            <div class="clay-card p-8 hover:shadow-clay-card-lg transition-shadow">
+                                <div class="flex flex-col md:flex-row justify-between font-bold mb-6 pb-6 border-b border-textMuted/20 items-start md:items-center gap-4">
+                                    <div class="flex items-center text-textMain clay-card-inner px-3 py-1.5"><i data-lucide="package" class="mr-2 lucide-sm text-accent"></i> Order #${o.id.substr(0,8)}</div>
+                                    <span class="clay-tag text-[10px] uppercase font-bold tracking-widest">${o.status}</span>
                                 </div>
                                 <div class="space-y-4 mb-8">
                                     ${o.items.map(i => `
-                                        <div class="flex justify-between text-sm text-slate-600 bg-gray-50/50 p-3 rounded-xl">
-                                            <span class="flex items-center font-medium"><span class="w-1.5 h-1.5 bg-slate-300 rounded-full mr-3"></span> ${i.name} <span class="text-slate-400 ml-2 text-xs">x${i.qty}</span></span>
-                                            <span class="font-bold text-slate-800">₹${i.price * i.qty}</span>
+                                        <div class="flex justify-between text-sm text-textMuted clay-card-inner p-3">
+                                            <span class="flex items-center font-medium"><span class="w-1.5 h-1.5 bg-textMuted/30 rounded-full mr-3"></span> ${i.name} <span class="text-textMuted/60 ml-2 text-xs">x${i.qty}</span></span>
+                                            <span class="font-bold text-textMain">₹${i.price * i.qty}</span>
                                         </div>
                                     `).join('')}
                                 </div>
-                                <div class="flex justify-between text-base font-extrabold pt-4 border-t border-dashed border-gray-200 text-slate-900">
+                                <div class="flex justify-between text-base font-extrabold pt-4 border-t border-dashed border-textMuted/20 text-textMain">
                                     <span>Total Amount</span>
                                     <span class="text-xl">₹${o.total}</span>
                                 </div>
-                                ${o.status !== 'Cancelled' ? trackerHTML : '<div class="mt-6 text-center text-danger font-bold bg-red-50 p-3 rounded-xl text-xs uppercase border border-red-100 flex justify-center items-center"><i data-lucide="x-circle" class="lucide-sm mr-2"></i> Order Cancelled</div>'}
+                                ${o.status !== 'Cancelled' ? trackerHTML : '<div class="mt-6 text-center text-danger font-bold clay-card-inner p-3 text-xs uppercase flex justify-center items-center"><i data-lucide="x-circle" class="lucide-sm mr-2"></i> Order Cancelled</div>'}
                                 
-                                <div class="mt-6 pt-4 border-t border-dashed border-gray-200 flex gap-2">
-                                    <button onclick="app.openCustomerChat('${o.id}')" class="flex-grow text-xs font-bold text-slate-600 hover:text-white flex items-center justify-center bg-gray-100 hover:bg-accent py-2.5 rounded-xl transition">
+                                <div class="mt-6 pt-4 border-t border-dashed border-textMuted/20 flex gap-2">
+                                    <button onclick="app.openCustomerChat('${o.id}')" class="flex-grow text-xs font-bold text-textMuted hover:text-white clay-btn clay-btn-secondary py-2.5">
                                         <i data-lucide="message-circle" class="lucide-xs mr-1.5"></i> Support
                                     </button>
-                                    ${canCancel ? `<button onclick="app.cancelOrder('${o.id}')" class="flex-grow text-xs font-bold text-danger hover:text-white flex items-center justify-center bg-red-50 hover:bg-red-600 py-2.5 rounded-xl transition">Cancel Order</button>` : ''}
+                                    ${canCancel ? `<button onclick="app.cancelOrder('${o.id}')" class="flex-grow text-xs font-bold text-danger hover:text-white clay-btn clay-btn-secondary py-2.5">Cancel Order</button>` : ''}
                                 </div>
                             </div>
                         `;
@@ -1561,45 +2271,23 @@
                 if(data.addressList && data.addressList.length > 0) {
                     data.addressList.forEach((addr, idx) => {
                         list.innerHTML += `
-                            <div class="border border-gray-100 p-6 rounded-2xl bg-gray-50 text-sm hover:border-accent/30 transition group relative overflow-hidden">
+                            <div class="clay-card p-6 text-sm hover:shadow-clay-card-lg transition group relative overflow-hidden">
                                 <div class="absolute top-0 right-0 p-4">
-                                    <button onclick="app.deleteAddress(${idx})" class="text-slate-300 hover:text-danger p-1 opacity-0 group-hover:opacity-100 transition">
+                                    <button onclick="app.deleteAddress(${idx})" class="text-textMuted hover:text-danger p-1 opacity-0 group-hover:opacity-100 transition">
                                         <i data-lucide="trash-2" class="lucide-sm"></i>
                                     </button>
                                 </div>
-                                <div class="font-bold text-slate-800 mb-2 flex items-center text-base"><i data-lucide="home" class="lucide-sm mr-2 text-slate-400"></i> ${addr.name} <span class="ml-3 text-[10px] bg-white border border-gray-200 text-slate-500 px-2 py-0.5 rounded uppercase tracking-wide font-bold">${addr.type}</span></div>
-                                <div class="text-slate-600 ml-7 leading-relaxed">${addr.line}, ${addr.area}</div>
-                                <div class="text-slate-600 ml-7">${addr.city} - ${addr.pin}</div>
-                                <div class="text-xs text-slate-400 mt-3 ml-7 flex items-center font-medium"><i data-lucide="phone" class="lucide-xs mr-2"></i> ${addr.mobile}</div>
+                                <div class="font-bold text-textMain mb-2 flex items-center text-base"><i data-lucide="home" class="lucide-sm mr-2 text-textMuted"></i> ${addr.name} <span class="ml-3 text-[10px] clay-tag text-textMuted font-bold">${addr.type}</span></div>
+                                <div class="text-textMuted ml-7 leading-relaxed">${addr.line}, ${addr.area}</div>
+                                <div class="text-textMuted ml-7">${addr.city} - ${addr.pin}</div>
+                                <div class="text-xs text-textMuted mt-3 ml-7 flex items-center font-medium"><i data-lucide="phone" class="lucide-xs mr-2"></i> ${addr.mobile}</div>
                             </div>
                         `;
                     });
                 } else {
-                    list.innerHTML = '<p class="text-slate-400 text-sm italic col-span-2 text-center py-4">No saved addresses found.</p>';
+                    list.innerHTML = '<p class="text-textMuted text-sm italic col-span-2 text-center py-4">No saved addresses found.</p>';
                 }
                 app.updateIcons();
-            },
-
-            openEditProfile: () => {
-                document.getElementById('edit-profile-name').value = app.currentUser.displayName || '';
-                document.getElementById('edit-profile-modal').classList.remove('hide');
-            },
-
-            updateProfile: async (e) => {
-                e.preventDefault();
-                app.toggleLoader(true);
-                const name = document.getElementById('edit-profile-name').value;
-                const photo = document.getElementById('edit-profile-photo').value;
-                try {
-                    await updateDoc(getUserRef(app.currentUser.uid), { name });
-                    if (photo) {
-                        await updateProfile(auth.currentUser, { photoURL: photo });
-                    }
-                    app.toast("Profile Updated", "success");
-                    document.getElementById('edit-profile-modal').classList.add('hide');
-                    app.loadProfile();
-                } catch (e) { app.toast(e.message, "error"); }
-                finally { app.toggleLoader(false); }
             },
 
             // --- CHAT LOGIC ---
@@ -1627,7 +2315,7 @@
                             const isMe = m.sender === 'Customer';
                             container.innerHTML += `
                                 <div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
-                                    <div class="${isMe ? 'bg-primary text-white rounded-br-none' : 'bg-white border border-gray-200 text-slate-800 rounded-bl-none'} px-5 py-3 rounded-2xl max-w-xs text-sm shadow-sm">
+                                    <div class="${isMe ? 'bg-accent text-white rounded-br-none' : 'clay-card rounded-bl-none'} px-5 py-3 rounded-2xl max-w-xs text-sm">
                                         ${!isMe && m.sender !== 'System' ? `<div class="text-[10px] font-bold text-accent mb-1 uppercase tracking-wide">${m.sender}</div>` : ''}
                                         ${m.text}
                                     </div>
@@ -1699,17 +2387,17 @@
 
                 myProducts.forEach(p => {
                     pList.innerHTML += `
-                        <div class="flex justify-between items-center border-b border-gray-50 py-4 last:border-0 hover:bg-gray-50 px-4 rounded-xl transition group">
+                        <div class="flex justify-between items-center border-b border-textMuted/20 py-4 last:border-0 hover:shadow-clay-card-lg px-4 rounded-xl transition group">
                             <div class="flex items-center space-x-4">
-                                <img src="${p.image}" class="w-14 h-14 rounded-xl object-contain bg-white border border-gray-100 p-1">
+                                <img src="${p.image}" class="w-14 h-14 rounded-xl object-contain clay-card p-1">
                                 <div>
-                                    <div class="font-bold text-sm text-slate-800 group-hover:text-accent transition-colors">${p.name}</div>
-                                    <div class="text-xs text-slate-500 font-bold">₹${p.price} ${p.discount ? `(-${p.discount}%)` : ''}</div>
+                                    <div class="font-bold text-sm text-textMain group-hover:text-accent transition-colors">${p.name}</div>
+                                    <div class="text-xs text-textMuted font-bold">₹${p.price} ${p.discount ? `(-${p.discount}%)` : ''}</div>
                                 </div>
                             </div>
                             <div class="flex space-x-2">
-                                <button onclick="app.openEditProductModal('${p.id}')" class="text-gray-400 hover:text-accent hover:bg-accent/10 p-2.5 rounded-xl transition"><i data-lucide="edit-2" class="lucide-sm"></i></button>
-                                <button onclick="app.deleteProduct('${p.id}')" class="text-gray-400 hover:text-danger hover:bg-danger/10 p-2.5 rounded-xl transition"><i data-lucide="trash-2" class="lucide-sm"></i></button>
+                                <button onclick="app.openEditProductModal('${p.id}')" class="text-textMuted hover:text-accent hover:bg-accent/10 p-2.5 rounded-xl transition"><i data-lucide="edit-2" class="lucide-sm"></i></button>
+                                <button onclick="app.deleteProduct('${p.id}')" class="text-textMuted hover:text-danger hover:bg-danger/10 p-2.5 rounded-xl transition"><i data-lucide="trash-2" class="lucide-sm"></i></button>
                             </div>
                         </div>
                     `;
@@ -1726,24 +2414,24 @@
                     }
                     
                     oList.innerHTML += `
-                        <div class="border border-gray-100 p-5 rounded-2xl mb-3 bg-white hover:shadow-md transition hover:border-accent/30 group">
+                        <div class="clay-card p-5 mb-3 hover:shadow-clay-card-lg transition group">
                             <div class="flex justify-between items-start mb-4">
                                 <div>
-                                    <div class="font-bold text-slate-800 text-sm flex items-center mb-1"><i data-lucide="package" class="lucide-xs mr-2 text-slate-300"></i> #${oid.substr(0,8)}</div>
-                                    <div class="text-xs text-slate-500">${new Date(o.createdAt?.seconds*1000).toLocaleDateString()}</div>
+                                    <div class="font-bold text-textMain text-sm flex items-center mb-1"><i data-lucide="package" class="lucide-xs mr-2 text-textMuted"></i> #${oid.substr(0,8)}</div>
+                                    <div class="text-xs text-textMuted">${new Date(o.createdAt?.seconds*1000).toLocaleDateString()}</div>
                                 </div>
-                                <div class="text-sm font-extrabold text-accent bg-accent/5 px-2 py-1 rounded-lg">₹${o.total}</div>
+                                <div class="text-sm font-extrabold text-accent clay-card-inner px-2 py-1">₹${o.total}</div>
                             </div>
-                            <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-50">
-                                <button onclick="app.viewOrderDetails('${oid}')" class="text-xs font-bold text-slate-600 hover:text-primary flex items-center"><i data-lucide="eye" class="lucide-xs mr-1.5"></i> View Full Details</button>
+                            <div class="flex justify-between items-center mt-4 pt-4 border-t border-textMuted/20">
+                                <button onclick="app.viewOrderDetails('${oid}')" class="text-xs font-bold text-textMuted hover:text-accent flex items-center"><i data-lucide="eye" class="lucide-xs mr-1.5"></i> View Full Details</button>
                                 ${o.status !== 'Pending Verification' ? `
-                                    <select onchange="app.updateOrderStatus('${oid}', this.value)" class="border border-gray-200 p-1.5 rounded-lg text-xs bg-gray-50 focus:ring-accent focus:border-accent cursor-pointer font-bold text-slate-700">
+                                    <select onchange="app.updateOrderStatus('${oid}', this.value)" class="clay-input p-1.5 text-xs cursor-pointer font-bold text-textMain">
                                         <option value="">Status...</option>
                                         <option value="Packed" ${o.status==='Packed'?'selected':''}>Packed</option>
                                         <option value="Shipped" ${o.status==='Shipped'?'selected':''}>Shipped</option>
                                         <option value="Delivered" ${o.status==='Delivered'?'selected':''}>Delivered</option>
                                     </select>
-                                ` : '<span class="text-[10px] text-warning font-bold bg-warning/10 px-2 py-1 rounded uppercase tracking-wide">Verifying</span>'}
+                                ` : '<span class="text-[10px] text-warning font-bold clay-tag uppercase tracking-wide">Verifying</span>'}
                             </div>
                         </div>
                     `;
@@ -1764,18 +2452,18 @@
                 modalContent.innerHTML = `
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div>
-                            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Customer Info</h4>
-                            <div class="bg-gray-50 p-4 rounded-2xl space-y-2 text-sm border border-gray-100">
-                                <p><span class="font-bold text-slate-700">Name:</span> ${o.customerName || 'N/A'}</p>
-                                <p><span class="font-bold text-slate-700">Email:</span> ${o.customerEmail || 'N/A'}</p>
-                                <p><span class="font-bold text-slate-700">Mobile:</span> ${addr.mobile || 'N/A'}</p>
-                                <p><span class="font-bold text-slate-700">User ID:</span> <span class="font-mono text-xs bg-gray-200 px-1 rounded">${o.customerId}</span></p>
+                            <h4 class="text-xs font-bold text-textMuted uppercase tracking-widest mb-3">Customer Info</h4>
+                            <div class="clay-card-inner p-4 space-y-2 text-sm">
+                                <p><span class="font-bold text-textMain">Name:</span> ${o.customerName || 'N/A'}</p>
+                                <p><span class="font-bold text-textMain">Email:</span> ${o.customerEmail || 'N/A'}</p>
+                                <p><span class="font-bold text-textMain">Mobile:</span> ${addr.mobile || 'N/A'}</p>
+                                <p><span class="font-bold text-textMain">User ID:</span> <span class="font-mono text-xs clay-tag px-1">${o.customerId}</span></p>
                             </div>
                         </div>
                         <div>
-                            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Shipping Address</h4>
-                            <div class="bg-gray-50 p-4 rounded-2xl space-y-1 text-sm text-slate-600 border border-gray-100">
-                                <p class="font-bold text-slate-800">${addr.name}</p>
+                            <h4 class="text-xs font-bold text-textMuted uppercase tracking-widest mb-3">Shipping Address</h4>
+                            <div class="clay-card-inner p-4 space-y-1 text-sm text-textMuted">
+                                <p class="font-bold text-textMain">${addr.name}</p>
                                 <p>${addr.line}</p>
                                 <p>${addr.area}</p>
                                 <p>${addr.city} - ${addr.pin}</p>
@@ -1784,28 +2472,28 @@
                     </div>
                     
                     <div>
-                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Order Items</h4>
-                        <div class="border border-gray-100 rounded-2xl overflow-hidden">
+                        <h4 class="text-xs font-bold text-textMuted uppercase tracking-widest mb-3">Order Items</h4>
+                        <div class="clay-card overflow-hidden">
                             ${o.items.map(i => `
-                                <div class="flex justify-between items-center p-4 border-b border-gray-50 last:border-0 bg-white">
+                                <div class="flex justify-between items-center p-4 border-b border-textMuted/20 last:border-0">
                                     <div class="flex items-center">
-                                        <div class="w-10 h-10 bg-gray-100 rounded-lg mr-3 flex items-center justify-center text-gray-400"><i data-lucide="box" class="lucide-sm"></i></div>
+                                        <div class="w-10 h-10 clay-card-inner rounded-lg mr-3 flex items-center justify-center text-textMuted"><i data-lucide="box" class="lucide-sm"></i></div>
                                         <div>
-                                            <div class="text-sm font-bold text-slate-800">${i.name}</div>
-                                            <div class="text-xs text-slate-500">Qty: ${i.qty}</div>
+                                            <div class="text-sm font-bold text-textMain">${i.name}</div>
+                                            <div class="text-xs text-textMuted">Qty: ${i.qty}</div>
                                         </div>
                                     </div>
-                                    <div class="font-bold text-slate-800">₹${i.price * i.qty}</div>
+                                    <div class="font-bold text-textMain">₹${i.price * i.qty}</div>
                                 </div>
                             `).join('')}
-                            <div class="bg-gray-50 p-4 flex justify-between items-center">
-                                <span class="font-bold text-slate-600 text-sm">Total Paid</span>
-                                <span class="font-extrabold text-slate-900 text-lg">₹${o.total}</span>
+                            <div class="clay-card-inner p-4 flex justify-between items-center">
+                                <span class="font-bold text-textMuted text-sm">Total Paid</span>
+                                <span class="font-extrabold text-textMain text-lg">₹${o.total}</span>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="text-xs text-center text-gray-400 pt-4">Order ID: ${o.id}</div>
+                    <div class="text-xs text-center text-textMuted pt-4">Order ID: ${o.id}</div>
                 `;
                 
                 document.getElementById('order-details-modal').classList.remove('hide');
@@ -1906,7 +2594,6 @@
                 form.p_price.value = 5499;
                 form.p_discount.value = 15;
                 form.p_img.value = "https://placehold.co/400x300?text=Camera";
-                document.getElementById('product-preview').src = form.p_img.value;
             },
 
             // --- ADMIN DASHBOARD ---
@@ -1928,19 +2615,19 @@
                     
                     if(o.status === 'Pending Verification') { 
                          payQueue.innerHTML += `
-                            <div class="flex justify-between items-center bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition">
+                            <div class="flex justify-between items-center clay-card p-5 hover:shadow-clay-card-lg transition">
                                 <div>
-                                    <div class="font-bold text-slate-800 text-sm">Order #${oid.substr(0,8)}</div>
-                                    <div class="text-xs text-slate-500 mt-1">Amount: <span class="font-bold text-slate-900">₹${o.total}</span> | ${o.paymentMethod.toUpperCase()}</div>
+                                    <div class="font-bold text-textMain text-sm">Order #${oid.substr(0,8)}</div>
+                                    <div class="text-xs text-textMuted mt-1">Amount: <span class="font-bold text-textMain">₹${o.total}</span> | ${o.paymentMethod.toUpperCase()}</div>
                                     <button onclick="app.viewOrderDetails('${oid}')" class="text-[10px] font-bold text-accent mt-2 hover:underline">View Details</button>
                                 </div>
-                                <button onclick="app.adminVerifyPayment('${d.id}')" class="bg-primary text-white text-xs px-5 py-2.5 rounded-xl hover:bg-primaryLight transition shadow-md font-bold flex items-center"><i data-lucide="check" class="lucide-xs mr-2"></i> Approve</button>
+                                <button onclick="app.adminVerifyPayment('${d.id}')" class="clay-btn clay-btn-primary text-xs px-5 py-2.5 font-bold flex items-center"><i data-lucide="check" class="lucide-xs mr-2"></i> Approve</button>
                             </div>
                          `;
                     }
                 });
                 
-                if(payQueue.innerHTML === '') payQueue.innerHTML = '<div class="text-slate-400 text-sm border border-dashed border-gray-200 p-6 rounded-2xl text-center">No pending payments.</div>';
+                if(payQueue.innerHTML === '') payQueue.innerHTML = '<div class="text-textMuted text-sm clay-card-inner p-6 text-center">No pending payments.</div>';
 
                 document.getElementById('admin-total-sales').innerText = '₹' + total;
                 document.getElementById('admin-order-count').innerText = count;
@@ -1953,18 +2640,18 @@
                     const req = d.data();
                     if(req.status === 'Pending') {
                         reqContainer.innerHTML += `
-                            <div class="border border-gray-100 p-5 rounded-2xl flex justify-between items-start bg-white mb-2 shadow-sm">
+                            <div class="clay-card p-5 flex justify-between items-start mb-2 hover:shadow-clay-card-lg">
                                 <div>
-                                    <div class="font-bold text-slate-800 text-sm">${req.company}</div>
-                                    <div class="text-xs text-slate-500 mt-1">${req.name} (${req.email})</div>
-                                    <div class="text-[10px] text-slate-400 mt-1 flex items-center font-bold uppercase tracking-wide"><i data-lucide="file-text" class="lucide-xs mr-1"></i> Docs Uploaded</div>
+                                    <div class="font-bold text-textMain text-sm">${req.company}</div>
+                                    <div class="text-xs text-textMuted mt-1">${req.name} (${req.email})</div>
+                                    <div class="text-[10px] text-textMuted mt-1 flex items-center font-bold uppercase tracking-wide"><i data-lucide="file-text" class="lucide-xs mr-1"></i> Docs Uploaded</div>
                                 </div>
-                                <button onclick="app.approveSeller('${d.id}', '${req.uid}')" class="bg-success text-white text-xs px-4 py-2 rounded-xl hover:bg-emerald-600 transition shadow-md font-bold">Approve</button>
+                                <button onclick="app.approveSeller('${d.id}', '${req.uid}')" class="clay-btn clay-btn-primary text-xs px-4 py-2 font-bold">Approve</button>
                             </div>
                         `;
                     }
                 });
-                if (reqContainer.innerHTML === '') reqContainer.innerHTML = '<div class="text-slate-400 text-sm text-center py-6 border border-dashed border-gray-200 rounded-2xl font-medium">No pending requests.</div>';
+                if (reqContainer.innerHTML === '') reqContainer.innerHTML = '<div class="text-textMuted text-sm text-center py-6 clay-card-inner font-medium">No pending requests.</div>';
                 app.updateIcons();
             },
 
@@ -2018,15 +2705,15 @@
                         const t = d.data();
                         const lastMsg = t.messages[t.messages.length -1];
                         list.innerHTML += `
-                             <div onclick="app.openServiceChat('${d.id}')" class="p-4 hover:bg-gray-50 cursor-pointer border-b border-gray-100 rounded-xl transition group">
+                             <div onclick="app.openServiceChat('${d.id}')" class="p-4 hover:shadow-clay-card-lg cursor-pointer border-b border-textMuted/20 rounded-xl transition group">
                                 <div class="flex justify-between mb-1">
-                                    <span class="font-bold text-xs text-slate-800 group-hover:text-primary transition-colors">Order #${t.orderId.substr(0,6)}</span>
+                                    <span class="font-bold text-xs text-textMain group-hover:text-accent transition-colors">Order #${t.orderId.substr(0,6)}</span>
                                 </div>
-                                <div class="text-xs text-slate-500 truncate font-medium">${lastMsg ? lastMsg.text : 'New Ticket'}</div>
+                                <div class="text-xs text-textMuted truncate font-medium">${lastMsg ? lastMsg.text : 'New Ticket'}</div>
                              </div>
                         `;
                     });
-                    if(list.innerHTML === '') list.innerHTML = '<div class="text-slate-400 p-6 text-sm text-center font-medium">No active tickets</div>';
+                    if(list.innerHTML === '') list.innerHTML = '<div class="text-textMuted p-6 text-sm text-center font-medium">No active tickets</div>';
                     app.updateIcons();
                 } catch(e) {
                     console.error(e);
@@ -2051,7 +2738,7 @@
                             const isMe = m.sender !== 'Customer' && m.sender !== 'System';
                             container.innerHTML += `
                                 <div class="flex ${isMe ? 'justify-end' : 'justify-start'}">
-                                    <div class="${isMe ? 'bg-primary text-white rounded-br-none' : 'bg-white border border-gray-200 text-slate-800 rounded-bl-none'} px-5 py-3 rounded-2xl max-w-xs text-sm shadow-sm mb-2">
+                                    <div class="${isMe ? 'bg-accent text-white rounded-br-none' : 'clay-card rounded-bl-none'} px-5 py-3 rounded-2xl max-w-xs text-sm mb-2">
                                         <div class="text-[10px] opacity-70 mb-1 font-bold uppercase tracking-wide">${m.sender}</div>
                                         ${m.text}
                                     </div>
@@ -2112,6 +2799,67 @@
             }
             app.updateIcons();
         });
+
+        // Initialize banner scroller
+        let currentBannerIndex = 0;
+        const bannerSlides = 5;
+        const slideWidth = 280 + 16; // 280px width + 16px gap
+
+        function scrollBanners(direction) {
+            const scroller = document.getElementById('banner-horizontal-scroller');
+            
+            if (direction === 'left') {
+                currentBannerIndex = Math.max(0, currentBannerIndex - 1);
+            } else {
+                currentBannerIndex = Math.min(bannerSlides - 1, currentBannerIndex + 1);
+            }
+            
+            scroller.scrollTo({
+                left: currentBannerIndex * slideWidth,
+                behavior: 'smooth'
+            });
+            
+            updateDots();
+        }
+
+        function scrollToBanner(index) {
+            currentBannerIndex = index;
+            const scroller = document.getElementById('banner-horizontal-scroller');
+            scroller.scrollTo({
+                left: index * slideWidth,
+                behavior: 'smooth'
+            });
+            updateDots();
+        }
+
+        function updateDots() {
+            const dots = document.querySelectorAll('.banner-dot');
+            dots.forEach((dot, index) => {
+                if (index === currentBannerIndex) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        // Auto-scroll banner every 5 seconds
+        setInterval(() => {
+            if (currentBannerIndex < bannerSlides - 1) {
+                scrollBanners('right');
+            } else {
+                scrollToBanner(0);
+            }
+        }, 5000);
+
+        // Update dots on scroll
+        const scroller = document.getElementById('banner-horizontal-scroller');
+        if (scroller) {
+            scroller.addEventListener('scroll', () => {
+                currentBannerIndex = Math.round(scroller.scrollLeft / slideWidth);
+                updateDots();
+            });
+        }
 
         // Initial Load
         app.init();
