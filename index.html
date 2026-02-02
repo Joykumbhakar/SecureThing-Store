@@ -6,7 +6,6 @@
     <title>SecureThingStore | Smart Security Solutions</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script src="https://unpkg.com/lucide@latest"></script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,29 +30,44 @@
                         sans: ['Inter', 'sans-serif'],
                     },
                     colors: {
-                        primary: '#0F172A', /* Slate-900 (Deep Dark Blue) */
+                        primary: '#0F172A',
                         primaryLight: '#334155',
-                        accent: '#2563EB', /* Blue-600 */
+                        accent: '#2563EB',
                         accentHover: '#1D4ED8',
                         secondary: '#ffffff',
                         bgLight: '#F8FAFC',
                         surface: '#FFFFFF',
-                        success: '#10B981', /* Emerald-500 */
-                        danger: '#EF4444', /* Red-500 */
-                        warning: '#F59E0B', /* Amber-500 */
+                        success: '#10B981',
+                        danger: '#EF4444',
+                        warning: '#F59E0B',
+                        textMain: '#2D2D44',
+                        textMuted: '#7D7D92',
                     },
                     boxShadow: {
                         'soft': '0 4px 20px -2px rgba(0, 0, 0, 0.05)',
                         'card': '0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04)',
-                        'glow': '0 0 20px rgba(37, 99, 235, 0.2)'
+                        'glow': '0 0 20px rgba(37, 99, 235, 0.2)',
+                        'clay-card': '20px 20px 60px #c8cdd6, -20px -20px 60px #ffffff',
+                        'clay-btn': '8px 8px 16px rgba(163, 177, 198, 0.4), -8px -8px 16px rgba(255, 255, 255, 0.8)',
                     },
                     animation: {
                         'shimmer': 'shimmer 1.5s infinite linear',
+                        'cart-bounce': 'cartBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                        'heart-ping': 'heartPing 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                     },
                     keyframes: {
                         shimmer: {
                             '0%': { backgroundPosition: '-200% 0' },
                             '100%': { backgroundPosition: '200% 0' }
+                        },
+                        cartBounce: {
+                            '0%, 100%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.2)' }
+                        },
+                        heartPing: {
+                            '0%': { transform: 'scale(1)' },
+                            '50%': { transform: 'scale(1.3)' },
+                            '100%': { transform: 'scale(1)' }
                         }
                     }
                 }
@@ -73,7 +87,6 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* Skeleton Loading Class */
         .skeleton {
             background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
             background-size: 200% 100%;
@@ -81,17 +94,14 @@
             border-radius: 0.5rem;
         }
 
-        /* Success Screen Animation */
         .check-icon { width: 64px; height: 64px; color: #10B981; animation: popIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); }
         @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 
-        /* Toast Notifications */
         #toast-container { position: fixed; bottom: 24px; right: 24px; z-index: 100; display: flex; flex-direction: column; gap: 12px; }
         .toast { 
             min-width: 300px; 
@@ -115,18 +125,38 @@
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         @keyframes slideOut { from { transform: translateX(0); opacity: 1; } to { transform: translateX(100%); opacity: 0; } }
 
-        /* Icon sizing fixes for lucide */
         .lucide { width: 1.25rem; height: 1.25rem; }
         .lucide-lg { width: 1.5rem; height: 1.5rem; }
         .lucide-xl { width: 2rem; height: 2rem; }
         .lucide-sm { width: 1rem; height: 1rem; }
         .btn-icon .lucide { margin-right: 0.5rem; }
+
+        .sale-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #EF4444;
+            color: white;
+            font-weight: 800;
+            font-size: 0.7rem;
+            padding: 4px 8px;
+            border-radius: 8px;
+            text-transform: uppercase;
+            z-index: 10;
+        }
+        .old-price {
+            text-decoration: line-through;
+            color: #94A3B8;
+            font-size: 0.875rem;
+            margin-right: 6px;
+        }
     </style>
 </head>
 <body class="text-slate-800 flex flex-col min-h-screen">
 
     <div id="toast-container"></div>
 
+    <!-- Top Navigation -->
     <nav class="bg-surface/90 border-b border-gray-200 sticky top-0 z-50 backdrop-blur-md transition-all duration-300">
         <div class="container mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-2 cursor-pointer group" onclick="app.router('home')">
@@ -138,14 +168,15 @@
             
             <div class="hidden md:flex items-center space-x-1">
                 <button onclick="app.router('home')" class="hover:bg-gray-100 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:text-primary">Shop</button>
-                <button onclick="app.router('orders')" class="hover:bg-gray-100 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:text-primary" id="nav-orders">Tracking</button>
+                <button onclick="app.router('categories')" class="hover:bg-gray-100 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:text-primary">Categories</button>
+                <button onclick="app.router('orders')" class="hover:bg-gray-100 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:text-primary" id="nav-orders">Orders</button>
+                <button onclick="app.router('wishlist')" class="hover:bg-gray-100 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:text-primary" id="nav-wishlist">Wishlist</button>
+                <button onclick="app.router('profile')" class="hover:bg-gray-100 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:text-primary" id="nav-profile">Profile</button>
                 
                 <button onclick="app.router('seller-dashboard')" class="bg-warning/10 text-warning-700 hover:bg-warning/20 px-3 py-2 rounded-lg text-sm font-bold transition-colors hide" id="nav-seller">Seller Portal</button>
                 <button onclick="app.router('admin-dashboard')" class="bg-primary/10 text-primary hover:bg-primary/20 px-3 py-2 rounded-lg text-sm font-bold transition-colors hide" id="nav-admin">Admin</button>
                 <button onclick="app.router('service-dashboard')" class="hover:bg-gray-100 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:text-primary hide" id="nav-service">Service</button>
                 
-                <button onclick="app.router('profile')" class="hover:bg-gray-100 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-slate-600 hover:text-primary hide" id="nav-profile">Profile</button>
-
                 <div class="w-px h-6 bg-gray-200 mx-2"></div>
 
                 <button onclick="app.toggleCart()" class="relative hover:bg-gray-100 p-2.5 rounded-lg transition-colors text-slate-600 hover:text-accent">
@@ -164,34 +195,62 @@
         </div>
         <div id="mobile-menu" class="hide md:hidden bg-white border-b border-gray-100 px-4 py-3 space-y-2 shadow-lg absolute w-full left-0 top-full">
             <button onclick="app.router('home')" class="flex items-center w-full text-left py-3 px-3 hover:bg-gray-50 rounded-lg text-slate-600 font-medium"><i data-lucide="store" class="mr-3 lucide-sm"></i> Shop</button>
-            <button onclick="app.router('orders')" class="flex items-center w-full text-left py-3 px-3 hover:bg-gray-50 rounded-lg text-slate-600 font-medium"><i data-lucide="package" class="mr-3 lucide-sm"></i> Track Orders</button>
+            <button onclick="app.router('categories')" class="flex items-center w-full text-left py-3 px-3 hover:bg-gray-50 rounded-lg text-slate-600 font-medium"><i data-lucide="grid" class="mr-3 lucide-sm"></i> Categories</button>
+            <button onclick="app.router('orders')" class="flex items-center w-full text-left py-3 px-3 hover:bg-gray-50 rounded-lg text-slate-600 font-medium"><i data-lucide="package" class="mr-3 lucide-sm"></i> Orders</button>
+            <button onclick="app.router('wishlist')" class="flex items-center w-full text-left py-3 px-3 hover:bg-gray-50 rounded-lg text-slate-600 font-medium"><i data-lucide="heart" class="mr-3 lucide-sm"></i> Wishlist</button>
             <button onclick="app.router('profile')" class="flex items-center w-full text-left py-3 px-3 hover:bg-gray-50 rounded-lg text-slate-600 font-medium hide" id="mobile-nav-profile"><i data-lucide="user" class="mr-3 lucide-sm"></i> Profile</button>
             <button onclick="app.toggleCart()" class="flex items-center w-full text-left py-3 px-3 hover:bg-gray-50 rounded-lg text-slate-600 font-medium"><i data-lucide="shopping-bag" class="mr-3 lucide-sm"></i> Cart</button>
             <div id="mobile-auth-section" class="pt-2 mt-2 border-t border-gray-100"></div>
         </div>
     </nav>
 
-    <main class="flex-grow container mx-auto px-4 py-6 relative">
+    <!-- Mobile Bottom Navigation -->
+    <div class="fixed bottom-0 left-0 w-full z-40 md:hidden bg-white border-t border-gray-200 py-3 px-6 flex justify-between items-center">
+        <button onclick="app.router('home')" class="flex flex-col items-center text-slate-600">
+            <i data-lucide="home" class="lucide-sm mb-1"></i>
+            <span class="text-xs">Shop</span>
+        </button>
+        <button onclick="app.router('wishlist')" class="flex flex-col items-center text-slate-600">
+            <i data-lucide="heart" class="lucide-sm mb-1"></i>
+            <span class="text-xs">Wishlist</span>
+        </button>
+        <button onclick="app.toggleCart()" class="flex flex-col items-center text-slate-600 relative">
+            <i data-lucide="shopping-bag" class="lucide-sm mb-1"></i>
+            <span class="text-xs">Cart</span>
+            <span id="cart-count-mobile" class="absolute -top-2 -right-2 bg-danger text-white text-[8px] w-4 h-4 rounded-full flex items-center justify-center">0</span>
+        </button>
+        <button onclick="app.router('orders')" class="flex flex-col items-center text-slate-600">
+            <i data-lucide="package" class="lucide-sm mb-1"></i>
+            <span class="text-xs">Orders</span>
+        </button>
+        <button onclick="app.router('profile')" class="flex flex-col items-center text-slate-600">
+            <i data-lucide="user" class="lucide-sm mb-1"></i>
+            <span class="text-xs">Profile</span>
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-6 relative mb-16 md:mb-0">
         
         <div id="global-loader" class="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center hide transition-all">
             <div class="loader mb-4"></div>
             <p class="text-primary font-bold text-xs tracking-widest">SECURETHING</p>
         </div>
 
+        <!-- VIEW: HOME -->
         <section id="view-home" class="view-section">
-            
             <div class="relative bg-primary rounded-3xl overflow-hidden shadow-2xl group mb-12 h-[500px] flex items-center">
                 <div class="absolute inset-0 z-0">
-                    <img src="https://placehold.co/1920x800/0f172a/2563eb?text=Smart+Security+Hub" alt="Security Banner" class="w-full h-full object-cover opacity-60 mix-blend-overlay">
+                    <img id="hero-banner-img" src="https://cybercafejoy.netlify.app/Banners.png" alt="Security Banner" class="w-full h-full object-cover opacity-60 mix-blend-overlay">
                     <div class="absolute inset-0 bg-gradient-to-r from-primary via-primary/90 to-transparent"></div>
                 </div>
 
                 <div class="relative z-10 max-w-2xl px-8 md:px-16">
                     <div class="inline-flex items-center gap-2 bg-accent/20 border border-accent/20 rounded-full px-4 py-1.5 mb-6 backdrop-blur-md">
                         <span class="flex h-2 w-2 rounded-full bg-accent animate-pulse"></span>
-                        <span class="text-xs font-bold text-accent tracking-wide uppercase">Next Gen Security</span>
+                        <span class="text-xs font-bold text-accent tracking-wide uppercase" id="banner-subtitle">Next Gen Security</span>
                     </div>
-                    <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight">
+                    <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6 leading-tight" id="banner-title">
                         Protect What <br/>
                         <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Matters Most</span>
                     </h1>
@@ -199,7 +258,7 @@
                         Advanced smart locks, AI-powered cameras, and sensors that keep your home safe 24/7. Monitoring made simple.
                     </p>
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <button onclick="document.getElementById('product-grid').scrollIntoView({behavior: 'smooth'})" class="bg-accent text-white px-8 py-4 rounded-xl font-bold hover:bg-accentHover transition shadow-lg shadow-accent/25 flex items-center justify-center">
+                        <button onclick="document.getElementById('product-grid').scrollIntoView({behavior: 'smooth'})" class="bg-accent text-white px-8 py-4 rounded-xl font-bold hover:bg-accentHover transition shadow-lg shadow-accent/25 flex items-center justify-center" id="banner-cta">
                             Start Shopping <i data-lucide="arrow-right" class="ml-2 w-4 h-4"></i>
                         </button>
                         <button onclick="app.filterCategory('Security')" class="bg-white/5 text-white border border-white/20 px-8 py-4 rounded-xl font-bold hover:bg-white/10 transition flex items-center justify-center backdrop-blur-md">
@@ -208,27 +267,8 @@
                     </div>
                 </div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-                <div class="relative rounded-2xl overflow-hidden h-64 shadow-card group cursor-pointer" onclick="app.filterCategory('Electronics')">
-                    <img src="https://placehold.co/800x400/e2e8f0/1e293b?text=Smart+Cameras" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-8">
-                        <h3 class="text-2xl font-bold text-white mb-1">Smart Vision</h3>
-                        <p class="text-gray-300 text-sm mb-4">AI Cameras with night vision.</p>
-                        <span class="text-white text-xs font-bold underline decoration-accent underline-offset-4">Shop Cameras</span>
-                    </div>
-                </div>
-                <div class="relative rounded-2xl overflow-hidden h-64 shadow-card group cursor-pointer" onclick="app.filterCategory('Home')">
-                    <img src="https://placehold.co/800x400/f1f5f9/334155?text=Smart+Locks" class="absolute inset-0 w-full h-full object-cover transition duration-700 group-hover:scale-110">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-8">
-                        <h3 class="text-2xl font-bold text-white mb-1">Secure Access</h3>
-                        <p class="text-gray-300 text-sm mb-4">Keyless entry for modern homes.</p>
-                        <span class="text-white text-xs font-bold underline decoration-accent underline-offset-4">Shop Locks</span>
-                    </div>
-                </div>
-            </div>
 
+            <!-- Categories Filter -->
             <div class="flex flex-col md:flex-row justify-between items-end md:items-center mb-8 gap-6 sticky top-20 z-30 bg-bgLight/95 backdrop-blur py-4">
                 <div>
                     <h2 class="text-3xl font-bold text-slate-800 tracking-tight">Trending Products</h2>
@@ -238,9 +278,7 @@
                 <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
                     <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar w-full sm:w-auto" id="category-chips">
                         <button onclick="app.filterCategory('all')" class="px-5 py-2 bg-primary text-white rounded-full text-sm font-bold shadow-lg shadow-primary/20 transition-all hover:scale-105">All</button>
-                        <button onclick="app.filterCategory('Electronics')" class="px-5 py-2 bg-white border border-gray-200 hover:border-gray-300 text-slate-600 rounded-full text-sm font-medium transition-all hover:scale-105 hover:shadow-md">Electronics</button>
-                        <button onclick="app.filterCategory('Home')" class="px-5 py-2 bg-white border border-gray-200 hover:border-gray-300 text-slate-600 rounded-full text-sm font-medium transition-all hover:scale-105 hover:shadow-md">Home</button>
-                        <button onclick="app.filterCategory('Security')" class="px-5 py-2 bg-white border border-gray-200 hover:border-gray-300 text-slate-600 rounded-full text-sm font-medium transition-all hover:scale-105 hover:shadow-md">Security</button>
+                        <!-- Dynamic categories will be loaded here -->
                     </div>
 
                     <div class="relative w-full sm:w-64 group">
@@ -250,14 +288,60 @@
                 </div>
             </div>
 
+            <!-- Product Grid -->
             <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 pb-12">
-                </div>
+                <!-- Products will be loaded here -->
+            </div>
         </section>
 
+        <!-- VIEW: CATEGORIES -->
+        <section id="view-categories" class="view-section hide">
+            <div class="mb-8">
+                <h2 class="text-3xl font-extrabold text-slate-800">Browse Categories</h2>
+                <p class="text-slate-500 text-sm mt-1">Explore our wide range of products.</p>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="categories-grid"></div>
+        </section>
+
+        <!-- VIEW: WISHLIST -->
+        <section id="view-wishlist" class="view-section hide">
+            <div class="mb-8 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-danger">
+                    <i data-lucide="heart" class="w-5 h-5 fill-current"></i>
+                </div>
+                <div>
+                    <h2 class="text-3xl font-extrabold text-slate-800">My Wishlist</h2>
+                    <p class="text-slate-500 text-sm mt-1">Saved items for later.</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 pb-12" id="wishlist-grid"></div>
+        </section>
+
+        <!-- VIEW: SEARCH RESULTS -->
+        <section id="view-search-results" class="view-section hide">
+            <div class="flex items-center gap-4 mb-8">
+                <button onclick="app.router('home')" class="flex items-center text-slate-500 hover:text-primary transition-colors text-sm font-bold">
+                    <i data-lucide="arrow-left" class="mr-2 lucide-sm"></i> Back
+                </button>
+                <div>
+                    <h2 class="text-2xl font-extrabold text-slate-800">Search Results</h2>
+                    <p class="text-slate-500 text-sm">Showing results for "<span id="search-query-display" class="font-bold text-accent"></span>"</p>
+                </div>
+            </div>
+            <div id="search-results-grid" class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 pb-12"></div>
+        </section>
+
+        <!-- VIEW: PRODUCT DETAILS -->
         <section id="view-product-details" class="view-section hide">
-            <button onclick="app.router('home')" class="mb-6 flex items-center text-slate-500 hover:text-primary transition-colors text-sm font-bold"><i data-lucide="arrow-left" class="mr-2 lucide-sm"></i> Back to Shop</button>
+            <button onclick="app.router('home')" class="mb-6 flex items-center text-slate-500 hover:text-primary transition-colors text-sm font-bold">
+                <i data-lucide="arrow-left" class="mr-2 lucide-sm"></i> Back to Shop
+            </button>
             <div class="bg-white rounded-3xl shadow-card overflow-hidden grid grid-cols-1 md:grid-cols-2 border border-gray-100">
                 <div class="bg-gray-50 p-12 flex items-center justify-center border-r border-gray-100 relative group">
+                    <div class="sale-badge hide" id="detail-badge">SALE</div>
+                    <button onclick="app.toggleWishlist(app.currentProductDetailId)" class="absolute top-6 right-6 bg-white p-3 rounded-xl shadow-md hover:shadow-lg transition z-20">
+                        <i data-lucide="heart" class="lucide-sm" id="detail-wishlist-icon"></i>
+                    </button>
                     <div class="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] opacity-50"></div>
                     <img id="detail-img" src="" class="max-h-96 w-full object-contain drop-shadow-xl relative z-10 transform group-hover:scale-105 transition-transform duration-500">
                 </div>
@@ -278,7 +362,10 @@
                         <div class="flex justify-between items-end mb-8">
                             <div>
                                 <span class="text-gray-400 text-xs font-bold uppercase tracking-wider">Total Price</span>
-                                <div id="detail-price" class="text-5xl font-extrabold text-slate-900 tracking-tight mt-1">₹2,499</div>
+                                <div class="flex items-baseline gap-3">
+                                    <span id="detail-price" class="text-5xl font-extrabold text-slate-900 tracking-tight mt-1">₹2,499</span>
+                                    <span id="detail-old-price" class="old-price text-xl hide">₹0</span>
+                                </div>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
@@ -294,6 +381,7 @@
             </div>
         </section>
 
+        <!-- VIEW: LOGIN -->
         <section id="view-login" class="view-section hide max-w-sm mx-auto mt-20">
             <div class="bg-white p-10 rounded-3xl shadow-card border border-gray-100">
                 <div class="text-center mb-8">
@@ -305,6 +393,13 @@
                 </div>
                 
                 <form id="auth-form" onsubmit="app.handleAuth(event)">
+                    <div id="auth-name-group" class="hide mb-5">
+                        <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Full Name</label>
+                        <div class="relative group">
+                            <input type="text" id="auth-name" class="w-full border border-gray-200 rounded-xl px-4 py-3.5 pl-11 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition bg-gray-50 focus:bg-white text-sm font-medium" placeholder="John Doe">
+                            <i data-lucide="user" class="absolute left-3.5 top-3.5 text-gray-400 group-focus-within:text-accent transition-colors lucide-sm"></i>
+                        </div>
+                    </div>
                     <div class="space-y-5">
                         <div>
                             <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Email Address</label>
@@ -340,9 +435,14 @@
                     <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5 mr-3" alt="Google">
                     Google Account
                 </button>
+
+                <div class="mt-8 text-center border-t border-slate-200 pt-4">
+                    <button onclick="app.router('seller-login')" class="text-xs font-bold text-slate-400 hover:text-primary uppercase tracking-wide">Seller Portal Login</button>
+                </div>
             </div>
         </section>
 
+        <!-- VIEW: SELLER LOGIN -->
         <section id="view-seller-login" class="view-section hide max-w-sm mx-auto mt-20 relative">
             <div class="bg-primary p-10 rounded-3xl shadow-2xl text-white relative overflow-hidden border border-white/10">
                 <div class="absolute -top-10 -right-10 opacity-5 text-white"><i data-lucide="store" class="w-48 h-48"></i></div>
@@ -381,30 +481,133 @@
             </div>
         </section>
 
-        <section id="view-profile" class="view-section hide">
-             <div class="max-w-4xl mx-auto">
-                 <h2 class="text-3xl font-bold mb-8 text-slate-800">My Profile</h2>
-                 <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100 mb-8 flex flex-col md:flex-row items-center gap-8">
-                     <div class="w-24 h-24 bg-primary/5 rounded-full flex items-center justify-center text-primary text-4xl shadow-inner">
-                         <i data-lucide="user"></i>
-                     </div>
-                     <div class="text-center md:text-left flex-grow">
-                         <h3 class="font-bold text-2xl text-slate-900" id="profile-name">User Name</h3>
-                         <p class="text-slate-500 text-sm flex items-center justify-center md:justify-start mt-2"><i data-lucide="mail" class="lucide-sm mr-2 text-accent"></i> <span id="profile-email">user@email.com</span></p>
-                     </div>
-                     <span class="bg-slate-100 text-slate-600 px-4 py-2 rounded-lg font-bold uppercase tracking-widest text-xs border border-slate-200" id="profile-role">Customer</span>
-                 </div>
+        <!-- VIEW: SELLER DASHBOARD -->
+        <section id="view-seller-dashboard" class="view-section hide">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-slate-900">Seller Dashboard</h2>
+                    <p class="text-slate-500 text-sm mt-1">Manage your business metrics and orders.</p>
+                </div>
+                <button onclick="app.openAddProductModal()" class="bg-success text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-emerald-600 shadow-lg shadow-success/20 transition flex items-center transform hover:scale-105 active:scale-95">
+                    <i data-lucide="plus" class="mr-2 lucide-sm"></i> Add New Product
+                </button>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+                <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100 flex justify-between items-center group hover:border-accent/30 transition-colors">
+                    <div>
+                        <div class="text-slate-400 text-xs uppercase font-bold tracking-wider mb-2">Total Products</div>
+                        <div class="text-4xl font-extrabold text-slate-900 group-hover:text-accent transition-colors" id="seller-stat-products">0</div>
+                    </div>
+                    <div class="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center text-accent shadow-inner">
+                        <i data-lucide="box" class="lucide-xl"></i>
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100 flex justify-between items-center group hover:border-warning/30 transition-colors">
+                    <div>
+                        <div class="text-slate-400 text-xs uppercase font-bold tracking-wider mb-2">Pending Orders</div>
+                        <div class="text-4xl font-extrabold text-slate-900 group-hover:text-warning transition-colors" id="seller-stat-orders">0</div>
+                    </div>
+                    <div class="w-16 h-16 bg-warning/10 rounded-2xl flex items-center justify-center text-warning shadow-inner">
+                        <i data-lucide="clock" class="lucide-xl"></i>
+                    </div>
+                </div>
+            </div>
 
-                 <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100">
-                     <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
-                        <h3 class="font-bold text-lg text-slate-800 flex items-center"><i data-lucide="map-pin" class="mr-2 text-accent"></i> Saved Addresses</h3>
-                     </div>
-                     <div id="profile-address-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                         </div>
-                 </div>
-             </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100 h-[600px] flex flex-col">
+                    <h3 class="font-bold border-b border-gray-100 pb-5 mb-5 text-slate-800 flex items-center text-lg"><i data-lucide="package" class="mr-3 lucide-sm text-slate-400"></i> My Inventory</h3>
+                    <div id="seller-products-list" class="space-y-3 flex-grow overflow-y-auto custom-scrollbar pr-2"></div>
+                </div>
+                <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100 h-[600px] flex flex-col">
+                    <h3 class="font-bold border-b border-gray-100 pb-5 mb-5 text-slate-800 flex items-center text-lg"><i data-lucide="clipboard-list" class="mr-3 lucide-sm text-slate-400"></i> Manage Orders</h3>
+                    <div id="seller-orders-list" class="space-y-4 flex-grow overflow-y-auto custom-scrollbar pr-2"></div>
+                </div>
+            </div>
         </section>
 
+        <!-- VIEW: ADMIN DASHBOARD -->
+        <section id="view-admin-dashboard" class="view-section hide">
+            <div class="flex items-center gap-4 mb-10">
+                <div class="bg-primary text-white p-4 rounded-2xl shadow-lg shadow-primary/30"><i data-lucide="shield-alert" class="lucide-lg"></i></div>
+                <div>
+                    <h2 class="text-3xl font-extrabold text-slate-900">Master Control</h2>
+                    <p class="text-sm text-slate-500 mt-1">System wide verification and management.</p>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                <div class="bg-primary text-white p-8 rounded-3xl shadow-xl relative overflow-hidden group">
+                    <div class="relative z-10">
+                        <div class="text-white/60 text-xs font-bold uppercase tracking-widest mb-3">Total Platform Sales</div>
+                        <div class="text-5xl font-extrabold" id="admin-total-sales">₹0</div>
+                    </div>
+                    <i data-lucide="trending-up" class="absolute right-8 top-8 text-white/5 w-32 h-32 group-hover:scale-110 transition duration-700"></i>
+                </div>
+                <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100">
+                    <div class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-3">Total Orders Processed</div>
+                    <div class="text-5xl font-extrabold text-slate-900" id="admin-order-count">0</div>
+                </div>
+            </div>
+            
+            <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100 mb-8">
+                <h3 class="font-bold text-lg mb-6 text-slate-800 flex items-center"><i data-lucide="check-square" class="mr-3 text-warning"></i> Payment Verification Queue</h3>
+                <div id="admin-payment-queue" class="space-y-3"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100">
+                    <h3 class="font-bold text-lg mb-6 text-slate-800 flex items-center"><i data-lucide="user-plus" class="mr-3 text-accent"></i> Seller Applications</h3>
+                    <div id="admin-seller-requests" class="space-y-3"></div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100">
+                        <h3 class="font-bold text-lg mb-6 text-slate-800 flex items-center"><i data-lucide="users" class="mr-3 text-primary"></i> Create Service Agent</h3>
+                        <form onsubmit="app.createServiceAccount(event)" class="flex gap-3">
+                            <input type="email" id="service-email-input" placeholder="Agent Email Address" class="border border-gray-200 p-3.5 flex-grow rounded-xl bg-gray-50 text-sm focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none" required>
+                            <button type="submit" class="bg-primary text-white px-6 rounded-xl hover:bg-primaryLight transition shadow-md font-bold">Create</button>
+                        </form>
+                    </div>
+
+                    <div class="bg-warning/5 p-8 rounded-3xl shadow-card border border-warning/10">
+                        <h3 class="font-bold text-lg mb-6 text-warning-700 flex items-center"><i data-lucide="user-check" class="mr-3 text-warning"></i> Quick Seller Onboarding</h3>
+                        <form onsubmit="app.createSellerManual(event)" class="space-y-4">
+                            <input type="email" id="manual-seller-email" placeholder="Seller Email ID" class="border border-warning/20 p-3.5 w-full rounded-xl bg-white text-sm focus:ring-warning focus:border-warning outline-none" required>
+                            <input type="text" id="manual-seller-name" placeholder="Business Name" class="border border-warning/20 p-3.5 w-full rounded-xl bg-white text-sm focus:ring-warning focus:border-warning outline-none" required>
+                            <button type="submit" class="bg-warning text-primary px-4 py-3.5 rounded-xl w-full hover:bg-yellow-400 transition font-bold shadow-md">Create & Send Credentials</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: PROFILE -->
+        <section id="view-profile" class="view-section hide max-w-lg mx-auto">
+            <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100 relative mt-16">
+                <div class="absolute -top-16 left-1/2 transform -translate-x-1/2">
+                    <div class="w-32 h-32 bg-primary rounded-[40px] flex items-center justify-center shadow-lg rotate-45 border-4 border-white">
+                        <div class="transform -rotate-45 text-white">
+                            <i data-lucide="user" class="w-12 h-12"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-16">
+                    <h2 class="text-2xl font-extrabold text-slate-800" id="profile-name">User</h2>
+                    <p class="text-slate-500 text-sm font-bold uppercase tracking-wide mt-1" id="profile-role">Customer</p>
+                    <p class="text-slate-400 text-xs mt-1" id="profile-email">email@example.com</p>
+                </div>
+                <div class="mt-8 space-y-4 text-left">
+                    <h3 class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Saved Addresses</h3>
+                    <div id="profile-address-list" class="space-y-3"></div>
+                </div>
+                <button onclick="app.logout()" class="w-full py-3 mt-8 bg-red-50 text-danger hover:bg-red-100 transition rounded-xl font-bold">
+                    Log Out
+                </button>
+            </div>
+        </section>
+
+        <!-- VIEW: CHECKOUT -->
         <section id="view-checkout" class="view-section hide">
             <h2 class="text-3xl font-bold mb-8 text-slate-800">Secure Checkout</h2>
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -483,6 +686,7 @@
             </div>
         </section>
 
+        <!-- VIEW: SUCCESS -->
         <section id="view-success" class="view-section hide text-center pt-24 max-w-md mx-auto">
             <div class="bg-white p-12 rounded-[2rem] shadow-card border border-gray-100">
                 <div class="flex justify-center mb-8">
@@ -497,35 +701,65 @@
             </div>
         </section>
 
+        <!-- VIEW: ORDERS -->
         <section id="view-orders" class="view-section hide max-w-4xl mx-auto">
             <h2 class="text-3xl font-bold mb-8 text-slate-800 flex items-center"><i data-lucide="package" class="mr-3 text-accent"></i> Order History</h2>
-            <div id="orders-list" class="space-y-6">
+            <div id="orders-list" class="space-y-6"></div>
+        </section>
+
+        <!-- VIEW: SERVICE DASHBOARD -->
+        <section id="view-service-dashboard" class="view-section hide">
+            <h2 class="text-3xl font-extrabold mb-8 text-slate-900 flex items-center"><i data-lucide="headphones" class="mr-4 text-accent"></i> Support Desk</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 h-[700px]">
+                <div class="bg-white p-6 rounded-3xl shadow-card border border-gray-100 md:col-span-1 overflow-hidden flex flex-col">
+                    <h3 class="font-bold mb-6 text-slate-400 text-xs uppercase tracking-widest px-2">Active Tickets</h3>
+                    <div id="support-tickets-list" class="space-y-2 flex-grow overflow-y-auto custom-scrollbar px-2 pb-2"></div>
                 </div>
+                <div class="bg-white rounded-3xl shadow-card border border-gray-100 md:col-span-2 flex flex-col overflow-hidden relative">
+                    <div id="service-chat-header" class="border-b border-gray-100 p-6 bg-white z-10 font-bold text-slate-800 flex items-center justify-between">
+                        <span class="text-gray-400">Select a ticket to view chat</span>
+                        <i data-lucide="message-square" class="text-gray-200"></i>
+                    </div>
+                    <div id="service-chat-messages" class="flex-grow bg-slate-50 p-8 overflow-y-auto space-y-4"></div>
+                    <form onsubmit="app.sendServiceMessage(event)" class="p-6 border-t border-gray-100 bg-white flex gap-4">
+                        <input type="text" id="service-chat-input" class="flex-grow border border-gray-200 rounded-xl px-5 py-4 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition font-medium" placeholder="Reply to customer..." disabled>
+                        <button type="submit" id="service-chat-send-btn" class="bg-primary text-white px-6 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primaryLight transition shadow-lg font-bold" disabled><i data-lucide="send" class="lucide-sm"></i></button>
+                    </form>
+                </div>
+            </div>
         </section>
 
+        <!-- VIEW: CUSTOMER CHAT -->
         <section id="view-customer-chat" class="view-section hide max-w-3xl mx-auto">
-             <button onclick="app.router('orders')" class="mb-4 text-slate-500 hover:text-accent flex items-center text-sm font-bold"><i data-lucide="arrow-left" class="mr-2 lucide-sm"></i> Back to Orders</button>
-             <div class="bg-white rounded-3xl shadow-card border border-gray-100 flex flex-col h-[600px] overflow-hidden">
-                 <div class="p-5 border-b border-gray-100 bg-white flex justify-between items-center z-10 shadow-sm">
-                     <div class="flex items-center gap-4">
-                         <div class="bg-primary/5 p-3 rounded-xl text-primary"><i data-lucide="headset"></i></div>
-                         <div>
-                             <h3 class="font-bold text-slate-800 text-base">Customer Support</h3>
-                             <p class="text-xs text-slate-400 font-mono mt-0.5" id="customer-chat-id">Ticket #...</p>
-                         </div>
-                     </div>
-                     <span class="bg-green-100 text-green-700 text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider flex items-center"><span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span> Online</span>
-                 </div>
-                 <div id="customer-chat-messages" class="flex-grow p-6 overflow-y-auto space-y-4 bg-slate-50"></div>
-                 <form onsubmit="app.sendCustomerMessage(event)" class="p-5 border-t border-gray-100 bg-white flex gap-4 items-center">
-                     <div class="relative flex-grow">
+            <button onclick="app.router('orders')" class="mb-4 text-slate-500 hover:text-accent flex items-center text-sm font-bold">
+                <i data-lucide="arrow-left" class="mr-2 lucide-sm"></i> Back to Orders
+            </button>
+            <div class="bg-white rounded-3xl shadow-card border border-gray-100 flex flex-col h-[600px] overflow-hidden">
+                <div class="p-5 border-b border-gray-100 bg-white flex justify-between items-center z-10 shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <div class="bg-primary/5 p-3 rounded-xl text-primary"><i data-lucide="headset"></i></div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base">Customer Support</h3>
+                            <p class="text-xs text-slate-400 font-mono mt-0.5" id="customer-chat-id">Ticket #...</p>
+                        </div>
+                    </div>
+                    <span class="bg-green-100 text-green-700 text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider flex items-center">
+                        <span class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></span> Online
+                    </span>
+                </div>
+                <div id="customer-chat-messages" class="flex-grow p-6 overflow-y-auto space-y-4 bg-slate-50"></div>
+                <form onsubmit="app.sendCustomerMessage(event)" class="p-5 border-t border-gray-100 bg-white flex gap-4 items-center">
+                    <div class="relative flex-grow">
                         <input type="text" id="customer-chat-input" class="w-full bg-gray-50 border border-gray-200 rounded-xl px-5 py-4 pr-12 focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition font-medium" placeholder="Type your message..." required>
-                     </div>
-                     <button type="submit" class="bg-primary text-white p-4 rounded-xl hover:bg-primaryLight transition shadow-lg flex-shrink-0 hover:scale-105 transform active:scale-95"><i data-lucide="send" class="lucide-sm"></i></button>
-                 </form>
-             </div>
+                    </div>
+                    <button type="submit" class="bg-primary text-white p-4 rounded-xl hover:bg-primaryLight transition shadow-lg flex-shrink-0 hover:scale-105 transform active:scale-95">
+                        <i data-lucide="send" class="lucide-sm"></i>
+                    </button>
+                </form>
+            </div>
         </section>
 
+        <!-- VIEW: SELLER APPLY -->
         <section id="view-seller-apply" class="view-section hide max-w-2xl mx-auto bg-white p-12 rounded-3xl shadow-card border border-gray-100">
             <div class="text-center mb-10">
                 <div class="bg-accent/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-accent">
@@ -583,126 +817,9 @@
             </form>
         </section>
 
-        <section id="view-seller-dashboard" class="view-section hide">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
-                <div>
-                    <h2 class="text-3xl font-extrabold text-slate-900">Seller Overview</h2>
-                    <p class="text-slate-500 text-sm mt-1">Manage your business metrics and orders.</p>
-                </div>
-                <button onclick="app.openAddProductModal()" class="bg-success text-white px-6 py-3 rounded-xl text-sm font-bold hover:bg-emerald-600 shadow-lg shadow-success/20 transition flex items-center transform hover:scale-105 active:scale-95"><i data-lucide="plus" class="mr-2 lucide-sm"></i> Add New Product</button>
-            </div>
-            
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
-                <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100 flex justify-between items-center group hover:border-accent/30 transition-colors">
-                    <div>
-                        <div class="text-slate-400 text-xs uppercase font-bold tracking-wider mb-2">Total Products</div>
-                        <div class="text-4xl font-extrabold text-slate-900 group-hover:text-accent transition-colors" id="seller-stat-products">0</div>
-                    </div>
-                    <div class="w-16 h-16 bg-accent/10 rounded-2xl flex items-center justify-center text-accent shadow-inner">
-                        <i data-lucide="box" class="lucide-xl"></i>
-                    </div>
-                </div>
-                <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100 flex justify-between items-center group hover:border-warning/30 transition-colors">
-                    <div>
-                        <div class="text-slate-400 text-xs uppercase font-bold tracking-wider mb-2">Pending Orders</div>
-                        <div class="text-4xl font-extrabold text-slate-900 group-hover:text-warning transition-colors" id="seller-stat-orders">0</div>
-                    </div>
-                    <div class="w-16 h-16 bg-warning/10 rounded-2xl flex items-center justify-center text-warning shadow-inner">
-                        <i data-lucide="clock" class="lucide-xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100 h-[600px] flex flex-col">
-                    <h3 class="font-bold border-b border-gray-100 pb-5 mb-5 text-slate-800 flex items-center text-lg"><i data-lucide="package" class="mr-3 lucide-sm text-slate-400"></i> My Inventory</h3>
-                    <div id="seller-products-list" class="space-y-3 flex-grow overflow-y-auto custom-scrollbar pr-2"></div>
-                </div>
-                <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100 h-[600px] flex flex-col">
-                    <h3 class="font-bold border-b border-gray-100 pb-5 mb-5 text-slate-800 flex items-center text-lg"><i data-lucide="clipboard-list" class="mr-3 lucide-sm text-slate-400"></i> Manage Orders</h3>
-                    <div id="seller-orders-list" class="space-y-4 flex-grow overflow-y-auto custom-scrollbar pr-2"></div>
-                </div>
-            </div>
-        </section>
-
-        <section id="view-admin-dashboard" class="view-section hide">
-            <div class="flex items-center gap-4 mb-10">
-                <div class="bg-primary text-white p-4 rounded-2xl shadow-lg shadow-primary/30"><i data-lucide="shield-alert" class="lucide-lg"></i></div>
-                <div>
-                    <h2 class="text-3xl font-extrabold text-slate-900">Master Control</h2>
-                    <p class="text-sm text-slate-500 mt-1">System wide verification and management.</p>
-                </div>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-                <div class="bg-primary text-white p-8 rounded-3xl shadow-xl relative overflow-hidden group">
-                    <div class="relative z-10">
-                        <div class="text-white/60 text-xs font-bold uppercase tracking-widest mb-3">Total Platform Sales</div>
-                        <div class="text-5xl font-extrabold" id="admin-total-sales">₹0</div>
-                    </div>
-                    <i data-lucide="trending-up" class="absolute right-8 top-8 text-white/5 w-32 h-32 group-hover:scale-110 transition duration-700"></i>
-                </div>
-                <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100">
-                    <div class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-3">Total Orders Processed</div>
-                    <div class="text-5xl font-extrabold text-slate-900" id="admin-order-count">0</div>
-                </div>
-            </div>
-            
-            <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100 mb-8">
-                <h3 class="font-bold text-lg mb-6 text-slate-800 flex items-center"><i data-lucide="check-square" class="mr-3 text-warning"></i> Payment Verification Queue</h3>
-                <div id="admin-payment-queue" class="space-y-3"></div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100">
-                    <h3 class="font-bold text-lg mb-6 text-slate-800 flex items-center"><i data-lucide="user-plus" class="mr-3 text-accent"></i> Seller Applications</h3>
-                    <div id="admin-seller-requests" class="space-y-3"></div>
-                </div>
-
-                <div class="space-y-6">
-                    <div class="bg-white p-8 rounded-3xl shadow-card border border-gray-100">
-                        <h3 class="font-bold text-lg mb-6 text-slate-800 flex items-center"><i data-lucide="users" class="mr-3 text-primary"></i> Create Service Agent</h3>
-                        <form onsubmit="app.createServiceAccount(event)" class="flex gap-3">
-                            <input type="email" id="service-email-input" placeholder="Agent Email Address" class="border border-gray-200 p-3.5 flex-grow rounded-xl bg-gray-50 text-sm focus:ring-2 focus:ring-accent/20 focus:border-accent outline-none" required>
-                            <button type="submit" class="bg-primary text-white px-6 rounded-xl hover:bg-primaryLight transition shadow-md font-bold">Create</button>
-                        </form>
-                    </div>
-
-                    <div class="bg-warning/5 p-8 rounded-3xl shadow-card border border-warning/10">
-                        <h3 class="font-bold text-lg mb-6 text-warning-700 flex items-center"><i data-lucide="user-check" class="mr-3 text-warning"></i> Quick Seller Onboarding</h3>
-                        <form onsubmit="app.createSellerManual(event)" class="space-y-4">
-                            <input type="email" id="manual-seller-email" placeholder="Seller Email ID" class="border border-warning/20 p-3.5 w-full rounded-xl bg-white text-sm focus:ring-warning focus:border-warning outline-none" required>
-                            <input type="text" id="manual-seller-name" placeholder="Business Name" class="border border-warning/20 p-3.5 w-full rounded-xl bg-white text-sm focus:ring-warning focus:border-warning outline-none" required>
-                            <button type="submit" class="bg-warning text-primary px-4 py-3.5 rounded-xl w-full hover:bg-yellow-400 transition font-bold shadow-md">Create & Send Credentials</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="view-service-dashboard" class="view-section hide">
-            <h2 class="text-3xl font-extrabold mb-8 text-slate-900 flex items-center"><i data-lucide="headphones" class="mr-4 text-accent"></i> Support Desk</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 h-[700px]">
-                <div class="bg-white p-6 rounded-3xl shadow-card border border-gray-100 md:col-span-1 overflow-hidden flex flex-col">
-                    <h3 class="font-bold mb-6 text-slate-400 text-xs uppercase tracking-widest px-2">Active Tickets</h3>
-                    <div id="support-tickets-list" class="space-y-2 flex-grow overflow-y-auto custom-scrollbar px-2 pb-2"></div>
-                </div>
-                <div class="bg-white rounded-3xl shadow-card border border-gray-100 md:col-span-2 flex flex-col overflow-hidden relative">
-                    <div id="service-chat-header" class="border-b border-gray-100 p-6 bg-white z-10 font-bold text-slate-800 flex items-center justify-between">
-                        <span class="text-gray-400">Select a ticket to view chat</span>
-                        <i data-lucide="message-square" class="text-gray-200"></i>
-                    </div>
-                    <div id="service-chat-messages" class="flex-grow bg-slate-50 p-8 overflow-y-auto space-y-4"></div>
-                    <form onsubmit="app.sendServiceMessage(event)" class="p-6 border-t border-gray-100 bg-white flex gap-4">
-                        <input type="text" id="service-chat-input" class="flex-grow border border-gray-200 rounded-xl px-5 py-4 bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition font-medium" placeholder="Reply to customer..." disabled>
-                        <button type="submit" id="service-chat-send-btn" class="bg-primary text-white px-6 rounded-xl disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primaryLight transition shadow-lg font-bold" disabled><i data-lucide="send" class="lucide-sm"></i></button>
-                    </form>
-                </div>
-            </div>
-        </section>
-
     </main>
 
+    <!-- Footer -->
     <footer class="bg-white border-t border-gray-200 pt-20 pb-10 mt-auto">
         <div class="container mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-16 mb-16">
@@ -742,17 +859,15 @@
         </div>
     </footer>
 
+    <!-- Cart Sidebar -->
     <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-96 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-[60] flex flex-col font-sans">
         <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-white">
             <h3 class="font-bold text-xl text-slate-800 flex items-center"><i data-lucide="shopping-cart" class="mr-3 text-accent"></i> Your Cart</h3>
-            <button onclick="app.toggleCart()" class="text-slate-400 hover:text-danger bg-gray-50 hover:bg-red-50 p-2 rounded-full transition-colors"><i data-lucide="x" class="lucide-sm"></i></button>
+            <button onclick="app.toggleCart()" class="text-slate-400 hover:text-danger bg-gray-50 hover:bg-red-50 p-2 rounded-full transition-colors">
+                <i data-lucide="x" class="lucide-sm"></i>
+            </button>
         </div>
-        <div id="cart-items" class="flex-grow overflow-y-auto p-6 space-y-4 bg-gray-50/50">
-            <div class="flex flex-col items-center justify-center h-64 text-slate-300">
-                <i data-lucide="shopping-bag" class="w-16 h-16 mb-4 opacity-50"></i>
-                <p class="font-medium text-sm">Your cart is empty.</p>
-            </div>
-        </div>
+        <div id="cart-items" class="flex-grow overflow-y-auto p-6 space-y-4 bg-gray-50/50"></div>
         <div class="p-8 border-t border-gray-100 bg-white">
             <div class="flex justify-between font-extrabold text-xl mb-6 text-slate-900">
                 <span>Total</span>
@@ -764,11 +879,14 @@
         </div>
     </div>
 
+    <!-- Add Product Modal -->
     <div id="add-product-modal" class="fixed inset-0 bg-primary/80 backdrop-blur-sm z-50 flex items-center justify-center hide transition-opacity p-4">
         <div class="bg-white p-8 rounded-3xl w-full max-w-lg shadow-2xl transform transition-all scale-100 border border-gray-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div class="flex justify-between items-center mb-8">
                 <h3 class="text-2xl font-bold text-slate-900" id="modal-title">Add New Product</h3>
-                <button onclick="document.getElementById('add-product-modal').classList.add('hide')" class="text-gray-400 hover:text-slate-800 bg-gray-50 hover:bg-gray-100 p-2 rounded-full transition"><i data-lucide="x"></i></button>
+                <button onclick="document.getElementById('add-product-modal').classList.add('hide')" class="text-gray-400 hover:text-slate-800 bg-gray-50 hover:bg-gray-100 p-2 rounded-full transition">
+                    <i data-lucide="x"></i>
+                </button>
             </div>
             <form onsubmit="app.sellerSaveProduct(event)" class="space-y-5">
                 <input type="hidden" name="p_id">
@@ -786,20 +904,34 @@
                         <input type="number" name="p_price" class="border border-gray-200 p-3.5 w-full rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition font-medium" required>
                     </div>
                     <div>
+                        <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Discount (%)</label>
+                        <input type="number" name="p_discount" class="border border-gray-200 p-3.5 w-full rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition font-medium" min="0" max="99">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
                         <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Category</label>
                         <select name="p_cat" class="border border-gray-200 p-3.5 w-full rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition text-sm font-medium">
                             <option value="Electronics">Electronics</option>
                             <option value="Home">Home</option>
                             <option value="Security">Security</option>
+                            <option value="Fashion">Fashion</option>
+                            <option value="Sports">Sports</option>
+                            <option value="Toys">Toys</option>
                         </select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Rating</label>
+                        <input type="number" name="p_rating" class="border border-gray-200 p-3.5 w-full rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition font-medium" step="0.1" min="0" max="5" value="5.0">
                     </div>
                 </div>
                 <div>
                     <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Image URL</label>
                     <div class="relative group">
-                         <input type="text" name="p_img" class="border border-gray-200 p-3.5 w-full rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition pl-11 font-medium">
+                         <input type="text" name="p_img" id="p_img_input" class="border border-gray-200 p-3.5 w-full rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition pl-11 font-medium" oninput="document.getElementById('product-preview').src = this.value || 'https://placehold.co/400x300?text=Preview'">
                          <i data-lucide="image" class="absolute left-3.5 top-3.5 text-gray-400 group-focus-within:text-accent transition-colors lucide-sm"></i>
                     </div>
+                    <img id="product-preview" src="https://placehold.co/400x300?text=Preview" class="w-full h-32 object-contain rounded-xl bg-slate-100 border border-slate-200 mt-2">
                 </div>
                 
                 <div class="flex justify-end space-x-3 mt-8 pt-4 border-t border-gray-100">
@@ -812,15 +944,42 @@
         </div>
     </div>
 
+    <!-- Order Details Modal -->
     <div id="order-details-modal" class="fixed inset-0 bg-primary/80 backdrop-blur-sm z-50 flex items-center justify-center hide transition-opacity p-4">
         <div class="bg-white p-8 rounded-3xl w-full max-w-2xl shadow-2xl transform transition-all scale-100 border border-gray-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div class="flex justify-between items-center mb-8 border-b border-gray-100 pb-4">
                 <h3 class="text-2xl font-bold text-slate-900">Order Details</h3>
-                <button onclick="document.getElementById('order-details-modal').classList.add('hide')" class="text-gray-400 hover:text-slate-800 bg-gray-50 hover:bg-gray-100 p-2 rounded-full transition"><i data-lucide="x"></i></button>
+                <button onclick="document.getElementById('order-details-modal').classList.add('hide')" class="text-gray-400 hover:text-slate-800 bg-gray-50 hover:bg-gray-100 p-2 rounded-full transition">
+                    <i data-lucide="x"></i>
+                </button>
             </div>
             
-            <div class="space-y-8" id="order-details-content">
+            <div class="space-y-8" id="order-details-content"></div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="edit-profile-modal" class="fixed inset-0 bg-primary/80 backdrop-blur-sm z-50 flex items-center justify-center hide transition-opacity p-4">
+        <div class="bg-white p-8 rounded-3xl w-full max-w-md shadow-2xl transform transition-all scale-100 border border-gray-100">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-bold text-slate-900">Edit Profile</h3>
+                <button onclick="document.getElementById('edit-profile-modal').classList.add('hide')" class="text-gray-400 hover:text-slate-800 bg-gray-50 hover:bg-gray-100 p-2 rounded-full transition">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <form onsubmit="app.updateProfile(event)" class="space-y-4">
+                <div>
+                    <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Display Name</label>
+                    <input type="text" id="edit-profile-name" class="border border-gray-200 p-3.5 w-full rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition font-medium" required>
                 </div>
+                <div>
+                    <label class="block text-slate-700 text-xs font-bold mb-2 uppercase tracking-wide">Photo URL</label>
+                    <input type="text" id="edit-profile-photo" class="border border-gray-200 p-3.5 w-full rounded-xl bg-gray-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-accent/20 focus:border-accent transition font-medium">
+                </div>
+                <button type="submit" class="w-full bg-primary text-white py-3.5 rounded-xl hover:bg-primaryLight transition shadow-lg font-bold">
+                    Update Profile
+                </button>
+            </form>
         </div>
     </div>
 
@@ -833,7 +992,8 @@
             signOut, 
             onAuthStateChanged,
             GoogleAuthProvider,
-            signInWithPopup
+            signInWithPopup,
+            updateProfile
         } from "firebase/auth";
         import { 
             getFirestore, 
@@ -880,11 +1040,20 @@
             userRole: 'customer',
             cart: [],
             products: [],
+            wishlist: [],
             currentTicketId: null,
             activeCategory: 'all',
             currentProductDetailId: null,
             chatUnsubscribe: null,
-            adminOrders: [], // Store orders for details view
+            adminOrders: [],
+            categories: [
+                { id: 'Electronics', name: 'Electronics', icon: 'cpu', color: 'bg-blue-100 text-blue-600' },
+                { id: 'Home', name: 'Home', icon: 'home', color: 'bg-orange-100 text-orange-600' },
+                { id: 'Security', name: 'Security', icon: 'lock', color: 'bg-red-100 text-red-600' },
+                { id: 'Fashion', name: 'Fashion', icon: 'shirt', color: 'bg-pink-100 text-pink-600' },
+                { id: 'Sports', name: 'Sports', icon: 'activity', color: 'bg-green-100 text-green-600' },
+                { id: 'Toys', name: 'Toys', icon: 'gamepad-2', color: 'bg-purple-100 text-purple-600' }
+            ],
 
             // --- HELPER: UPDATE ICONS ---
             updateIcons: () => {
@@ -916,6 +1085,19 @@
                 }, 3000);
             },
 
+            // --- INITIALIZATION ---
+            init: () => {
+                const savedCart = localStorage.getItem('cart');
+                if (savedCart) {
+                    app.cart = JSON.parse(savedCart);
+                    app.updateCartUI();
+                }
+                const savedWishlist = localStorage.getItem('wishlist');
+                if (savedWishlist) app.wishlist = JSON.parse(savedWishlist);
+                
+                app.updateIcons();
+            },
+
             // --- ROUTER ---
             router: async (viewId) => {
                 if(app.chatUnsubscribe) { app.chatUnsubscribe(); app.chatUnsubscribe = null; }
@@ -926,9 +1108,15 @@
                 const view = document.getElementById(`view-${viewId}`);
                 if (view) view.classList.remove('hide');
 
-                if (viewId === 'home') await app.loadProducts();
+                if (viewId === 'home') { 
+                    await app.loadProducts(); 
+                    app.loadBanners(); 
+                    app.loadHomeCategories(); 
+                }
+                if (viewId === 'categories') app.loadCategories();
                 if (viewId === 'orders') await app.loadCustomerOrders();
                 if (viewId === 'profile') await app.loadProfile();
+                if (viewId === 'wishlist') app.loadWishlist();
                 if (viewId === 'seller-dashboard') await app.loadSellerDashboard();
                 if (viewId === 'admin-dashboard') await app.loadAdminDashboard();
                 if (viewId === 'service-dashboard') await app.loadServiceDashboard();
@@ -945,24 +1133,58 @@
             },
 
             // --- AUTHENTICATION ---
+            updateAuthUI: () => {
+                const logoutBtn = `<div class="flex items-center space-x-2">
+                    <span class="text-xs font-bold text-slate-800 hidden lg:inline-block bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200 uppercase tracking-widest">${app.userRole}</span>
+                    <button onclick="app.logout()" class="text-xs bg-white border border-gray-200 hover:bg-gray-50 text-slate-800 px-4 py-2 rounded-lg transition font-bold shadow-sm">Logout</button>
+                </div>`;
+                
+                const loginBtn = `<button onclick="app.router('login')" class="bg-primary text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-primaryLight transition shadow-lg shadow-primary/20">Login</button>`;
+                
+                document.getElementById('auth-section').innerHTML = app.currentUser ? logoutBtn : loginBtn;
+                document.getElementById('mobile-auth-section').innerHTML = app.currentUser ? `
+                    <div class="px-3 pb-2 pt-2 border-t border-gray-100">
+                        <div class="text-xs text-gray-400 mb-2 uppercase font-bold tracking-wide">${app.currentUser.email}</div>
+                        <button onclick="app.logout()" class="w-full text-left py-3 text-danger hover:bg-red-50 rounded-lg transition px-2 font-bold flex items-center">
+                            <i data-lucide="log-out" class="mr-2 lucide-sm"></i> Logout
+                        </button>
+                    </div>
+                ` : `<button onclick="app.router('login')" class="block w-full text-left py-3 mt-2 border-t border-gray-100 px-3 hover:bg-gray-50 rounded-lg text-slate-800 font-medium">Login / Sign Up</button>`;
+
+                ['nav-admin', 'nav-seller', 'nav-service', 'nav-profile', 'mobile-nav-profile'].forEach(id => 
+                    document.getElementById(id).classList.add('hide'));
+                
+                if (app.userRole === 'admin') document.getElementById('nav-admin').classList.remove('hide');
+                if (app.userRole === 'seller') document.getElementById('nav-seller').classList.remove('hide');
+                if (app.userRole === 'service') document.getElementById('nav-service').classList.remove('hide');
+                
+                if(app.currentUser) {
+                    document.getElementById('nav-profile').classList.remove('hide');
+                    document.getElementById('mobile-nav-profile').classList.remove('hide');
+                }
+            },
+
             handleAuth: async (e) => {
                 e.preventDefault();
                 app.toggleLoader(true);
                 const email = document.getElementById('auth-email').value;
                 const pass = document.getElementById('auth-pass').value;
                 const isRegister = document.getElementById('auth-btn-text').innerText === 'Sign Up';
+                const name = document.getElementById('auth-name').value;
 
                 try {
                     let userCred;
                     if (isRegister) {
+                        if (!name) throw new Error("Please enter your name.");
                         userCred = await createUserWithEmailAndPassword(auth, email, pass);
                         await setDoc(getUserRef(userCred.user.uid), {
                             uid: userCred.user.uid,
                             email: email,
                             role: 'customer',
-                            name: email.split('@')[0],
+                            name: name,
                             addressList: []
                         });
+                        await updateProfile(userCred.user, { displayName: name });
                         app.toast("Account created successfully!", "success");
                     } else {
                         userCred = await signInWithEmailAndPassword(auth, email, pass);
@@ -985,7 +1207,8 @@
                 try {
                     const userCred = await signInWithEmailAndPassword(auth, email, pass);
                     const userDoc = await getDoc(getUserRef(userCred.user.uid));
-                    if(userDoc.exists() && userDoc.data().role === 'seller') {
+                    // STRICT CHECK: Only allow if DB role is 'seller' or if it's the Admin email
+                    if ((userDoc.exists() && userDoc.data().role === 'seller') || userCred.user.email === ADMIN_EMAIL) {
                         app.toast("Welcome back, Seller!", "success");
                         app.router('seller-dashboard');
                     } else {
@@ -1035,20 +1258,124 @@
                 const btn = document.getElementById('auth-btn-text');
                 const switchText = document.getElementById('auth-switch-text');
                 const title = document.getElementById('auth-title');
+                const nameGroup = document.getElementById('auth-name-group');
                 
                 if (btn.innerText === 'Sign In') {
                     btn.innerText = 'Sign Up';
                     switchText.innerText = 'Already have an account? Sign In';
                     title.innerText = "Create Account";
+                    nameGroup.classList.remove('hide');
                 } else {
                     btn.innerText = 'Sign In';
                     switchText.innerText = 'Create an account';
                     title.innerText = "Welcome Back";
+                    nameGroup.classList.add('hide');
                 }
                 app.updateIcons();
             },
 
+            // --- BANNERS ---
+            loadBanners: async () => {
+                try {
+                    const snap = await getDocs(getCollectionRef('banners'));
+                    if (!snap.empty) {
+                        const banner = snap.docs[0].data();
+                        document.getElementById('banner-title').innerHTML = banner.title || 'Protect What <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Matters Most</span>';
+                        document.getElementById('banner-subtitle').innerText = banner.subtitle || 'Next Gen Security';
+                        document.getElementById('hero-banner-img').src = banner.image || 'https://cybercafejoy.netlify.app/Banners.png';
+                        document.getElementById('banner-cta').innerText = banner.cta || 'Start Shopping';
+                    }
+                } catch (e) { }
+            },
+
+            adminSaveBanner: async (e) => {
+                e.preventDefault();
+                app.toggleLoader(true);
+                const data = {
+                    title: document.getElementById('banner-title-input').value,
+                    subtitle: document.getElementById('banner-subtitle-input').value,
+                    image: document.getElementById('banner-img-input').value,
+                    cta: document.getElementById('banner-cta-input').value,
+                    updatedAt: serverTimestamp()
+                };
+                try {
+                    const snap = await getDocs(getCollectionRef('banners'));
+                    if (snap.empty) {
+                        await addDoc(getCollectionRef('banners'), data);
+                    } else {
+                        await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'banners', snap.docs[0].id), data);
+                    }
+                    app.toast("Banner Updated!", "success");
+                } catch (e) { app.toast(e.message, "error"); }
+                finally { app.toggleLoader(false); }
+            },
+
+            // --- CATEGORIES ---
+            loadHomeCategories: () => {
+                const con = document.getElementById('category-chips');
+                con.innerHTML = '<button onclick="app.filterCategory(\'all\')" class="px-5 py-2 bg-primary text-white rounded-full text-sm font-bold shadow-lg shadow-primary/20 transition-all hover:scale-105">All</button>';
+
+                app.categories.forEach(cat => {
+                    con.innerHTML += `
+                        <button onclick="app.filterCategory('${cat.id}')" class="px-5 py-2 bg-white border border-gray-200 hover:border-gray-300 text-slate-600 rounded-full text-sm font-medium transition-all hover:scale-105 hover:shadow-md">
+                            ${cat.name}
+                        </button>
+                    `;
+                });
+                app.updateIcons();
+            },
+
+            loadCategories: () => {
+                const grid = document.getElementById('categories-grid');
+                grid.innerHTML = '';
+                app.categories.forEach(cat => {
+                    grid.innerHTML += `
+                        <div onclick="app.filterCategory('${cat.id}'); app.router('home')" class="bg-white p-6 rounded-3xl shadow-soft border border-gray-100 flex flex-col items-center justify-center text-center cursor-pointer hover:shadow-card transition h-40">
+                            <div class="w-14 h-14 rounded-full flex items-center justify-center ${cat.color} mb-3">
+                                <i data-lucide="${cat.icon}" class="w-7 h-7"></i>
+                            </div>
+                            <span class="font-bold text-slate-700">${cat.name}</span>
+                        </div>
+                    `;
+                });
+                app.updateIcons();
+            },
+
             // --- PRODUCT LOGIC ---
+            createProductCardHTML: (p, isLiked) => {
+                const discount = p.discount ? parseInt(p.discount) : 0;
+                const price = parseInt(p.price);
+                const finalPrice = discount > 0
+                    ? Math.round(price - (price * discount / 100))
+                    : price;
+
+                return `
+                    <div class="bg-white rounded-3xl shadow-soft hover:shadow-card transition-all duration-300 overflow-hidden group border border-gray-100 flex flex-col cursor-pointer hover:-translate-y-1" onclick="app.loadProductDetails('${p.id}')">
+                        <div class="h-64 bg-gray-50 relative overflow-hidden flex items-center justify-center p-6">
+                            ${discount > 0 ? `<div class="sale-badge">SALE -${discount}%</div>` : ''}
+                            <button onclick="event.stopPropagation(); app.toggleWishlist('${p.id}')" class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm w-10 h-10 rounded-xl flex items-center justify-center shadow-sm z-10 ${isLiked ? 'text-red-500' : 'text-gray-400'}">
+                                <i data-lucide="heart" class="${isLiked ? 'fill-current' : ''}"></i>
+                            </button>
+                            <img src="${p.image || 'https://placehold.co/400x300?text=Product'}" class="w-full h-full object-contain group-hover:scale-110 transition duration-700" onerror="this.src='https://placehold.co/400x300?text=No+Image'">
+                        </div>
+                        <div class="p-6 flex-grow flex flex-col">
+                            <span class="text-[10px] uppercase font-bold text-accent tracking-widest mb-1.5 opacity-80">${p.category || 'Item'}</span>
+                            <h3 class="font-bold text-slate-800 text-lg truncate mb-2 leading-tight" title="${p.name}">${p.name}</h3>
+                            <p class="text-sm text-slate-500 line-clamp-2 h-10 mb-6 font-medium">${p.desc}</p>
+                            <div class="mt-auto flex justify-between items-center">
+                                <div>
+                                    ${discount > 0 ? `<span class="old-price text-sm">₹${price}</span>` : ''}
+                                    <span class="text-slate-900 font-extrabold text-2xl">₹${finalPrice}</span>
+                                </div>
+                                <button onclick="event.stopPropagation(); app.addToCart('${p.id}')" class="bg-primary text-white w-12 h-12 rounded-xl hover:bg-primaryLight transition-colors shadow-lg shadow-primary/20 flex items-center justify-center transform active:scale-95">
+                                    <i data-lucide="plus" class="lucide-sm"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            },
+
             loadProducts: async () => {
                 const grid = document.getElementById('product-grid');
                 
@@ -1094,27 +1421,8 @@
                 }
 
                 products.forEach(p => {
-                    grid.innerHTML += `
-                        <div class="bg-white rounded-3xl shadow-soft hover:shadow-card transition-all duration-300 overflow-hidden group border border-gray-100 flex flex-col cursor-pointer hover:-translate-y-1" onclick="app.loadProductDetails('${p.id}')">
-                            <div class="h-64 bg-gray-50 relative overflow-hidden flex items-center justify-center p-6">
-                                <img src="${p.image || 'https://placehold.co/400x300?text=Product'}" class="w-full h-full object-contain group-hover:scale-110 transition duration-700" onerror="this.src='https://placehold.co/400x300?text=No+Image'">
-                                <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm flex items-center text-slate-800">
-                                    <i data-lucide="star" class="lucide-xs fill-warning text-warning mr-1"></i> ${p.rating || '4.5'}
-                                </div>
-                            </div>
-                            <div class="p-6 flex-grow flex flex-col">
-                                <span class="text-[10px] uppercase font-bold text-accent tracking-widest mb-1.5 opacity-80">${p.category || 'Item'}</span>
-                                <h3 class="font-bold text-slate-800 text-lg truncate mb-2 leading-tight" title="${p.name}">${p.name}</h3>
-                                <p class="text-sm text-slate-500 line-clamp-2 h-10 mb-6 font-medium">${p.desc}</p>
-                                <div class="mt-auto flex justify-between items-center">
-                                    <span class="text-slate-900 font-extrabold text-2xl">₹${p.price}</span>
-                                    <button onclick="event.stopPropagation(); app.addToCart('${p.id}')" class="bg-primary text-white w-12 h-12 rounded-xl hover:bg-primaryLight transition-colors shadow-lg shadow-primary/20 flex items-center justify-center transform active:scale-95">
-                                        <i data-lucide="plus" class="lucide-sm"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                    const isLiked = app.wishlist.includes(p.id);
+                    grid.innerHTML += app.createProductCardHTML(p, isLiked);
                 });
                 app.updateIcons();
             },
@@ -1127,16 +1435,107 @@
                 document.getElementById('detail-img').src = p.image || 'https://placehold.co/400x300';
                 document.getElementById('detail-name').innerText = p.name;
                 document.getElementById('detail-desc').innerText = p.desc;
-                document.getElementById('detail-price').innerText = '₹' + p.price;
                 document.getElementById('detail-cat').innerText = p.category || 'General';
                 document.getElementById('detail-rating').innerText = (p.rating || 4.5);
+
+                const discount = p.discount ? parseInt(p.discount) : 0;
+                const price = parseInt(p.price);
+                const finalPrice = discount > 0 ? Math.round(price - (price * discount / 100)) : price;
+
+                document.getElementById('detail-price').innerText = '₹' + finalPrice;
+                const oldPriceEl = document.getElementById('detail-old-price');
+                const badge = document.getElementById('detail-badge');
+
+                if (discount > 0) {
+                    oldPriceEl.innerText = '₹' + price;
+                    oldPriceEl.classList.remove('hide');
+                    badge.classList.remove('hide');
+                    badge.innerText = `SALE -${discount}%`;
+                } else {
+                    oldPriceEl.classList.add('hide');
+                    badge.classList.add('hide');
+                }
+
+                // Update Wishlist Icon state
+                const isLiked = app.wishlist.includes(pid);
+                const heartIcon = document.getElementById('detail-wishlist-icon');
+                if (isLiked) {
+                    heartIcon.classList.add('fill-current', 'text-red-500');
+                } else {
+                    heartIcon.classList.remove('fill-current', 'text-red-500');
+                }
                 
                 app.router('product-details');
             },
 
-            buyNow: (pid) => {
-                app.addToCart(pid);
-                app.goToCheckout();
+            // --- WISHLIST ---
+            loadWishlist: () => {
+                const grid = document.getElementById('wishlist-grid');
+                grid.innerHTML = '';
+                const wishedProducts = app.products.filter(p => app.wishlist.includes(p.id));
+
+                if (wishedProducts.length === 0) {
+                    grid.innerHTML = '<div class="col-span-full text-center py-20 text-slate-400">Your wishlist is empty</div>';
+                    return;
+                }
+                wishedProducts.forEach(p => {
+                    const isLiked = app.wishlist.includes(p.id);
+                    grid.innerHTML += app.createProductCardHTML(p, isLiked);
+                });
+                app.updateIcons();
+            },
+
+            toggleWishlist: (pid) => {
+                if (app.wishlist.includes(pid)) {
+                    app.wishlist = app.wishlist.filter(id => id !== pid);
+                    app.toast("Removed from Wishlist");
+                } else {
+                    app.wishlist.push(pid);
+                    app.toast("Added to Wishlist", "success");
+
+                    // Add ping animation
+                    const btn = document.activeElement;
+                    if (btn) {
+                        btn.style.animation = 'heartPing 0.4s';
+                        setTimeout(() => btn.style.animation = '', 400);
+                    }
+                }
+                localStorage.setItem('wishlist', JSON.stringify(app.wishlist));
+
+                if (!document.getElementById('view-home').classList.contains('hide')) {
+                    app.renderProductGrid(app.products);
+                } else if (!document.getElementById('view-product-details').classList.contains('hide')) {
+                    app.loadProductDetails(pid);
+                } else if (!document.getElementById('view-search-results').classList.contains('hide')) {
+                    const query = document.getElementById('search-query-display').innerText;
+                    app.performSearch(query);
+                } else if (!document.getElementById('view-wishlist').classList.contains('hide')) {
+                    app.loadWishlist();
+                }
+            },
+
+            // --- SEARCH ---
+            performSearch: (query) => {
+                if (!query.trim()) return;
+                const term = query.toLowerCase();
+                const filtered = app.products.filter(p => 
+                    p.name.toLowerCase().includes(term) || 
+                    (p.desc && p.desc.toLowerCase().includes(term))
+                );
+
+                document.getElementById('search-query-display').innerText = query;
+                const grid = document.getElementById('search-results-grid');
+                grid.innerHTML = '';
+
+                if (filtered.length === 0) {
+                    grid.innerHTML = `<div class="col-span-4 text-center py-20 text-slate-400">No products found matching "${query}"</div>`;
+                } else {
+                    filtered.forEach(p => {
+                        const isLiked = app.wishlist.includes(p.id);
+                        grid.innerHTML += app.createProductCardHTML(p, isLiked);
+                    });
+                }
+                app.router('search-results');
             },
 
             filterCategory: (cat) => {
@@ -1157,14 +1556,20 @@
             filterProducts: () => {
                 const term = document.getElementById('search-input').value.toLowerCase();
                 const filtered = app.products.filter(p => {
-                    const matchesSearch = p.name.toLowerCase().includes(term) || p.desc.toLowerCase().includes(term);
+                    const matchesSearch = p.name.toLowerCase().includes(term) || 
+                                         (p.desc && p.desc.toLowerCase().includes(term));
                     let matchesCat = true;
                     if(app.activeCategory !== 'all') { 
-                        matchesCat = (p.category === app.activeCategory) || (p.name.includes(app.activeCategory));
+                        matchesCat = (p.category === app.activeCategory);
                     }
                     return matchesSearch && matchesCat;
                 });
                 app.renderProductGrid(filtered);
+            },
+
+            buyNow: (pid) => {
+                app.addToCart(pid);
+                app.goToCheckout();
             },
 
             // --- CART LOGIC ---
@@ -1172,10 +1577,27 @@
                 const product = app.products.find(p => p.id === pid);
                 if (!product) return;
                 
+                const discount = product.discount ? parseInt(product.discount) : 0;
+                const finalPrice = discount > 0 ? 
+                    Math.round(product.price - (product.price * discount / 100)) : 
+                    product.price;
+                
                 const existing = app.cart.find(item => item.id === pid);
                 if (existing) existing.qty++;
-                else app.cart.push({ ...product, qty: 1 });
+                else app.cart.push({ 
+                    ...product, 
+                    qty: 1, 
+                    price: finalPrice, 
+                    originalPrice: product.price 
+                });
                 
+                // Animation
+                const btn = document.getElementById('fab-cart-btn') || document.querySelector('button[onclick="app.toggleCart()"]');
+                if (btn) {
+                    btn.style.animation = 'none';
+                    setTimeout(() => btn.style.animation = 'cartBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)', 10);
+                }
+
                 app.updateCartUI();
                 app.toast(`${product.name} added to cart`, "success");
             },
@@ -1192,6 +1614,7 @@
             updateCartUI: () => {
                 const container = document.getElementById('cart-items');
                 const countBadge = document.getElementById('cart-count');
+                const mobileBadge = document.getElementById('cart-count-mobile');
                 const totalEl = document.getElementById('cart-total');
                 const subtotalEl = document.getElementById('checkout-subtotal');
                 const checkoutTotalEl = document.getElementById('checkout-total');
@@ -1203,50 +1626,53 @@
                 let total = 0;
                 let count = 0;
 
-                app.cart.forEach((item, index) => {
-                    total += item.price * item.qty;
-                    count += item.qty;
-                    
-                    // Sidebar Item
-                    container.innerHTML += `
-                        <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
-                            <div class="flex-1">
-                                <div class="font-bold text-sm truncate text-slate-800 mb-1">${item.name}</div>
-                                <div class="text-xs text-accent font-bold">₹${item.price} x ${item.qty}</div>
-                            </div>
-                            <div class="flex items-center space-x-3 bg-gray-50 rounded-xl p-1.5 border border-gray-100">
-                                <button onclick="app.changeQty(${index}, -1)" class="text-gray-400 hover:text-danger w-6 h-6 flex items-center justify-center transition"><i data-lucide="minus" class="lucide-xs"></i></button>
-                                <span class="text-xs font-bold w-4 text-center text-slate-800">${item.qty}</span>
-                                <button onclick="app.changeQty(${index}, 1)" class="text-gray-400 hover:text-success w-6 h-6 flex items-center justify-center transition"><i data-lucide="plus" class="lucide-xs"></i></button>
-                            </div>
-                        </div>
-                    `;
-                    
-                    // Checkout Item
-                    checkoutItems.innerHTML += `
-                        <div class="flex justify-between border-b border-gray-100 pb-4 mb-4 last:border-0 last:pb-0 last:mb-0">
-                            <div>
-                                <span class="text-slate-800 font-bold block text-sm">${item.name}</span>
-                                <span class="text-slate-400 text-xs">Qty: ${item.qty}</span>
-                            </div>
-                            <span class="font-extrabold text-slate-900">₹${item.price * item.qty}</span>
-                        </div>
-                    `;
-                });
-
                 if (app.cart.length === 0) {
-                      container.innerHTML = `
+                    container.innerHTML = `
                         <div class="flex flex-col items-center justify-center h-64 text-slate-300">
                             <i data-lucide="shopping-bag" class="w-16 h-16 mb-4 opacity-50"></i>
                             <p class="text-sm font-medium">Your cart is empty.</p>
                         </div>`;
+                } else {
+                    app.cart.forEach((item, index) => {
+                        total += item.price * item.qty;
+                        count += item.qty;
+                        
+                        // Sidebar Item
+                        container.innerHTML += `
+                            <div class="flex justify-between items-center bg-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+                                <div class="flex-1">
+                                    <div class="font-bold text-sm truncate text-slate-800 mb-1">${item.name}</div>
+                                    <div class="text-xs text-accent font-bold">₹${item.price} x ${item.qty}</div>
+                                </div>
+                                <div class="flex items-center space-x-3 bg-gray-50 rounded-xl p-1.5 border border-gray-100">
+                                    <button onclick="app.changeQty(${index}, -1)" class="text-gray-400 hover:text-danger w-6 h-6 flex items-center justify-center transition"><i data-lucide="minus" class="lucide-xs"></i></button>
+                                    <span class="text-xs font-bold w-4 text-center text-slate-800">${item.qty}</span>
+                                    <button onclick="app.changeQty(${index}, 1)" class="text-gray-400 hover:text-success w-6 h-6 flex items-center justify-center transition"><i data-lucide="plus" class="lucide-xs"></i></button>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Checkout Item
+                        checkoutItems.innerHTML += `
+                            <div class="flex justify-between border-b border-gray-100 pb-4 mb-4 last:border-0 last:pb-0 last:mb-0">
+                                <div>
+                                    <span class="text-slate-800 font-bold block text-sm">${item.name}</span>
+                                    <span class="text-slate-400 text-xs">Qty: ${item.qty}</span>
+                                </div>
+                                <span class="font-extrabold text-slate-900">₹${item.price * item.qty}</span>
+                            </div>
+                        `;
+                    });
                 }
                 
                 countBadge.innerText = count;
+                if(mobileBadge) mobileBadge.innerText = count;
                 totalEl.innerText = '₹' + total;
                 if(subtotalEl) subtotalEl.innerText = '₹' + total;
                 if(checkoutTotalEl) checkoutTotalEl.innerText = '₹' + total;
                 app.cartTotalValue = total;
+                
+                localStorage.setItem('cart', JSON.stringify(app.cart));
                 app.updateIcons();
             },
 
@@ -1266,9 +1692,10 @@
                 }
                 app.toggleCart();
                 app.router('checkout');
-                app.updateCartUI(); 
+                app.loadSavedAddresses();
             },
 
+            // --- ADDRESS MANAGEMENT ---
             saveAddress: async () => {
                 const newAddr = {
                     name: document.getElementById('addr-name').value,
@@ -1293,6 +1720,20 @@
                     app.toast("Failed to save address", "error");
                 }
             },
+
+            deleteAddress: async (idx) => {
+                if (!confirm("Remove this address?")) return;
+                try {
+                    const ref = getUserRef(app.currentUser.uid);
+                    const snap = await getDoc(ref);
+                    const list = snap.data().addressList || [];
+                    list.splice(idx, 1);
+                    await updateDoc(ref, { addressList: list });
+                    app.loadSavedAddresses();
+                    if (!document.getElementById('view-profile').classList.contains('hide')) app.loadProfile();
+                    app.toast("Address Removed", "info");
+                } catch (e) { app.toast("Error removing", "error"); }
+            },
             
             loadSavedAddresses: async () => {
                 const userDoc = await getDoc(getUserRef(app.currentUser.uid));
@@ -1313,6 +1754,9 @@
                                         <div class="text-xs text-slate-400 mt-2 flex items-center font-medium"><i data-lucide="phone" class="lucide-xs mr-1"></i> ${addr.mobile}</div>
                                     </div>
                                 </div>
+                                <button onclick="event.preventDefault(); app.deleteAddress(${idx})" class="absolute top-2 right-2 text-slate-300 hover:text-danger p-1 opacity-0 group-hover:opacity-100 transition">
+                                    <i data-lucide="trash-2" class="lucide-sm"></i>
+                                </button>
                             </label>
                         `;
                     });
@@ -1323,6 +1767,7 @@
                 app.updateIcons();
             },
 
+            // --- ORDER MANAGEMENT ---
             placeOrder: async () => {
                 const selectedAddrInput = document.querySelector('input[name="selected-address"]:checked');
                 const userDoc = await getDoc(getUserRef(app.currentUser.uid));
@@ -1343,13 +1788,13 @@
                 try {
                     const orderData = {
                         customerId: app.currentUser.uid,
-                        customerEmail: app.currentUser.email, // Storing Email explicitly
-                        customerName: addressToUse.name,      // Storing Name explicitly
+                        customerEmail: app.currentUser.email,
+                        customerName: addressToUse.name,
                         items: app.cart,
                         total: app.cartTotalValue,
                         address: addressToUse,
                         paymentMethod: document.querySelector('input[name="payment"]:checked').value,
-                        status: 'Pending Verification', 
+                        status: 'Pending Verification',
                         trackingSteps: [{ status: 'Order Placed', time: new Date().toISOString() }],
                         createdAt: serverTimestamp()
                     };
@@ -1408,6 +1853,10 @@
                         });
                         trackerHTML += `</div>`;
 
+                        // Cancellation Logic (24h)
+                        const orderTime = o.createdAt ? o.createdAt.toDate().getTime() : 0;
+                        const canCancel = (Date.now() - orderTime) < (24 * 60 * 60 * 1000) && o.status !== 'Cancelled' && o.status !== 'Delivered';
+
                         list.innerHTML += `
                             <div class="bg-white p-8 rounded-3xl shadow-soft border border-gray-100 hover:shadow-card transition-shadow">
                                 <div class="flex flex-col md:flex-row justify-between font-bold mb-6 pb-6 border-b border-gray-50 items-start md:items-center gap-4">
@@ -1428,9 +1877,12 @@
                                 </div>
                                 ${o.status !== 'Cancelled' ? trackerHTML : '<div class="mt-6 text-center text-danger font-bold bg-red-50 p-3 rounded-xl text-xs uppercase border border-red-100 flex justify-center items-center"><i data-lucide="x-circle" class="lucide-sm mr-2"></i> Order Cancelled</div>'}
                                 
-                                ${o.status !== 'Delivered' && o.status !== 'Cancelled' 
-                                    ? `<div class="mt-8 flex justify-end"><button onclick="app.openCustomerChat('${o.id}')" class="text-xs text-accent font-bold hover:text-white flex items-center bg-accent/10 px-5 py-2.5 rounded-xl transition hover:bg-accent border border-accent/10 hover:border-accent"><i data-lucide="message-circle" class="mr-2 lucide-sm"></i> Need Help?</button></div>` 
-                                    : ''}
+                                <div class="mt-6 pt-4 border-t border-dashed border-gray-200 flex gap-2">
+                                    <button onclick="app.openCustomerChat('${o.id}')" class="flex-grow text-xs font-bold text-slate-600 hover:text-white flex items-center justify-center bg-gray-100 hover:bg-accent py-2.5 rounded-xl transition">
+                                        <i data-lucide="message-circle" class="lucide-xs mr-1.5"></i> Support
+                                    </button>
+                                    ${canCancel ? `<button onclick="app.cancelOrder('${o.id}')" class="flex-grow text-xs font-bold text-danger hover:text-white flex items-center justify-center bg-red-50 hover:bg-red-600 py-2.5 rounded-xl transition">Cancel Order</button>` : ''}
+                                </div>
                             </div>
                         `;
                     });
@@ -1442,6 +1894,18 @@
                 }
             },
 
+            cancelOrder: async (oid) => {
+                if (!confirm("Are you sure you want to cancel this order?")) return;
+                app.toggleLoader(true);
+                try {
+                    await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'orders', oid), { status: 'Cancelled' });
+                    app.toast("Order Cancelled", "info");
+                    app.loadCustomerOrders();
+                } catch(e) { app.toast("Error cancelling", "error"); }
+                finally { app.toggleLoader(false); }
+            },
+
+            // --- PROFILE ---
             loadProfile: async () => {
                 if(!app.currentUser) return app.router('login');
                 const userRef = getUserRef(app.currentUser.uid);
@@ -1455,10 +1919,14 @@
                 const list = document.getElementById('profile-address-list');
                 list.innerHTML = '';
                 if(data.addressList && data.addressList.length > 0) {
-                    data.addressList.forEach(addr => {
+                    data.addressList.forEach((addr, idx) => {
                         list.innerHTML += `
                             <div class="border border-gray-100 p-6 rounded-2xl bg-gray-50 text-sm hover:border-accent/30 transition group relative overflow-hidden">
-                                <div class="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition"><i data-lucide="edit-2" class="lucide-xs text-gray-400"></i></div>
+                                <div class="absolute top-0 right-0 p-4">
+                                    <button onclick="app.deleteAddress(${idx})" class="text-slate-300 hover:text-danger p-1 opacity-0 group-hover:opacity-100 transition">
+                                        <i data-lucide="trash-2" class="lucide-sm"></i>
+                                    </button>
+                                </div>
                                 <div class="font-bold text-slate-800 mb-2 flex items-center text-base"><i data-lucide="home" class="lucide-sm mr-2 text-slate-400"></i> ${addr.name} <span class="ml-3 text-[10px] bg-white border border-gray-200 text-slate-500 px-2 py-0.5 rounded uppercase tracking-wide font-bold">${addr.type}</span></div>
                                 <div class="text-slate-600 ml-7 leading-relaxed">${addr.line}, ${addr.area}</div>
                                 <div class="text-slate-600 ml-7">${addr.city} - ${addr.pin}</div>
@@ -1470,6 +1938,28 @@
                     list.innerHTML = '<p class="text-slate-400 text-sm italic col-span-2 text-center py-4">No saved addresses found.</p>';
                 }
                 app.updateIcons();
+            },
+
+            openEditProfile: () => {
+                document.getElementById('edit-profile-name').value = app.currentUser.displayName || '';
+                document.getElementById('edit-profile-modal').classList.remove('hide');
+            },
+
+            updateProfile: async (e) => {
+                e.preventDefault();
+                app.toggleLoader(true);
+                const name = document.getElementById('edit-profile-name').value;
+                const photo = document.getElementById('edit-profile-photo').value;
+                try {
+                    await updateDoc(getUserRef(app.currentUser.uid), { name });
+                    if (photo) {
+                        await updateProfile(auth.currentUser, { photoURL: photo });
+                    }
+                    app.toast("Profile Updated", "success");
+                    document.getElementById('edit-profile-modal').classList.add('hide');
+                    app.loadProfile();
+                } catch (e) { app.toast(e.message, "error"); }
+                finally { app.toggleLoader(false); }
             },
 
             // --- CHAT LOGIC ---
@@ -1524,7 +2014,7 @@
                 input.value = '';
             },
 
-            // --- SELLER LOGIC ---
+            // --- SELLER APPLICATIONS ---
             submitSellerApplication: async (e) => {
                 e.preventDefault();
                 app.toggleLoader(true);
@@ -1553,6 +2043,7 @@
                 }
             },
 
+            // --- SELLER DASHBOARD ---
             loadSellerDashboard: async () => {
                 const pList = document.getElementById('seller-products-list');
                 const oList = document.getElementById('seller-orders-list');
@@ -1560,18 +2051,20 @@
                 oList.innerHTML = '';
                 let productCount = 0;
                 let pendingOrderCount = 0;
-                app.adminOrders = []; // Used for local lookup
+                app.adminOrders = [];
 
                 // Products
-                app.products.forEach(p => {
-                    productCount++;
+                const myProducts = app.products.filter(p => p.sellerId === app.currentUser.uid);
+                productCount = myProducts.length;
+
+                myProducts.forEach(p => {
                     pList.innerHTML += `
                         <div class="flex justify-between items-center border-b border-gray-50 py-4 last:border-0 hover:bg-gray-50 px-4 rounded-xl transition group">
                             <div class="flex items-center space-x-4">
                                 <img src="${p.image}" class="w-14 h-14 rounded-xl object-contain bg-white border border-gray-100 p-1">
                                 <div>
                                     <div class="font-bold text-sm text-slate-800 group-hover:text-accent transition-colors">${p.name}</div>
-                                    <div class="text-xs text-slate-500 font-bold">₹${p.price}</div>
+                                    <div class="text-xs text-slate-500 font-bold">₹${p.price} ${p.discount ? `(-${p.discount}%)` : ''}</div>
                                 </div>
                             </div>
                             <div class="flex space-x-2">
@@ -1588,7 +2081,9 @@
                     const o = d.data();
                     const oid = d.id;
                     app.adminOrders.push({id: oid, ...o});
-                    if(o.status !== 'Delivered' && o.status !== 'Cancelled') pendingOrderCount++;
+                    if(o.status !== 'Delivered' && o.status !== 'Cancelled' && o.status !== 'Pending Verification') {
+                        pendingOrderCount++;
+                    }
                     
                     oList.innerHTML += `
                         <div class="border border-gray-100 p-5 rounded-2xl mb-3 bg-white hover:shadow-md transition hover:border-accent/30 group">
@@ -1619,7 +2114,6 @@
                 app.updateIcons();
             },
 
-            // --- VIEW FULL ORDER DETAILS (MODAL) ---
             viewOrderDetails: (oid) => {
                 const o = app.adminOrders.find(x => x.id === oid);
                 if(!o) return;
@@ -1696,8 +2190,10 @@
                 form.p_name.value = p.name;
                 form.p_desc.value = p.desc;
                 form.p_price.value = p.price;
+                form.p_discount.value = p.discount || 0;
                 form.p_cat.value = p.category || 'Electronics';
                 form.p_img.value = p.image;
+                form.p_rating.value = p.rating || 5.0;
                 
                 document.getElementById('mock-btn').classList.add('hide');
                 document.getElementById('add-product-modal').classList.remove('hide');
@@ -1712,9 +2208,10 @@
                     name: f.p_name.value,
                     desc: f.p_desc.value,
                     price: Number(f.p_price.value),
+                    discount: Number(f.p_discount.value) || 0,
                     image: f.p_img.value || 'https://placehold.co/400x400?text=Item',
                     category: f.p_cat.value,
-                    rating: 5.0,
+                    rating: Number(f.p_rating.value) || 5.0,
                     sellerId: app.currentUser.uid
                 };
                 
@@ -1767,10 +2264,12 @@
                 form.p_name.value = "Smart Sentinel Cam " + rnd;
                 form.p_desc.value = "Military grade encryption, 4K resolution, AI motion tracking and 1 year free cloud storage.";
                 form.p_price.value = 5499;
+                form.p_discount.value = 15;
                 form.p_img.value = "https://placehold.co/400x300?text=Camera";
+                document.getElementById('product-preview').src = form.p_img.value;
             },
 
-            // --- ADMIN LOGIC ---
+            // --- ADMIN DASHBOARD ---
             loadAdminDashboard: async () => {
                 const ordersSnap = await getDocs(getCollectionRef('orders'));
                 let total = 0;
@@ -1868,7 +2367,7 @@
                 app.toast(`Seller Account Created for ${email}`, "success");
             },
 
-            // --- SERVICE LOGIC ---
+            // --- SERVICE DASHBOARD ---
             loadServiceDashboard: async () => {
                 const list = document.getElementById('support-tickets-list');
                 list.innerHTML = '';
@@ -1961,50 +2460,21 @@
                     }
                 }
 
-                document.getElementById('auth-section').innerHTML = `
-                    <div class="flex items-center space-x-2">
-                        <span class="text-xs font-bold text-slate-800 hidden lg:inline-block bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200 uppercase tracking-widest">${app.userRole}</span>
-                        <button onclick="app.logout()" class="text-xs bg-white border border-gray-200 hover:bg-gray-50 text-slate-800 px-4 py-2 rounded-lg transition font-bold shadow-sm">Logout</button>
-                    </div>
-                `;
-                document.getElementById('mobile-auth-section').innerHTML = `
-                    <div class="px-3 pb-2 pt-2 border-t border-gray-100">
-                         <div class="text-xs text-gray-400 mb-2 uppercase font-bold tracking-wide">${user.email}</div>
-                         <button onclick="app.logout()" class="w-full text-left py-3 text-danger hover:bg-red-50 rounded-lg transition px-2 font-bold flex items-center"><i data-lucide="log-out" class="mr-2 lucide-sm"></i> Logout</button>
-                    </div>
-                 `;
-
-                if(app.userRole === 'admin') document.getElementById('nav-admin').classList.remove('hide');
-                if(app.userRole === 'seller') document.getElementById('nav-seller').classList.remove('hide');
-                if(app.userRole === 'service') document.getElementById('nav-service').classList.remove('hide');
-                
-                document.getElementById('nav-profile').classList.remove('hide');
-                document.getElementById('mobile-nav-profile').classList.remove('hide');
+                app.updateAuthUI();
 
                 if (app.products.length === 0) app.loadProducts();
 
             } else {
                 app.currentUser = null;
                 app.userRole = 'guest';
-                document.getElementById('auth-section').innerHTML = `
-                    <button onclick="app.router('login')" class="bg-primary text-white px-5 py-2 rounded-lg text-sm font-bold hover:bg-primaryLight transition shadow-lg shadow-primary/20">Login</button>
-                `;
-                document.getElementById('mobile-auth-section').innerHTML = `
-                    <button onclick="app.router('login')" class="block w-full text-left py-3 mt-2 border-t border-gray-100 px-3 hover:bg-gray-50 rounded-lg text-slate-800 font-medium">Login / Sign Up</button>
-                `;
-                
-                document.getElementById('nav-admin').classList.add('hide');
-                document.getElementById('nav-seller').classList.add('hide');
-                document.getElementById('nav-service').classList.add('hide');
-                document.getElementById('nav-profile').classList.add('hide');
-                document.getElementById('mobile-nav-profile').classList.add('hide');
-                
+                app.updateAuthUI();
                 app.loadProducts();
             }
             app.updateIcons();
         });
 
         // Initial Load
+        app.init();
         app.router('home');
 
     </script>
