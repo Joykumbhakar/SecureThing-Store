@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <meta name="theme-color" content="#583FBC">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SecureThingStore | Smart Security Solutions</title>
@@ -183,7 +184,6 @@
         }
         
         .clay-card:hover {
-            transform: translateY(-5px);
             box-shadow: 25px 25px 50px var(--tw-shadow-clay-dark), -25px -25px 50px var(--tw-shadow-clay-light);
         }
         
@@ -448,165 +448,90 @@
         <!-- VIEW: HOME -->
         <section id="view-home" class="view-section">
             <!-- Claymorphism Hero Section with Horizontal Banner Scroller -->
-            <div class="relative mb-12">
-                <div class="clay-card p-8 lg:p-12">
-                    <!-- Main Content Area -->
-                    <div class="flex flex-col lg:flex-row gap-8 lg:gap-12">
-                        <div class="lg:w-2/3 flex flex-col justify-center">
-                            <div class="inline-flex items-center gap-2 clay-tag mb-6 w-fit animate-float">
-                                <span class="flex h-2 w-2 rounded-full bg-accent animate-pulse"></span>
-                                <span class="text-xs font-bold text-accent tracking-wide uppercase">Next Gen Security</span>
-                            </div>
-                            
-                            <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-textMain mb-6 leading-tight">
-                                Protect What <br/>
-                                <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500">Matters Most</span>
-                            </h1>
-                            
-                            <p class="text-textMuted text-lg mb-8 leading-relaxed max-w-xl">
-                                Advanced smart locks, AI-powered cameras, and sensors that keep your home safe 24/7. Monitoring made simple.
-                            </p>
-                            
-                            <div class="flex flex-col sm:flex-row gap-4">
-                                <button onclick="document.getElementById('product-grid').scrollIntoView({behavior: 'smooth'})" 
-                                        class="clay-btn clay-btn-primary px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:shadow-clay-card-lg transition-all duration-300">
-                                    Start Shopping <i data-lucide="arrow-right" class="w-4 h-4"></i>
-                                </button>
-                                <button onclick="app.filterCategory('Security')" 
-                                        class="clay-btn clay-btn-secondary px-8 py-4 rounded-2xl font-bold flex items-center justify-center gap-2 hover:shadow-clay-card-lg transition-all duration-300">
-                                    <i data-lucide="shield" class="w-4 h-4"></i> Explore Systems
-                                </button>
-                            </div>
-                            
-                            <div class="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <div class="clay-card-inner p-4 text-center">
-                                    <div class="text-2xl font-extrabold text-accent mb-1">24/7</div>
-                                    <div class="text-xs font-bold text-textMuted uppercase tracking-wide">Monitoring</div>
-                                </div>
-                                <div class="clay-card-inner p-4 text-center">
-                                    <div class="text-2xl font-extrabold text-accent mb-1">AI</div>
-                                    <div class="text-xs font-bold text-textMuted uppercase tracking-wide">Powered</div>
-                                </div>
-                                <div class="clay-card-inner p-4 text-center">
-                                    <div class="text-2xl font-extrabold text-accent mb-1">100%</div>
-                                    <div class="text-xs font-bold text-textMuted uppercase tracking-wide">Secure</div>
-                                </div>
-                                <div class="clay-card-inner p-4 text-center">
-                                    <div class="text-2xl font-extrabold text-accent mb-1">1Y</div>
-                                    <div class="text-xs font-bold text-textMuted uppercase tracking-wide">Warranty</div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- Horizontal Banner Scroller Area -->
-                        <div class="lg:w-1/3">
-                            <div class="clay-card-inner p-6">
-                                <h3 class="font-bold text-textMain text-lg mb-4 flex items-center gap-2">
-                                    <i data-lucide="sparkles" class="w-5 h-5 text-accent"></i>
-                                    Featured Categories
-                                </h3>
-                                
-                                <!-- Horizontal Scroller Container -->
-                                <div class="banner-horizontal-container flex gap-4 pb-4" id="banner-horizontal-scroller">
-                                    <!-- Banner 1 -->
-                                    <div class="banner-horizontal-slide">
-                                        <div class="clay-card p-6 transition-all duration-300 hover:shadow-clay-card-lg cursor-pointer group h-full" onclick="app.filterCategory('Security')">
-                                            <div class="flex flex-col items-center text-center">
-                                                <div class="clay-card-inner p-4 mb-4 group-hover:animate-float">
-                                                    <i data-lucide="shield" class="w-10 h-10 text-accent"></i>
-                                                </div>
-                                                <h3 class="font-bold text-textMain mb-2 text-lg">Smart Locks</h3>
-                                                <p class="text-sm text-textMuted mb-4">Biometric & remote access control systems</p>
-                                                <div class="clay-tag inline-block text-xs">NEW</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Banner 2 -->
-                                    <div class="banner-horizontal-slide">
-                                        <div class="clay-card p-6 transition-all duration-300 hover:shadow-clay-card-lg cursor-pointer group h-full" onclick="app.filterCategory('Electronics')">
-                                            <div class="flex flex-col items-center text-center">
-                                                <div class="clay-card-inner p-4 mb-4 group-hover:animate-float">
-                                                    <i data-lucide="camera" class="w-10 h-10 text-accent"></i>
-                                                </div>
-                                                <h3 class="font-bold text-textMain mb-2 text-lg">AI Cameras</h3>
-                                                <p class="text-sm text-textMuted mb-4">4K resolution with facial recognition</p>
-                                                <div class="clay-tag inline-block text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white">BEST SELLER</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Banner 3 -->
-                                    <div class="banner-horizontal-slide">
-                                        <div class="clay-card p-6 transition-all duration-300 hover:shadow-clay-card-lg cursor-pointer group h-full" onclick="app.filterCategory('Security')">
-                                            <div class="flex flex-col items-center text-center">
-                                                <div class="clay-card-inner p-4 mb-4 group-hover:animate-float">
-                                                    <i data-lucide="siren" class="w-10 h-10 text-accent"></i>
-                                                </div>
-                                                <h3 class="font-bold text-textMain mb-2 text-lg">Alarm Systems</h3>
-                                                <p class="text-sm text-textMuted mb-4">Wireless sensors with instant alerts</p>
-                                                <div class="clay-tag inline-block text-xs">SALE</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Banner 4 -->
-                                    <div class="banner-horizontal-slide">
-                                        <div class="clay-card p-6 transition-all duration-300 hover:shadow-clay-card-lg cursor-pointer group h-full" onclick="app.filterCategory('Home')">
-                                            <div class="flex flex-col items-center text-center">
-                                                <div class="clay-card-inner p-4 mb-4 group-hover:animate-float">
-                                                    <i data-lucide="wifi" class="w-10 h-10 text-accent"></i>
-                                                </div>
-                                                <h3 class="font-bold text-textMain mb-2 text-lg">Smart Home</h3>
-                                                <p class="text-sm text-textMuted mb-4">Complete home automation packages</p>
-                                                <div class="clay-tag inline-block text-xs">TRENDING</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <!-- Banner 5 -->
-                                    <div class="banner-horizontal-slide">
-                                        <div class="clay-card p-6 transition-all duration-300 hover:shadow-clay-card-lg cursor-pointer group h-full" onclick="app.filterCategory('Electronics')">
-                                            <div class="flex flex-col items-center text-center">
-                                                <div class="clay-card-inner p-4 mb-4 group-hover:animate-float">
-                                                    <i data-lucide="monitor" class="w-10 h-10 text-accent"></i>
-                                                </div>
-                                                <h3 class="font-bold text-textMain mb-2 text-lg">Monitoring</h3>
-                                                <p class="text-sm text-textMuted mb-4">24/7 professional security monitoring</p>
-                                                <div class="clay-tag inline-block text-xs">PREMIUM</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Dots Indicator -->
-                                <div class="banner-dots" id="banner-dots">
-                                    <div class="banner-dot active" onclick="scrollToBanner(0)"></div>
-                                    <div class="banner-dot" onclick="scrollToBanner(1)"></div>
-                                    <div class="banner-dot" onclick="scrollToBanner(2)"></div>
-                                    <div class="banner-dot" onclick="scrollToBanner(3)"></div>
-                                    <div class="banner-dot" onclick="scrollToBanner(4)"></div>
-                                </div>
-                                
-                                <!-- Navigation Arrows -->
-                                <div class="flex justify-center gap-4 mt-4">
-                                    <button onclick="scrollBanners('left')" 
-                                            class="clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-full hover:shadow-clay-card-lg transition-all">
-                                        <i data-lucide="chevron-left" class="w-5 h-5 text-accent"></i>
-                                    </button>
-                                    <button onclick="scrollBanners('right')" 
-                                            class="clay-btn clay-btn-secondary w-10 h-10 flex items-center justify-center rounded-full hover:shadow-clay-card-lg transition-all">
-                                        <i data-lucide="chevron-right" class="w-5 h-5 text-accent"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+            
+<!-- Right Side: Horizontal Image Banner Scroller -->
+<div class="lg:w-1/3">
+    <div class="clay-card-inner p-6 h-full flex flex-col justify-center">
+        
+        <!-- Header -->
+        <h3 class="font-bold text-textMain text-lg mb-4 flex items-center gap-2">
+            <i data-lucide="sparkles" class="w-5 h-5 text-accent"></i>
+            Special Offers
+        </h3>
+        
+        <!-- Scroller Container -->
+        <div class="banner-horizontal-container flex gap-4 pb-4" id="banner-horizontal-scroller">
+            
+            <!-- Slide 1: Security -->
+            <div class="banner-horizontal-slide relative group cursor-pointer" onclick="app.filterCategory('Security')">
+                <div class="clay-card overflow-hidden aspect-[3/1] w-full rounded-2xl shadow-sm">
+                    <img src="banner1.png" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Security Sale">
+                    <!-- Overlay Text -->
+                    <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+                        <span class="text-white font-bold text-lg block leading-none">Security</span>
+                        <span class="text-white/80 text-xs font-medium">Up to 50% Off</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Slide 2: Electronics -->
+            <div class="banner-horizontal-slide relative group cursor-pointer" onclick="app.filterCategory('Electronics')">
+                <div class="clay-card overflow-hidden aspect-[3/1] w-full rounded-2xl shadow-sm">
+                    <img src="banner2.png" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Electronics Sale">
+                    <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+                        <span class="text-white font-bold text-lg block leading-none">Gadgets</span>
+                        <span class="text-white/80 text-xs font-medium">New Arrivals</span>
                     </div>
                 </div>
             </div>
 
+            <!-- Slide 3: Smart Home -->
+            <div class="banner-horizontal-slide relative group cursor-pointer" onclick="app.filterCategory('Home')">
+                <div class="clay-card overflow-hidden aspect-[3/1] w-full rounded-2xl shadow-sm">
+                    <img src="banner3.png" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Smart Home Sale">
+                    <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+                        <span class="text-white font-bold text-lg block leading-none">Smart Home</span>
+                        <span class="text-white/80 text-xs font-medium">Automation Kits</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 4: Fashion -->
+            <div class="banner-horizontal-slide relative group cursor-pointer" onclick="app.filterCategory('Fashion')">
+                <div class="clay-card overflow-hidden aspect-[3/1] w-full rounded-2xl shadow-sm">
+                    <img src="banner4.png" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Fashion Sale">
+                    <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+                        <span class="text-white font-bold text-lg block leading-none">Fashion</span>
+                        <span class="text-white/80 text-xs font-medium">Trending Now</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Slide 5: Toys -->
+            <div class="banner-horizontal-slide relative group cursor-pointer" onclick="app.filterCategory('Toys')">
+                <div class="clay-card overflow-hidden aspect-[3/1] w-full rounded-2xl shadow-sm">
+                    <img src="banner5.png" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="Toys Sale">
+                    <div class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
+                        <span class="text-white font-bold text-lg block leading-none">Kids Zone</span>
+                        <span class="text-white/80 text-xs font-medium">Fun & Games</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        
+        <!-- Dots Indicator -->
+        <div class="banner-dots" id="banner-dots">
+            <div class="banner-dot active" onclick="scrollToBanner(0)"></div>
+            <div class="banner-dot" onclick="scrollToBanner(1)"></div>
+            <div class="banner-dot" onclick="scrollToBanner(2)"></div>
+            <div class="banner-dot" onclick="scrollToBanner(3)"></div>
+            <div class="banner-dot" onclick="scrollToBanner(4)"></div>
+        </div>
+    </div>
+</div>
             <!-- Categories Filter -->
-            <div class="clay-card p-8 mb-8 sticky top-20 z-30">
+            <div class="clay-card mb-8 sticky top-20 z-30">
                 <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-6">
                     
                     
@@ -634,7 +559,24 @@
             </div>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="categories-grid"></div>
         </section>
+<section id="view-category-products" class="view-section hide">
+    <div class="mb-6 flex items-center justify-between">
+        <button onclick="app.router('categories')" class="text-textMuted hover:text-accent flex items-center text-sm font-bold transition-colors">
+            <i data-lucide="arrow-left" class="mr-2 lucide-sm"></i> Back to Categories
+        </button>
+    </div>
 
+    <div class="clay-card p-8 mb-8 relative overflow-hidden">
+        <div class="relative z-10">
+            <h2 id="cat-page-title" class="text-3xl font-extrabold text-textMain mb-2">Category Name</h2>
+            <p class="text-textMuted text-sm" id="cat-page-desc">Browse our collection</p>
+        </div>
+        <i id="cat-page-icon" data-lucide="box" class="absolute right-[-20px] bottom-[-20px] w-40 h-40 text-textMuted/5 rotate-12"></i>
+    </div>
+
+    <div id="category-specific-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 pb-24">
+        </div>
+</section>
         <!-- VIEW: WISHLIST -->
         <section id="view-wishlist" class="view-section hide">
             <div class="mb-8 flex items-center gap-3">
@@ -1672,35 +1614,162 @@
             },
 
             // --- CATEGORIES ---
-            loadHomeCategories: () => {
-                const con = document.getElementById('category-chips');
-                con.innerHTML = '<button onclick="app.filterCategory(\'all\')" class="clay-btn clay-btn-primary px-5 py-2 text-sm font-bold">All</button>';
+            // 1. Render the Horizontal Chips on Home View
+    loadHomeCategories: () => {
+        const con = document.getElementById('category-chips');
+        if (!con) return;
 
-                app.categories.forEach(cat => {
-                    con.innerHTML += `
-                        <button onclick="app.filterCategory('${cat.id}')" class="clay-btn clay-btn-secondary px-5 py-2 text-sm font-medium">
-                            ${cat.name}
-                        </button>
-                    `;
-                });
-                app.updateIcons();
-            },
+        // Add 'All' button first
+        let html = `
+            <button onclick="app.filterCategory('all')" 
+                data-cat="all"
+                class="clay-btn ${app.activeCategory === 'all' ? 'clay-btn-primary' : 'clay-btn-secondary'} px-5 py-2 text-xs md:text-sm font-bold whitespace-nowrap transition-all">
+                All Items
+            </button>
+        `;
 
-            loadCategories: () => {
-                const grid = document.getElementById('categories-grid');
-                grid.innerHTML = '';
-                app.categories.forEach(cat => {
-                    grid.innerHTML += `
-                        <div onclick="app.filterCategory('${cat.id}'); app.router('home')" class="clay-card p-6 flex flex-col items-center justify-center text-center cursor-pointer h-40">
-                            <div class="clay-card-inner w-14 h-14 rounded-full flex items-center justify-center ${cat.color} mb-3">
-                                <i data-lucide="${cat.icon}" class="w-7 h-7"></i>
-                            </div>
-                            <span class="font-bold text-textMain">${cat.name}</span>
-                        </div>
-                    `;
-                });
-                app.updateIcons();
-            },
+        // Add dynamic categories
+        app.categories.forEach(cat => {
+            const isActive = app.activeCategory === cat.id;
+            html += `
+                <button onclick="app.filterCategory('${cat.id}')" 
+                    data-cat="${cat.id}"
+                    class="clay-btn ${isActive ? 'clay-btn-primary' : 'clay-btn-secondary'} px-5 py-2 text-xs md:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-2">
+                    ${cat.name}
+                </button>
+            `;
+        });
+
+        con.innerHTML = html;
+        app.updateIcons();
+    },
+
+           // 2. Render the Full Grid for 'Categories' View
+   // Paste these inside your window.app = { ... } object
+
+    // 1. Render the Grid in 'Browse Categories'
+    loadCategories: () => {
+        const grid = document.getElementById('categories-grid');
+        if (!grid) return;
+
+        grid.innerHTML = '';
+        app.categories.forEach(cat => {
+            grid.innerHTML += `
+                <div onclick="app.openCategoryPage('${cat.id}')" 
+                    class="clay-card p-4 flex flex-col items-center justify-center text-center cursor-pointer h-36 active:scale-95 transition-transform hover:shadow-clay-card-lg group">
+                    
+                    <div class="clay-card-inner w-14 h-14 rounded-2xl flex items-center justify-center ${cat.color} mb-3 shadow-inner group-hover:scale-110 transition-transform">
+                        <i data-lucide="${cat.icon}" class="w-7 h-7"></i>
+                    </div>
+                    
+                    <span class="font-bold text-textMain text-sm">${cat.name}</span>
+                    <span class="text-[10px] text-textMuted mt-1 font-bold group-hover:text-accent transition-colors">View All</span>
+                </div>
+            `;
+        });
+        app.updateIcons();
+    },
+
+    // 2. Open the "New Window" and load products
+    openCategoryPage: (catId) => {
+        // Find the category details (name, icon, etc.)
+        const cat = app.categories.find(c => c.id === catId);
+        if(!cat) return;
+
+        // Switch to the new view
+        app.router('category-products'); 
+
+        // Update the Title and Description
+        document.getElementById('cat-page-title').innerText = cat.name;
+        document.getElementById('cat-page-desc').innerText = `Explore our ${cat.name} collection`;
+        
+        // Update the big background icon
+        const iconEl = document.getElementById('cat-page-icon');
+        iconEl.setAttribute('data-lucide', cat.icon);
+
+        // Filter Products
+        const container = document.getElementById('category-specific-grid');
+        container.innerHTML = '';
+
+        // Get products that match this category
+        const filtered = app.products.filter(p => p.category === catId);
+
+        if(filtered.length === 0) {
+            container.innerHTML = `
+                <div class="col-span-full flex flex-col items-center justify-center py-20 text-textMuted">
+                    <i data-lucide="package-open" class="w-16 h-16 mb-4 opacity-30"></i>
+                    <p class="font-bold">No products found in ${cat.name}</p>
+                    <button onclick="app.router('home')" class="mt-4 text-accent text-sm font-bold hover:underline">Browse all items</button>
+                </div>
+            `;
+        } else {
+            // Render the products using your existing card design
+            filtered.forEach(p => {
+                const isLiked = app.wishlist.includes(p.id);
+                container.innerHTML += app.createProductCardHTML(p, isLiked);
+            });
+        }
+        
+        app.updateIcons();
+        window.scrollTo(0,0);
+    },
+
+    // 3. Handle click from the Full Grid (Redirects to Home)
+    handleCategoryClick: (catId) => {
+        app.filterCategory(catId); // Set filter
+        app.router('home'); // Go to home
+        
+        // Wait for view to switch then scroll to products
+        setTimeout(() => {
+            const productSection = document.getElementById('category-chips');
+            if(productSection) {
+                productSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }, 100);
+    },
+
+    // 4. Main Filter Logic (Updates UI & State)
+    filterCategory: (catId) => {
+        app.activeCategory = catId;
+
+        // Update UI of Home Chips (Highlight active one)
+        const buttons = document.querySelectorAll('#category-chips button');
+        buttons.forEach(btn => {
+            if (btn.dataset.cat === catId) {
+                btn.classList.remove('clay-btn-secondary');
+                btn.classList.add('clay-btn-primary');
+            } else {
+                btn.classList.add('clay-btn-secondary');
+                btn.classList.remove('clay-btn-primary');
+            }
+        });
+
+        // Trigger the actual filtering
+        app.filterProducts();
+    },
+
+    // 5. Filter Products (Combines Category + Search Bar)
+    filterProducts: () => {
+        const searchInput = document.getElementById('search-input');
+        const term = searchInput ? searchInput.value.toLowerCase() : '';
+        
+        const filtered = app.products.filter(p => {
+            // Check Search Term
+            const matchesSearch = p.name.toLowerCase().includes(term) || 
+                                  (p.desc && p.desc.toLowerCase().includes(term));
+            
+            // Check Category
+            let matchesCat = true;
+            if (app.activeCategory !== 'all') {
+                // Ensure exact match or check if product category contains the ID
+                matchesCat = (p.category === app.activeCategory);
+            }
+
+            return matchesSearch && matchesCat;
+        });
+
+        app.renderProductGrid(filtered);
+    },
 
             // --- PRODUCT LOGIC ---
             createProductCardHTML: (p, isLiked) => {
@@ -1886,34 +1955,6 @@
                 }
             },
 
-            filterCategory: (cat) => {
-                app.activeCategory = cat;
-                const btns = document.getElementById('category-chips').children;
-                Array.from(btns).forEach(btn => {
-                    if(btn.innerText === cat || (cat === 'all' && btn.innerText === 'All')) { 
-                        btn.classList.remove('clay-btn-secondary');
-                        btn.classList.add('clay-btn-primary');
-                    } else { 
-                        btn.classList.add('clay-btn-secondary');
-                        btn.classList.remove('clay-btn-primary');
-                    }
-                });
-                app.filterProducts();
-            },
-
-            filterProducts: () => {
-                const term = document.getElementById('search-input').value.toLowerCase();
-                const filtered = app.products.filter(p => {
-                    const matchesSearch = p.name.toLowerCase().includes(term) || 
-                                         (p.desc && p.desc.toLowerCase().includes(term));
-                    let matchesCat = true;
-                    if(app.activeCategory !== 'all') { 
-                        matchesCat = (p.category === app.activeCategory);
-                    }
-                    return matchesSearch && matchesCat;
-                });
-                app.renderProductGrid(filtered);
-            },
 
             buyNow: (pid) => {
                 app.addToCart(pid);
