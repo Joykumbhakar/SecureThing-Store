@@ -58,14 +58,11 @@
                         'clay-card-lg': '30px 30px 60px var(--tw-shadow-clay-dark), -30px -30px 60px var(--tw-shadow-clay-light)',
                         'clay-card-inner': 'inset 5px 5px 10px var(--tw-shadow-clay-dark), inset -5px -5px 10px var(--tw-shadow-clay-light)',
                         'clay-btn': '8px 8px 16px rgba(163, 177, 198, 0.4), -8px -8px 16px rgba(255, 255, 255, 0.8)',
-                        'clay-bubble-me': '8px 8px 16px rgba(88, 63, 188, 0.2), -8px -8px 16px rgba(127, 90, 240, 0.2)',
-                        'clay-bubble-other': '8px 8px 16px rgba(163, 177, 198, 0.2), -8px -8px 16px rgba(255, 255, 255, 0.8)',
                     },
                     animation: {
                         'shimmer': 'shimmer 1.5s infinite linear',
                         'cart-bounce': 'cartBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                         'heart-ping': 'heartPing 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                        'float': 'float 6s ease-in-out infinite',
                         'pulse-glow': 'pulse-glow 2s infinite',
                     },
                     keyframes: {
@@ -81,10 +78,6 @@
                             '0%': { transform: 'scale(1)' },
                             '50%': { transform: 'scale(1.3)' },
                             '100%': { transform: 'scale(1)' }
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0px)' },
-                            '50%': { transform: 'translateY(-20px)' }
                         }
                     }
                 }
@@ -95,8 +88,6 @@
         :root {
             --tw-shadow-clay-light: #ffffff;
             --tw-shadow-clay-dark: #c8cdd6;
-            --tw-shadow-clay-bubble-me: rgba(88, 63, 188, 0.2);
-            --tw-shadow-clay-bubble-other: rgba(163, 177, 198, 0.2);
         }
 
         body {
@@ -291,7 +282,6 @@
             margin-right: 6px;
         }
 
-        /* Claymorphism Components */
         .clay-card {
             background: #EBF0F6;
             border-radius: 30px;
@@ -358,8 +348,7 @@
             box-shadow: 4px 4px 8px var(--tw-shadow-clay-dark), -4px -4px 8px var(--tw-shadow-clay-light);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-
-        /* Banner Horizontal Scroller */
+/* Banner Horizontal Scroller */
         .banner-horizontal-container {
             overflow-x: auto;
             scroll-snap-type: x mandatory;
@@ -399,8 +388,6 @@
             background: #7F5AF0;
             border-radius: 12px;
         }
-
-        /* Navigation Styles */
         .nav-link-desktop {
             @apply px-4 py-2 text-sm font-bold text-textMain hover:text-accent transition-colors relative after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-0 after:h-0.5 after:bg-accent after:transition-all after:duration-300 hover:after:w-4/5;
         }
@@ -457,27 +444,6 @@
             box-shadow: inset 5px 5px 10px #d1d9e6, inset -5px -5px 10px #ffffff;
         }
 
-        /* Mobile Navigation SVG Curve */
-        .mobile-nav-curve {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 90px;
-            z-index: 40;
-            pointer-events: none;
-        }
-
-        .mobile-nav-content {
-            position: absolute;
-            inset: 0;
-            pointer-events: auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            padding: 0 1rem 0.5rem 1rem;
-        }
-
         .cart-badge {
             position: absolute;
             top: -8px;
@@ -504,7 +470,6 @@
     <!-- Top Navigation -->
     <nav class="z-40 transition-all duration-300 w-full shrink-0 bg-clayBg sticky top-0">
         <div class="px-6 py-6 flex justify-between items-center">
-            <!-- Mobile Menu Toggle (Links to Categories) -->
             <button onclick="app.router('categories')"
                 class="text-primary p-2 bg-white rounded-xl shadow-clay-float md:hidden">
                 <i data-lucide="layout-grid" class="w-6 h-6"></i>
@@ -530,7 +495,7 @@
                 <button onclick="app.router('service-dashboard')" class="nav-link-desktop text-accent hide"
                     id="nav-service">Support</button>
                 <button onclick="app.router('seller-dashboard')" class="nav-link-desktop text-warning hide"
-                    id="nav-seller">Seller Portal</button>
+                    id="nav-seller">Seller</button>
                 <button onclick="app.router('admin-dashboard')" class="nav-link-desktop text-primary hide"
                     id="nav-admin">Admin</button>
                 <div id="auth-section-desktop" class="ml-4"></div>
@@ -553,7 +518,7 @@
             <div class="relative">
                 <input type="text" id="global-search-input"
                     onkeydown="if(event.key === 'Enter') app.performSearch(this.value)"
-                    placeholder="Search products & press Enter..."
+                    placeholder="Search products..."
                     class="clay-input w-full py-4 pl-12 pr-12 text-sm font-bold shadow-clay-inner">
                 <i data-lucide="search" class="absolute left-4 top-4 text-primary w-5 h-5"></i>
                 <button onclick="app.clearSearch()" class="absolute right-4 top-4 text-slate-400 hover:text-danger"><i
@@ -564,7 +529,6 @@
 
     <!-- Main Content -->
     <main class="flex-grow container mx-auto px-4 py-6 mb-16 md:mb-0">
-
         <div id="global-loader"
             class="fixed inset-0 bg-white/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center hide transition-all">
             <div class="loader mb-4"></div>
@@ -573,9 +537,7 @@
 
         <!-- VIEW: HOME -->
         <section id="view-home" class="view-section">
-            <!-- Claymorphism Hero Section with Horizontal Banner Scroller -->
-            <!-- Right Side: Horizontal Image Banner Scroller -->
-            <div class="lg:w-1/3 lg:shrink-0">
+           <div class="lg:w-1/3 lg:shrink-0">
                 <div class="clay-card-inner p-0 h-full flex flex-col justify-center overflow-hidden">
 
                     <!-- Header -->
@@ -587,14 +549,16 @@
                     </div>
 
                     <!-- Scroller Container -->
+                    <!-- Added overflow-x-auto, snap-x, snap-mandatory for robust scrolling -->
                     <div class="banner-horizontal-container flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-4 pb-4 px-6 no-scrollbar"
                         id="banner-horizontal-scroller">
 
                         <!-- Slide 1: Security -->
+                        <!-- Changed inline style to Tailwind classes: w-full shrink-0 snap-center -->
                         <div class="banner-horizontal-slide w-full shrink-0 snap-center relative group cursor-pointer"
                             onclick="app.filterCategory('Security')">
                             <div class="clay-card overflow-hidden aspect-[3/1] w-full rounded-2xl shadow-sm">
-                                <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+                                <img src="banner1.png"
                                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                     alt="Security Sale">
                                 <!-- Overlay Text -->
@@ -610,7 +574,7 @@
                         <div class="banner-horizontal-slide w-full shrink-0 snap-center relative group cursor-pointer"
                             onclick="app.filterCategory('Electronics')">
                             <div class="clay-card overflow-hidden aspect-[3/1] w-full rounded-2xl shadow-sm">
-                                <img src="https://images.unsplash.com/photo-1498049794561-7780e7231661?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+                                <img src="banner2.png"
                                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                     alt="Electronics Sale">
                                 <div
@@ -625,7 +589,7 @@
                         <div class="banner-horizontal-slide w-full shrink-0 snap-center relative group cursor-pointer"
                             onclick="app.filterCategory('Home')">
                             <div class="clay-card overflow-hidden aspect-[3/1] w-full rounded-2xl shadow-sm">
-                                <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+                                <img src="banner3.png"
                                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                     alt="Smart Home Sale">
                                 <div
@@ -640,7 +604,7 @@
                         <div class="banner-horizontal-slide w-full shrink-0 snap-center relative group cursor-pointer"
                             onclick="app.filterCategory('Fashion')">
                             <div class="clay-card overflow-hidden aspect-[3/1] w-full rounded-2xl shadow-sm">
-                                <img src="https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+                                <img src="banner4.png"
                                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                     alt="Fashion Sale">
                                 <div
@@ -655,7 +619,7 @@
                         <div class="banner-horizontal-slide w-full shrink-0 snap-center relative group cursor-pointer"
                             onclick="app.filterCategory('Toys')">
                             <div class="clay-card overflow-hidden aspect-[3/1] w-full rounded-2xl shadow-sm">
-                                <img src="https://images.unsplash.com/photo-1570824104453-508955ab713e?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80"
+                                <img src="banner5.png"
                                     class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                                     alt="Toys Sale">
                                 <div
@@ -672,35 +636,31 @@
                     <div class="pb-6">
                         <!-- Dots Indicator -->
                         <div class="banner-dots" id="banner-dots">
-                            <div class="banner-dot active" onclick="app.scrollToBanner(0)"></div>
-                            <div class="banner-dot" onclick="app.scrollToBanner(1)"></div>
-                            <div class="banner-dot" onclick="app.scrollToBanner(2)"></div>
-                            <div class="banner-dot" onclick="app.scrollToBanner(3)"></div>
-                            <div class="banner-dot" onclick="app.scrollToBanner(4)"></div>
+                            <div class="banner-dot active" onclick="scrollToBanner(0)"></div>
+                            <div class="banner-dot" onclick="scrollToBanner(1)"></div>
+                            <div class="banner-dot" onclick="scrollToBanner(2)"></div>
+                            <div class="banner-dot" onclick="scrollToBanner(3)"></div>
+                            <div class="banner-dot" onclick="scrollToBanner(4)"></div>
                         </div>
 
                     </div>
                 </div>
             </div>
+
             <!-- Categories Filter -->
             <div class="clay-card mb-8 sticky top-20 z-30">
-                <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-6">
-
-
+                <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-6 p-6">
                     <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
                         <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar w-full sm:w-auto" id="category-chips">
                             <button onclick="app.filterCategory('all')"
                                 class="clay-btn clay-btn-primary px-5 py-2 text-sm font-bold">All</button>
-                            <!-- Dynamic categories will be loaded here -->
                         </div>
-
                     </div>
                 </div>
             </div>
 
             <!-- Product Grid -->
             <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 pb-32">
-                <!-- Products will be loaded here -->
             </div>
         </section>
 
@@ -712,27 +672,7 @@
             </div>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="categories-grid"></div>
         </section>
-        <section id="view-category-products" class="view-section hide">
-            <div class="mb-6 flex items-center justify-between">
-                <button onclick="app.router('categories')"
-                    class="text-textMuted hover:text-accent flex items-center text-sm font-bold transition-colors">
-                    <i data-lucide="arrow-left" class="mr-2 lucide-sm"></i> Back to Categories
-                </button>
-            </div>
 
-            <div class="clay-card p-8 mb-8 relative overflow-hidden">
-                <div class="relative z-10">
-                    <h2 id="cat-page-title" class="text-3xl font-extrabold text-textMain mb-2">Category Name</h2>
-                    <p class="text-textMuted text-sm" id="cat-page-desc">Browse our collection</p>
-                </div>
-                <i id="cat-page-icon" data-lucide="box"
-                    class="absolute right-[-20px] bottom-[-20px] w-40 h-40 text-textMuted/5 rotate-12"></i>
-            </div>
-
-            <div id="category-specific-grid"
-                class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-6 pb-24">
-            </div>
-        </section>
         <!-- VIEW: WISHLIST -->
         <section id="view-wishlist" class="view-section hide">
             <div class="mb-8 flex items-center gap-3">
@@ -875,7 +815,7 @@
                                 <i data-lucide="shopping-bag" class="mr-2 lucide-sm"></i> Add to Cart
                             </button>
                             <button onclick="app.buyNow(app.currentProductDetailId)"
-                                class="clay-btn clay-btn-primary py-4 font-bold flex justify-center items-center hover:shadow-clay-card-lg">
+                                class="clay-btn clay-btn-primary py-4 font-bold flex justify-center items-center">
                                 Buy Now <i data-lucide="arrow-right" class="ml-2 lucide-sm"></i>
                             </button>
                         </div>
@@ -978,7 +918,7 @@
                     </div>
 
                     <button onclick="app.placeOrder()"
-                        class="clay-btn clay-btn-primary w-full font-bold py-4 rounded-xl mt-8 hover:shadow-clay-card-lg flex justify-center items-center">
+                        class="clay-btn clay-btn-primary w-full font-bold py-4 rounded-xl mt-8 flex justify-center items-center">
                         <span>Place Order</span> <i data-lucide="check" class="ml-2 lucide-sm"></i>
                     </button>
                     <div class="text-center mt-6 text-xs text-textMuted flex justify-center items-center">
@@ -999,8 +939,7 @@
                     securely placed and is being processed.</p>
                 <div class="flex flex-col gap-4">
                     <button onclick="app.router('orders')"
-                        class="clay-btn clay-btn-primary w-full py-4 font-bold hover:shadow-clay-card-lg">Track Your
-                        Order</button>
+                        class="clay-btn clay-btn-primary w-full py-4 font-bold">Track Your Order</button>
                     <button onclick="app.router('home')"
                         class="clay-btn clay-btn-secondary w-full py-4 font-bold">Continue Shopping</button>
                 </div>
@@ -1065,9 +1004,278 @@
                         <input type="text" id="customer-chat-input" class="clay-input w-full px-5 py-4 font-medium"
                             placeholder="Type your message..." required>
                     </div>
-                    <button type="submit" class="clay-btn clay-btn-primary p-4 hover:shadow-clay-card-lg"><i
-                            data-lucide="send" class="lucide-sm"></i></button>
+                    <button type="submit" class="clay-btn clay-btn-primary p-4"><i data-lucide="send"
+                            class="lucide-sm"></i></button>
                 </form>
+            </div>
+        </section>
+
+        <!-- VIEW: SELLER LOGIN -->
+        <section id="view-seller-login" class="view-section hide max-w-sm mx-auto mt-20 relative">
+            <div class="clay-card p-10 relative overflow-hidden">
+                <div class="mb-8">
+                    <div class="clay-card-inner p-3 mb-4 text-warning">
+                        <i data-lucide="briefcase" class="lucide-lg"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-textMain">Seller Portal</h2>
+                    <p class="text-textMuted text-sm mt-1">Manage inventory & orders</p>
+                </div>
+
+                <form onsubmit="app.handleSellerAuth(event)" class="space-y-5">
+                    <div>
+                        <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Seller
+                            Email</label>
+                        <div class="relative group">
+                            <input type="email" id="seller-auth-email"
+                                class="clay-input w-full px-4 py-3.5 pl-11 text-sm font-medium"
+                                placeholder="id@securething.com" required>
+                            <i data-lucide="user"
+                                class="absolute left-3.5 top-3.5 text-textMuted group-focus-within:text-warning transition-colors lucide-sm"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <label
+                            class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Password</label>
+                        <div class="relative group">
+                            <input type="password" id="seller-auth-pass"
+                                class="clay-input w-full px-4 py-3.5 pl-11 text-sm font-medium" placeholder="••••••••"
+                                required>
+                            <i data-lucide="lock"
+                                class="absolute left-3.5 top-3.5 text-textMuted group-focus-within:text-warning transition-colors lucide-sm"></i>
+                        </div>
+                    </div>
+                    <button type="submit"
+                        class="clay-btn clay-btn-primary w-full font-bold py-3.5 rounded-xl mt-4 flex justify-center items-center bg-warning hover:bg-yellow-400 text-primary">
+                        Access Dashboard <i data-lucide="arrow-right" class="ml-2 lucide-sm"></i>
+                    </button>
+                </form>
+                <div class="mt-8 pt-6 border-t border-textMuted/20 text-center">
+                    <a href="#" onclick="app.router('seller-apply')"
+                        class="text-xs text-textMuted hover:text-textMain transition flex items-center justify-center font-bold uppercase tracking-wide"><i
+                            data-lucide="file-plus" class="mr-2 lucide-sm"></i> Apply for Seller Account</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: SELLER APPLY -->
+        <section id="view-seller-apply" class="view-section hide max-w-2xl mx-auto">
+            <div class="clay-card p-12">
+                <div class="text-center mb-10">
+                    <div
+                        class="clay-card-inner w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-accent">
+                        <i data-lucide="store" class="lucide-xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-extrabold text-textMain">Partner Application</h2>
+                    <p class="text-textMuted mt-2">Join our marketplace. Admin approval required.</p>
+                </div>
+
+                <form onsubmit="app.submitSellerApplication(event)" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Full
+                                Name</label>
+                            <input type="text" name="name" class="clay-input w-full p-3.5" required>
+                        </div>
+                        <div>
+                            <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Date of
+                                Birth</label>
+                            <input type="date" name="dob" class="clay-input w-full p-3.5" required>
+                        </div>
+                        <div>
+                            <label
+                                class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Mobile</label>
+                            <input type="tel" name="mobile" class="clay-input w-full p-3.5" required>
+                        </div>
+                        <div>
+                            <label
+                                class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Email</label>
+                            <input type="email" name="email" class="clay-input w-full p-3.5" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Company
+                            Name</label>
+                        <input type="text" name="company" class="clay-input w-full p-3.5" required>
+                    </div>
+                    <div>
+                        <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Business
+                            Address</label>
+                        <input type="text" name="address" class="clay-input w-full p-3.5" required>
+                    </div>
+
+                    <div class="clay-card-inner p-8">
+                        <h4 class="text-sm font-bold text-textMain mb-6 flex items-center"><i data-lucide="upload-cloud"
+                                class="mr-2 text-accent"></i> Upload Documents</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <span class="text-xs text-textMuted block mb-2 font-bold uppercase">Government ID</span>
+                                <input type="file" id="doc-file"
+                                    class="block w-full text-sm text-textMuted file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-accent file:text-white hover:file:bg-accentHover transition">
+                            </div>
+                            <div>
+                                <span class="text-xs text-textMuted block mb-2 font-bold uppercase">Profile Photo</span>
+                                <input type="file" id="photo-file"
+                                    class="block w-full text-sm text-textMuted file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-accent file:text-white hover:file:bg-accentHover transition">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                        class="clay-btn clay-btn-primary w-full font-bold py-4 flex justify-center items-center">
+                        Submit Application <i data-lucide="send" class="ml-2 lucide-sm"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- VIEW: SELLER DASHBOARD -->
+        <section id="view-seller-dashboard" class="view-section hide">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+                <div>
+                    <h2 class="text-3xl font-extrabold text-textMain">Seller Overview</h2>
+                    <p class="text-textMuted text-sm mt-1">Manage your business metrics and orders.</p>
+                </div>
+                <button onclick="app.openAddProductModal()"
+                    class="clay-btn clay-btn-primary px-6 py-3 text-sm font-bold flex items-center"><i
+                        data-lucide="plus" class="mr-2 lucide-sm"></i> Add New Product</button>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-10">
+                <div class="clay-card p-8 flex justify-between items-center group">
+                    <div>
+                        <div class="text-textMuted text-xs uppercase font-bold tracking-wider mb-2">Total Products</div>
+                        <div class="text-4xl font-extrabold text-textMain group-hover:text-accent transition-colors"
+                            id="seller-stat-products">0</div>
+                    </div>
+                    <div class="clay-card-inner w-16 h-16 rounded-2xl flex items-center justify-center text-accent">
+                        <i data-lucide="box" class="lucide-xl"></i>
+                    </div>
+                </div>
+                <div class="clay-card p-8 flex justify-between items-center group">
+                    <div>
+                        <div class="text-textMuted text-xs uppercase font-bold tracking-wider mb-2">Pending Orders</div>
+                        <div class="text-4xl font-extrabold text-textMain group-hover:text-warning transition-colors"
+                            id="seller-stat-orders">0</div>
+                    </div>
+                    <div class="clay-card-inner w-16 h-16 rounded-2xl flex items-center justify-center text-warning">
+                        <i data-lucide="clock" class="lucide-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="clay-card p-8 h-[600px] flex flex-col">
+                    <h3
+                        class="font-bold border-b border-textMuted/20 pb-5 mb-5 text-textMain flex items-center text-lg">
+                        <i data-lucide="package" class="mr-3 lucide-sm text-textMuted"></i> My Inventory
+                    </h3>
+                    <div id="seller-products-list" class="space-y-3 flex-grow overflow-y-auto pr-2"></div>
+                </div>
+                <div class="clay-card p-8 h-[600px] flex flex-col">
+                    <h3
+                        class="font-bold border-b border-textMuted/20 pb-5 mb-5 text-textMain flex items-center text-lg">
+                        <i data-lucide="clipboard-list" class="mr-3 lucide-sm text-textMuted"></i> Manage Orders
+                    </h3>
+                    <div id="seller-orders-list" class="space-y-4 flex-grow overflow-y-auto pr-2"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: ADMIN DASHBOARD -->
+        <section id="view-admin-dashboard" class="view-section hide">
+            <div class="flex items-center gap-4 mb-10">
+                <div class="clay-card-inner p-4 text-accent"><i data-lucide="shield-alert" class="lucide-lg"></i></div>
+                <div>
+                    <h2 class="text-3xl font-extrabold text-textMain">Master Control</h2>
+                    <p class="text-sm text-textMuted mt-1">System wide verification and management.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                <div
+                    class="clay-card p-8 relative overflow-hidden group bg-gradient-to-r from-accent to-accentHover text-white">
+                    <div class="relative z-10">
+                        <div class="text-white/80 text-xs font-bold uppercase tracking-widest mb-3">Total Platform Sales
+                        </div>
+                        <div class="text-5xl font-extrabold" id="admin-total-sales">₹0</div>
+                    </div>
+                    <i data-lucide="trending-up"
+                        class="absolute right-8 top-8 text-white/10 w-32 h-32 group-hover:scale-110 transition duration-700"></i>
+                </div>
+                <div class="clay-card p-8">
+                    <div class="text-textMuted text-xs font-bold uppercase tracking-widest mb-3">Total Orders Processed
+                    </div>
+                    <div class="text-5xl font-extrabold text-textMain" id="admin-order-count">0</div>
+                </div>
+            </div>
+
+            <div class="clay-card p-8 mb-8">
+                <h3 class="font-bold text-lg mb-6 text-textMain flex items-center"><i data-lucide="check-square"
+                        class="mr-3 text-warning"></i> Payment Verification Queue</h3>
+                <div id="admin-payment-queue" class="space-y-3"></div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="clay-card p-8">
+                    <h3 class="font-bold text-lg mb-6 text-textMain flex items-center"><i data-lucide="user-plus"
+                            class="mr-3 text-accent"></i> Seller Applications</h3>
+                    <div id="admin-seller-requests" class="space-y-3"></div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="clay-card p-8">
+                        <h3 class="font-bold text-lg mb-6 text-textMain flex items-center"><i data-lucide="users"
+                                class="mr-3 text-primary"></i> Create Service Agent</h3>
+                        <form onsubmit="app.createServiceAccount(event)" class="flex gap-3">
+                            <input type="email" id="service-email-input" placeholder="Agent Email Address"
+                                class="clay-input p-3.5 flex-grow text-sm" required>
+                            <input type="password" id="service-password-input" placeholder="Temporary Password"
+                                class="clay-input p-3.5 flex-grow text-sm" required>
+                            <button type="submit" class="clay-btn clay-btn-primary px-6 font-bold">Create</button>
+                        </form>
+                    </div>
+
+                    <div class="clay-card p-8">
+                        <h3 class="font-bold text-lg mb-6 text-warning flex items-center"><i data-lucide="user-check"
+                                class="mr-3 text-warning"></i> Quick Seller Onboarding</h3>
+                        <form onsubmit="app.createSellerManual(event)" class="space-y-4">
+                            <input type="email" id="manual-seller-email" placeholder="Seller Email ID"
+                                class="clay-input p-3.5 w-full text-sm" required>
+                            <input type="text" id="manual-seller-name" placeholder="Business Name"
+                                class="clay-input p-3.5 w-full text-sm" required>
+                            <button type="submit" class="clay-btn clay-btn-primary px-4 py-3.5 w-full font-bold">Create
+                                & Send Credentials</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW: SERVICE DASHBOARD -->
+        <section id="view-service-dashboard" class="view-section hide">
+            <h2 class="text-3xl font-extrabold mb-8 text-textMain flex items-center"><i data-lucide="headphones"
+                    class="mr-4 text-accent"></i> Support Desk</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 h-[700px]">
+                <div class="clay-card p-6 md:col-span-1 overflow-hidden flex flex-col">
+                    <h3 class="font-bold mb-6 text-textMuted text-xs uppercase tracking-widest px-2">Active Tickets</h3>
+                    <div id="support-tickets-list" class="space-y-2 flex-grow overflow-y-auto px-2 pb-2"></div>
+                </div>
+                <div class="clay-card md:col-span-2 flex flex-col overflow-hidden relative">
+                    <div id="service-chat-header"
+                        class="border-b border-textMuted/20 p-6 font-bold text-textMain flex items-center justify-between">
+                        <span class="text-textMuted">Select a ticket to view chat</span>
+                        <i data-lucide="message-square" class="text-textMuted/30"></i>
+                    </div>
+                    <div id="service-chat-messages" class="flex-grow p-8 overflow-y-auto space-y-4 clay-card-inner">
+                    </div>
+                    <form onsubmit="app.sendServiceMessage(event)" class="p-6 border-t border-textMuted/20 flex gap-4">
+                        <input type="text" id="service-chat-input" class="clay-input flex-grow px-5 py-4 font-medium"
+                            placeholder="Reply to customer..." disabled>
+                        <button type="submit" id="service-chat-send-btn"
+                            class="clay-btn clay-btn-primary px-6 font-bold" disabled><i data-lucide="send"
+                                class="lucide-sm"></i></button>
+                    </form>
+                </div>
             </div>
         </section>
 
@@ -1135,7 +1343,7 @@
 
     <!-- Cart Sidebar -->
     <div id="cart-sidebar"
-        class="fixed inset-y-0 right-0 w-96 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-[60] flex flex-col font-sans">
+        class="fixed inset-y-0 right-0 w-96 bg-white shadow-2xl transform translate-x-full transition-transform duration-300 z-[60] flex flex-col">
         <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-white">
             <h3 class="font-bold text-xl text-textMain flex items-center"><i data-lucide="shopping-cart"
                     class="mr-3 text-accent"></i> Your Cart</h3>
@@ -1150,64 +1358,125 @@
                 <span id="cart-total" class="text-accent">₹0</span>
             </div>
             <button onclick="app.goToCheckout()"
-                class="w-full clay-btn clay-btn-primary py-4 rounded-2xl font-bold flex justify-center items-center gap-2 hover:shadow-clay-card-lg">
+                class="w-full clay-btn clay-btn-primary py-4 rounded-2xl font-bold flex justify-center items-center gap-2">
                 Proceed to Checkout <i data-lucide="arrow-right" class="lucide-sm"></i>
             </button>
         </div>
     </div>
 
+    <!-- Mobile Navigation -->
     <div class="fixed bottom-0 left-0 w-full z-50 md:hidden pointer-events-none pb-safe">
-
         <div class="relative w-full h-[90px] pointer-events-auto">
-
-            <svg class="absolute bottom-0 left-0 w-full h-full drop-shadow-[0_-10px_20px_rgba(88,63,188,0.2)]"
-                viewBox="0 0 100 24" preserveAspectRatio="none">
+            <svg class="absolute bottom-0 left-0 w-full h-full" viewBox="0 0 100 24" preserveAspectRatio="none">
                 <path d="M0,5 Q0,0 5,0 H32 Q42,0 50,9 Q58,0 68,0 H95 Q100,0 100,5 V24 H0 Z" fill="#583FBC"
                     vector-effect="non-scaling-stroke" />
             </svg>
-
             <div class="absolute inset-0 flex justify-between items-end px-4 pb-3">
-
                 <button onclick="app.router('home')" id="mob-nav-home"
                     class="nav-icon-mobile w-1/5 flex flex-col items-center justify-end pb-2 text-white/70 active:text-white transition-colors group">
                     <i data-lucide="home" class="w-6 h-6 group-active:scale-90 transition-transform"></i>
                     <span class="text-[10px] font-medium mt-1">Home</span>
                 </button>
-
                 <button onclick="app.router('wishlist')" id="mob-nav-wishlist"
                     class="nav-icon-mobile w-1/5 flex flex-col items-center justify-end pb-2 text-white/70 active:text-white transition-colors group">
                     <i data-lucide="heart" class="w-6 h-6 group-active:scale-90 transition-transform"></i>
                     <span class="text-[10px] font-medium mt-1">Wishlist</span>
                 </button>
-
                 <div class="w-1/5 relative flex justify-center h-full pointer-events-none">
                     <button id="fab-cart-btn" onclick="app.toggleCart()"
                         class="pointer-events-auto absolute -top-5 w-14 h-14 bg-white/10 backdrop-blur-md rounded-full flex items-center justify-center border-4 border-white/10 text-white shadow-2xl transition-all active:scale-95 hover:bg-white/20">
-
                         <div class="w-10 h-10 bg-[#6d51d4] rounded-full flex items-center justify-center shadow-inner">
                             <i data-lucide="shopping-cart" class="w-5 h-5"></i>
                         </div>
-
                         <span id="cart-count-mobile"
                             class="absolute top-0 right-0 bg-red-500 text-white text-[9px] font-bold w-4 h-4 flex items-center justify-center rounded-full border border-[#583FBC]">
                             0
                         </span>
                     </button>
                 </div>
-
                 <button onclick="app.router('orders')" id="mob-nav-orders"
                     class="nav-icon-mobile w-1/5 flex flex-col items-center justify-end pb-2 text-white/70 active:text-white transition-colors group">
                     <i data-lucide="package" class="w-6 h-6 group-active:scale-90 transition-transform"></i>
                     <span class="text-[10px] font-medium mt-1">Orders</span>
                 </button>
-
                 <button onclick="app.router('profile')" id="mob-nav-profile"
                     class="nav-icon-mobile w-1/5 flex flex-col items-center justify-end pb-2 text-white/70 active:text-white transition-colors group">
                     <i data-lucide="user" class="w-6 h-6 group-active:scale-90 transition-transform"></i>
                     <span class="text-[10px] font-medium mt-1">Profile</span>
                 </button>
-
             </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="add-product-modal"
+        class="fixed inset-0 bg-primary/80 backdrop-blur-sm z-50 flex items-center justify-center hide transition-opacity p-4">
+        <div class="clay-card p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-8">
+                <h3 class="text-2xl font-bold text-textMain" id="modal-title">Add New Product</h3>
+                <button onclick="document.getElementById('add-product-modal').classList.add('hide')"
+                    class="text-textMuted hover:text-textMain clay-btn clay-btn-secondary p-2 transition"><i
+                        data-lucide="x"></i></button>
+            </div>
+            <form onsubmit="app.sellerSaveProduct(event)" class="space-y-5">
+                <input type="hidden" name="p_id">
+                <div>
+                    <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Product
+                        Name</label>
+                    <input type="text" name="p_name" class="clay-input w-full p-3.5 font-medium" required>
+                </div>
+                <div>
+                    <label
+                        class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Description</label>
+                    <textarea name="p_desc" class="clay-input w-full p-3.5 font-medium" rows="3" required></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Price
+                            (₹)</label>
+                        <input type="number" name="p_price" class="clay-input w-full p-3.5 font-medium" required>
+                    </div>
+                    <div>
+                        <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Discount
+                            %</label>
+                        <input type="number" name="p_discount" class="clay-input w-full p-3.5 font-medium" value="0"
+                            min="0" max="100">
+                    </div>
+                    <div>
+                        <label
+                            class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Category</label>
+                        <select name="p_cat" class="clay-input w-full p-3.5 text-sm font-medium">
+                            <option value="Electronics">Electronics</option>
+                            <option value="Home">Home</option>
+                            <option value="Security">Security</option>
+                            <option value="Fashion">Fashion</option>
+                            <option value="Sports">Sports</option>
+                            <option value="Toys">Toys</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Rating</label>
+                        <input type="number" name="p_rating" class="clay-input w-full p-3.5 font-medium" step="0.1"
+                            min="0" max="5" value="5.0">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-textMain text-xs font-bold mb-2 uppercase tracking-wide">Image URL</label>
+                    <div class="relative group">
+                        <input type="text" name="p_img" class="clay-input w-full p-3.5 pl-11 font-medium">
+                        <i data-lucide="image"
+                            class="absolute left-3.5 top-3.5 text-textMuted group-focus-within:text-accent transition-colors lucide-sm"></i>
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-3 mt-8 pt-4 border-t border-textMuted/20">
+                    <button type="button" onclick="app.fillMockProduct(this.form)"
+                        class="clay-btn clay-btn-secondary px-5 py-3 text-xs font-bold" id="mock-btn">Auto-Fill</button>
+                    <button type="submit" class="clay-btn clay-btn-primary px-8 py-3 font-bold flex items-center">
+                        <i data-lucide="save" class="mr-2 lucide-sm"></i> Save
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -1240,7 +1509,7 @@
             where
         } from "firebase/firestore";
 
-        // --- FIREBASE CONFIGURATION ---
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyAEDJkwaThWJNm8lQbOLxb-JSTQ45dbHOw",
             authDomain: "thing-672ba.firebaseapp.com",
@@ -1256,13 +1525,11 @@
         const db = getFirestore(appInst);
         const ADMIN_EMAIL = "joykumbhakar101@gmail.com";
 
-        // Helper to get Firestore paths
-        const APP_ID = typeof __app_id !== 'undefined' ? __app_id : 'secure-thing-store';
-
+        const APP_ID = 'secure-thing-store';
         const getCollectionRef = (name) => collection(db, 'artifacts', APP_ID, 'public', 'data', name);
         const getUserRef = (uid) => doc(db, 'artifacts', APP_ID, 'public', 'data', 'users', uid);
 
-        // --- APPLICATION STATE ---
+        // Application State
         window.app = {
             currentUser: null,
             userRole: 'customer',
@@ -1283,128 +1550,40 @@
                 { id: 'Toys', name: 'Toys', icon: 'gamepad-2', color: 'bg-purple-100 text-purple-600' }
             ],
 
-            // --- HELPER: UPDATE ICONS ---
-            updateIcons: () => {
-                if (window.lucide) {
-                    window.lucide.createIcons();
-                }
+            // Initialize
+            init: () => {
+                const savedCart = localStorage.getItem('cart');
+                if (savedCart) app.cart = JSON.parse(savedCart);
+                const savedWishlist = localStorage.getItem('wishlist');
+                if (savedWishlist) app.wishlist = JSON.parse(savedWishlist);
+                app.updateCartUI();
+                if (window.lucide) window.lucide.createIcons();
             },
 
-            // --- UTILS: TOAST NOTIFICATIONS ---
+            // Toast Notifications
             toast: (msg, type = 'info') => {
                 const container = document.getElementById('toast-container');
                 const toast = document.createElement('div');
                 toast.className = `toast ${type}`;
-
                 let iconName = 'info';
                 if (type === 'success') iconName = 'check-circle';
                 if (type === 'error') iconName = 'alert-circle';
-
-                toast.innerHTML = `
-                    <i data-lucide="${iconName}"></i>
-                    <span class="font-bold text-sm text-slate-800">${msg}</span>
-                `;
+                toast.innerHTML = `<i data-lucide="${iconName}"></i><span class="font-bold text-sm text-slate-800">${msg}</span>`;
                 container.appendChild(toast);
-                app.updateIcons();
-
+                if (window.lucide) window.lucide.createIcons();
                 setTimeout(() => {
                     toast.style.animation = 'slideOut 0.3s ease-in forwards';
                     setTimeout(() => toast.remove(), 300);
                 }, 3000);
             },
 
-            // --- INITIALIZATION ---
-            init: () => {
-                const savedCart = localStorage.getItem('cart');
-                if (savedCart) {
-                    app.cart = JSON.parse(savedCart);
-                    app.updateCartUI();
-                }
-                const savedWishlist = localStorage.getItem('wishlist');
-                if (savedWishlist) app.wishlist = JSON.parse(savedWishlist);
-
-                app.updateIcons();
-                
-                // Initialize banner scroller
-                app.initBannerScroller();
-                
-                // Load products
-                app.loadProducts();
-                app.loadHomeCategories();
-            },
-
-            // --- BANNER SCROLLER FUNCTIONS ---
-            initBannerScroller: () => {
-                let currentBannerIndex = 0;
-                const bannerSlides = 5;
-                const slideWidth = 280 + 16;
-
-                window.scrollBanners = (direction) => {
-                    const scroller = document.getElementById('banner-horizontal-scroller');
-
-                    if (direction === 'left') {
-                        currentBannerIndex = Math.max(0, currentBannerIndex - 1);
-                    } else {
-                        currentBannerIndex = Math.min(bannerSlides - 1, currentBannerIndex + 1);
-                    }
-
-                    scroller.scrollTo({
-                        left: currentBannerIndex * slideWidth,
-                        behavior: 'smooth'
-                    });
-
-                    updateDots();
-                };
-
-                window.scrollToBanner = (index) => {
-                    currentBannerIndex = index;
-                    const scroller = document.getElementById('banner-horizontal-scroller');
-                    scroller.scrollTo({
-                        left: index * slideWidth,
-                        behavior: 'smooth'
-                    });
-                    updateDots();
-                };
-
-                function updateDots() {
-                    const dots = document.querySelectorAll('.banner-dot');
-                    dots.forEach((dot, index) => {
-                        if (index === currentBannerIndex) {
-                            dot.classList.add('active');
-                        } else {
-                            dot.classList.remove('active');
-                        }
-                    });
-                }
-
-                // Auto-scroll banner every 5 seconds
-                setInterval(() => {
-                    if (currentBannerIndex < bannerSlides - 1) {
-                        scrollBanners('right');
-                    } else {
-                        scrollToBanner(0);
-                    }
-                }, 5000);
-
-                // Update dots on scroll
-                const scroller = document.getElementById('banner-horizontal-scroller');
-                if (scroller) {
-                    scroller.addEventListener('scroll', () => {
-                        currentBannerIndex = Math.round(scroller.scrollLeft / slideWidth);
-                        updateDots();
-                    });
-                }
-            },
-
-            // --- ROUTER ---
+            // Router
             router: async (viewId) => {
                 if (app.chatUnsubscribe) { app.chatUnsubscribe(); app.chatUnsubscribe = null; }
-
                 document.querySelectorAll('.view-section').forEach(el => el.classList.add('hide'));
-
                 const view = document.getElementById(`view-${viewId}`);
                 if (view) view.classList.remove('hide');
-
+                
                 if (viewId === 'home') {
                     await app.loadProducts();
                     app.loadHomeCategories();
@@ -1413,74 +1592,67 @@
                 if (viewId === 'orders') await app.loadCustomerOrders();
                 if (viewId === 'profile') await app.loadProfile();
                 if (viewId === 'wishlist') app.loadWishlist();
-                if (viewId === 'checkout') app.loadCheckoutPage();
+                if (viewId === 'seller-dashboard') await app.loadSellerDashboard();
+                if (viewId === 'admin-dashboard') await app.loadAdminDashboard();
+                if (viewId === 'service-dashboard') await app.loadServiceDashboard();
 
-                // Update mobile nav active state
                 app.updateMobileNavActive(viewId);
-
                 window.scrollTo(0, 0);
-                app.updateIcons();
+                if (window.lucide) window.lucide.createIcons();
             },
 
-            // Update mobile navigation active state
             updateMobileNavActive: (view) => {
-                const navItems = ['home', 'wishlist', 'orders', 'profile'];
-                navItems.forEach(item => {
+                ['home', 'wishlist', 'orders', 'profile'].forEach(item => {
                     const el = document.getElementById(`mob-nav-${item}`);
-                    if (el) {
-                        if (item === view) {
-                            el.classList.add('active');
-                        } else {
-                            el.classList.remove('active');
-                        }
-                    }
+                    if (el) el.classList[item === view ? 'add' : 'remove']('active');
                 });
             },
 
-            toggleHeaderSearch: function () {
-                const searchBar = document.getElementById('header-search-bar');
-                searchBar.classList.toggle('hide');
-            },
-
-            clearSearch: function () {
+            // Search
+            toggleHeaderSearch: () => document.getElementById('header-search-bar').classList.toggle('hide'),
+            clearSearch: () => {
                 document.getElementById('global-search-input').value = '';
                 document.getElementById('header-search-bar').classList.add('hide');
             },
-
-            performSearch: function (query) {
+            performSearch: (query) => {
                 if (!query.trim()) return;
                 const term = query.toLowerCase();
                 const filtered = app.products.filter(p =>
-                    p.name.toLowerCase().includes(term) ||
-                    (p.desc && p.desc.toLowerCase().includes(term))
+                    p.name.toLowerCase().includes(term) || (p.desc && p.desc.toLowerCase().includes(term))
                 );
-
-                const productGrid = document.getElementById('product-grid');
-
+                const grid = document.getElementById('product-grid');
                 if (filtered.length === 0) {
-                    productGrid.innerHTML = `
-                        <div class="col-span-4 flex flex-col items-center justify-center py-24 text-gray-300">
-                            <i data-lucide="search-x" class="w-20 h-20 mb-4 opacity-50"></i>
-                            <p class="text-slate-500 font-bold text-lg">No products found matching "${query}"</p>
-                        </div>`;
+                    grid.innerHTML = `<div class="col-span-4 text-center py-24"><i data-lucide="search-x" class="w-20 h-20 mx-auto mb-4 opacity-50"></i><p class="text-slate-500 font-bold">No products found</p></div>`;
                 } else {
-                    app.renderProductGrid(filtered);
+                    grid.innerHTML = filtered.map(p => app.createProductCardHTML(p, app.wishlist.includes(p.id))).join('');
                 }
-
-                app.updateIcons();
                 document.getElementById('header-search-bar').classList.add('hide');
+                if (window.lucide) window.lucide.createIcons();
             },
 
-            // --- AUTHENTICATION ---
+            // Authentication
             updateAuthUI: () => {
-                const logoutBtn = `<div class="flex items-center space-x-2">
-                    <span class="text-xs font-bold text-textMain hidden lg:inline-block clay-tag uppercase tracking-widest">${app.userRole}</span>
-                    <button onclick="app.logout()" class="text-xs clay-btn clay-btn-secondary px-4 py-2 font-bold">Logout</button>
-                </div>`;
-
-                const loginBtn = `<button onclick="app.router('login')" class="clay-btn clay-btn-primary px-5 py-2 text-sm font-bold hover:shadow-clay-card-lg">Login</button>`;
-
-                document.getElementById('auth-section-desktop').innerHTML = app.currentUser ? logoutBtn : loginBtn;
+                const container = document.getElementById('auth-section-desktop');
+                const navService = document.getElementById('nav-service');
+                const navSeller = document.getElementById('nav-seller');
+                const navAdmin = document.getElementById('nav-admin');
+                
+                navService.classList.add('hide');
+                navSeller.classList.add('hide');
+                navAdmin.classList.add('hide');
+                
+                if (app.currentUser) {
+                    container.innerHTML = `<div class="flex items-center space-x-2">
+                        <span class="text-xs font-bold text-textMain clay-tag uppercase">${app.userRole}</span>
+                        <button onclick="app.logout()" class="clay-btn clay-btn-secondary px-4 py-2 text-xs font-bold">Logout</button>
+                    </div>`;
+                    
+                    if (app.userRole === 'service') navService.classList.remove('hide');
+                    if (app.userRole === 'seller') navSeller.classList.remove('hide');
+                    if (app.userRole === 'admin') navAdmin.classList.remove('hide');
+                } else {
+                    container.innerHTML = `<button onclick="app.router('login')" class="clay-btn clay-btn-primary px-5 py-2 text-sm font-bold">Login</button>`;
+                }
             },
 
             handleAuth: async (e) => {
@@ -1494,7 +1666,6 @@
                 try {
                     let userCred;
                     if (isRegister) {
-                        if (!name) throw new Error("Please enter your name.");
                         userCred = await createUserWithEmailAndPassword(auth, email, pass);
                         await setDoc(getUserRef(userCred.user.uid), {
                             uid: userCred.user.uid,
@@ -1504,16 +1675,37 @@
                             addressList: []
                         });
                         await updateProfile(userCred.user, { displayName: name });
-                        app.toast("Account created successfully!", "success");
+                        app.toast("Account created!", "success");
                     } else {
                         userCred = await signInWithEmailAndPassword(auth, email, pass);
-                        app.toast("Logged in successfully.", "success");
+                        app.toast("Logged in!", "success");
                     }
-                    app.currentUser = userCred.user;
-                    app.updateAuthUI();
                     app.router('home');
                 } catch (error) {
                     app.toast(error.message, "error");
+                } finally {
+                    app.toggleLoader(false);
+                }
+            },
+
+            handleSellerAuth: async (e) => {
+                e.preventDefault();
+                app.toggleLoader(true);
+                const email = document.getElementById('seller-auth-email').value;
+                const pass = document.getElementById('seller-auth-pass').value;
+
+                try {
+                    const userCred = await signInWithEmailAndPassword(auth, email, pass);
+                    const userDoc = await getDoc(getUserRef(userCred.user.uid));
+                    if ((userDoc.exists() && userDoc.data().role === 'seller') || userCred.user.email === ADMIN_EMAIL) {
+                        app.toast("Welcome Seller!", "success");
+                        app.router('seller-dashboard');
+                    } else {
+                        await signOut(auth);
+                        app.toast("Access Denied", "error");
+                    }
+                } catch (err) {
+                    app.toast("Login Failed: " + err.message, "error");
                 } finally {
                     app.toggleLoader(false);
                 }
@@ -1534,24 +1726,19 @@
                             addressList: []
                         });
                     }
-                    app.currentUser = user;
-                    app.updateAuthUI();
                     app.toast("Logged in with Google", "success");
                     app.router('home');
                 } catch (error) {
-                    console.error(error);
                     app.toast("Google Sign-In failed", "error");
                 }
             },
 
             logout: () => {
                 signOut(auth).then(() => {
-                    app.currentUser = null;
                     app.cart = [];
                     app.updateCartUI();
-                    app.updateAuthUI();
                     app.router('home');
-                    app.toast("Logged out securely.", "info");
+                    app.toast("Logged out", "info");
                 });
             },
 
@@ -1572,150 +1759,65 @@
                     title.innerText = "Welcome Back";
                     nameGroup.classList.add('hide');
                 }
-                app.updateIcons();
+                if (window.lucide) window.lucide.createIcons();
             },
 
-            // --- CATEGORIES ---
+            // Categories
             loadHomeCategories: () => {
                 const con = document.getElementById('category-chips');
                 if (!con) return;
-
-                // Add 'All' button first
-                let html = `
-                    <button onclick="app.filterCategory('all')" 
-                        data-cat="all"
-                        class="clay-btn ${app.activeCategory === 'all' ? 'clay-btn-primary' : 'clay-btn-secondary'} px-5 py-2 text-xs md:text-sm font-bold whitespace-nowrap transition-all">
-                        All Items
-                    </button>
-                `;
-
-                // Add dynamic categories
+                let html = `<button onclick="app.filterCategory('all')" class="clay-btn ${app.activeCategory === 'all' ? 'clay-btn-primary' : 'clay-btn-secondary'} px-5 py-2 text-sm font-bold">All</button>`;
                 app.categories.forEach(cat => {
                     const isActive = app.activeCategory === cat.id;
-                    html += `
-                        <button onclick="app.filterCategory('${cat.id}')" 
-                            data-cat="${cat.id}"
-                            class="clay-btn ${isActive ? 'clay-btn-primary' : 'clay-btn-secondary'} px-5 py-2 text-xs md:text-sm font-bold whitespace-nowrap transition-all flex items-center gap-2">
-                            ${cat.name}
-                        </button>
-                    `;
+                    html += `<button onclick="app.filterCategory('${cat.id}')" class="clay-btn ${isActive ? 'clay-btn-primary' : 'clay-btn-secondary'} px-5 py-2 text-sm font-bold">${cat.name}</button>`;
                 });
-
                 con.innerHTML = html;
-                app.updateIcons();
             },
 
             loadCategories: () => {
                 const grid = document.getElementById('categories-grid');
                 if (!grid) return;
-
-                grid.innerHTML = '';
-                app.categories.forEach(cat => {
-                    grid.innerHTML += `
-                        <div onclick="app.openCategoryPage('${cat.id}')" 
-                            class="clay-card p-4 flex flex-col items-center justify-center text-center cursor-pointer h-36 active:scale-95 transition-transform hover:shadow-clay-card-lg group">
-                            
-                            <div class="clay-card-inner w-14 h-14 rounded-2xl flex items-center justify-center ${cat.color} mb-3 shadow-inner group-hover:scale-110 transition-transform">
-                                <i data-lucide="${cat.icon}" class="w-7 h-7"></i>
-                            </div>
-                            
-                            <span class="font-bold text-textMain text-sm">${cat.name}</span>
-                            <span class="text-[10px] text-textMuted mt-1 font-bold group-hover:text-accent transition-colors">View All</span>
+                grid.innerHTML = app.categories.map(cat => `
+                    <div onclick="app.filterCategory('${cat.id}')" class="clay-card p-4 flex flex-col items-center justify-center text-center cursor-pointer h-36 hover:shadow-clay-card-lg">
+                        <div class="clay-card-inner w-14 h-14 rounded-2xl flex items-center justify-center ${cat.color} mb-3">
+                            <i data-lucide="${cat.icon}" class="w-7 h-7"></i>
                         </div>
-                    `;
-                });
-                app.updateIcons();
-            },
-
-            openCategoryPage: (catId) => {
-                const cat = app.categories.find(c => c.id === catId);
-                if (!cat) return;
-
-                app.router('category-products');
-
-                document.getElementById('cat-page-title').innerText = cat.name;
-                document.getElementById('cat-page-desc').innerText = `Explore our ${cat.name} collection`;
-
-                const iconEl = document.getElementById('cat-page-icon');
-                iconEl.setAttribute('data-lucide', cat.icon);
-
-                const container = document.getElementById('category-specific-grid');
-                container.innerHTML = '';
-
-                const filtered = app.products.filter(p => p.category === catId);
-
-                if (filtered.length === 0) {
-                    container.innerHTML = `
-                        <div class="col-span-full flex flex-col items-center justify-center py-20 text-textMuted">
-                            <i data-lucide="package-open" class="w-16 h-16 mb-4 opacity-30"></i>
-                            <p class="font-bold">No products found in ${cat.name}</p>
-                            <button onclick="app.router('home')" class="mt-4 text-accent text-sm font-bold hover:underline">Browse all items</button>
-                        </div>
-                    `;
-                } else {
-                    filtered.forEach(p => {
-                        const isLiked = app.wishlist.includes(p.id);
-                        container.innerHTML += app.createProductCardHTML(p, isLiked);
-                    });
-                }
-
-                app.updateIcons();
-                window.scrollTo(0, 0);
+                        <span class="font-bold text-textMain text-sm">${cat.name}</span>
+                    </div>
+                `).join('');
+                if (window.lucide) window.lucide.createIcons();
             },
 
             filterCategory: (catId) => {
                 app.activeCategory = catId;
                 app.loadHomeCategories();
-
-                const filtered = catId === 'all'
-                    ? app.products
-                    : app.products.filter(p => p.category === catId);
-
+                const filtered = catId === 'all' ? app.products : app.products.filter(p => p.category === catId);
                 app.renderProductGrid(filtered);
             },
 
-            // --- PRODUCT LOGIC ---
+            // Products
             createProductCardHTML: (p, isLiked) => {
-                const discount = p.discount ? parseInt(p.discount) : 0;
+                const discount = p.discount || 0;
                 const price = parseInt(p.price);
-                const finalPrice = discount > 0
-                    ? Math.round(price - (price * discount / 100))
-                    : price;
-
+                const finalPrice = discount > 0 ? Math.round(price - (price * discount / 100)) : price;
                 return `
-                    <div class="clay-card group flex flex-col relative overflow-hidden h-full transform transition-all duration-300 hover:-translate-y-1 active:scale-[0.98]" onclick="app.loadProductDetails('${p.id}')">
-                        
+                    <div class="clay-card group flex flex-col relative overflow-hidden h-full" onclick="app.loadProductDetails('${p.id}')">
                         <div class="relative bg-white/60 aspect-[1/1] p-3 flex items-center justify-center overflow-hidden rounded-t-[20px]">
-                            
-                            ${discount > 0 ? `<span class="absolute top-2 left-2 bg-[#F56E91] text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-md z-10 shadow-sm">-${discount}%</span>` : ''}
-                            
-                            <button onclick="event.stopPropagation(); app.toggleWishlist('${p.id}')" 
-                                class="absolute top-2 right-2 w-7 h-7 rounded-full flex items-center justify-center bg-white/80 backdrop-blur-sm shadow-sm z-10 transition active:scale-90 ${isLiked ? 'text-danger' : 'text-slate-400 hover:text-danger'}">
+                            ${discount > 0 ? `<span class="absolute top-2 left-2 bg-[#F56E91] text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-md">-${discount}%</span>` : ''}
+                            <button onclick="event.stopPropagation(); app.toggleWishlist('${p.id}')" class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/80 flex items-center justify-center ${isLiked ? 'text-danger' : 'text-slate-400'}">
                                 <i data-lucide="heart" class="w-3.5 h-3.5 ${isLiked ? 'fill-current' : ''}"></i>
                             </button>
-
-                            <img src="${p.image || 'https://placehold.co/400x400?text=Product'}" 
-                                class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110 mix-blend-multiply" 
-                                onerror="this.src='https://placehold.co/400x400?text=No+Image'">
+                            <img src="${p.image || 'https://placehold.co/400x400?text=Product'}" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/400x400?text=No+Image'">
                         </div>
-
                         <div class="p-3 flex flex-col flex-grow">
-                            <div class="text-[9px] uppercase font-bold text-accent tracking-wider mb-1 opacity-80 truncate">
-                                ${p.category || 'Item'}
-                            </div>
-                            
-                            <h3 class="font-bold text-textMain text-xs md:text-sm leading-tight mb-2 line-clamp-2 min-h-[2.5em]" title="${p.name}">
-                                ${p.name}
-                            </h3>
-
+                            <div class="text-[9px] uppercase font-bold text-accent tracking-wider mb-1">${p.category || 'Item'}</div>
+                            <h3 class="font-bold text-textMain text-sm leading-tight mb-2 line-clamp-2">${p.name}</h3>
                             <div class="mt-auto pt-2 flex items-end justify-between border-t border-dashed border-gray-200/50">
                                 <div class="flex flex-col">
-                                    ${discount > 0 ? `<span class="text-[10px] text-textMuted line-through font-medium leading-none mb-0.5">₹${price}</span>` : ''}
-                                    <span class="font-extrabold text-textMain text-sm md:text-lg leading-none">₹${finalPrice}</span>
+                                    ${discount > 0 ? `<span class="text-[10px] text-textMuted line-through">₹${price}</span>` : ''}
+                                    <span class="font-extrabold text-textMain text-lg">₹${finalPrice}</span>
                                 </div>
-                                
-                                <button onclick="event.stopPropagation(); app.addToCart('${p.id}')" 
-                                    class="w-8 h-8 md:w-9 md:h-9 rounded-xl bg-accent text-white flex items-center justify-center shadow-lg active:scale-90 transition-all hover:bg-accentHover">
+                                <button onclick="event.stopPropagation(); app.addToCart('${p.id}')" class="w-9 h-9 rounded-xl bg-accent text-white flex items-center justify-center">
                                     <i data-lucide="plus" class="w-4 h-4"></i>
                                 </button>
                             </div>
@@ -1723,157 +1825,57 @@
                     </div>
                 `;
             },
+
             loadProducts: async () => {
                 const grid = document.getElementById('product-grid');
-
-                // Show skeleton loading
-                grid.innerHTML = '';
-                for (let i = 0; i < 8; i++) {
-                    grid.innerHTML += `
-                        <div class="clay-card p-4">
-                            <div class="skeleton h-48 w-full mb-4"></div>
-                            <div class="skeleton h-6 w-3/4 mb-2"></div>
-                            <div class="skeleton h-4 w-1/2 mb-4"></div>
-                            <div class="flex justify-between">
-                                <div class="skeleton h-8 w-20"></div>
-                                <div class="skeleton h-8 w-8 rounded-full"></div>
-                            </div>
+                grid.innerHTML = Array(8).fill().map(() => `
+                    <div class="clay-card p-4">
+                        <div class="skeleton h-48 w-full mb-4"></div>
+                        <div class="skeleton h-6 w-3/4 mb-2"></div>
+                        <div class="skeleton h-4 w-1/2 mb-4"></div>
+                        <div class="flex justify-between">
+                            <div class="skeleton h-8 w-20"></div>
+                            <div class="skeleton h-8 w-8 rounded-full"></div>
                         </div>
-                    `;
-                }
+                    </div>
+                `).join('');
 
                 try {
-                    // Mock products data
-                    app.products = [
-                        {
-                            id: '1',
-                            name: 'Smart Security Camera Pro',
-                            desc: '4K resolution, night vision, motion detection with AI tracking',
-                            price: 2499,
-                            discount: 15,
-                            image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-                            category: 'Security',
-                            rating: 4.5
-                        },
-                        {
-                            id: '2',
-                            name: 'Wireless Door Lock System',
-                            desc: 'Biometric fingerprint, Bluetooth connectivity, tamper alert',
-                            price: 3499,
-                            discount: 10,
-                            image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-                            category: 'Security',
-                            rating: 4.8
-                        },
-                        {
-                            id: '3',
-                            name: 'Smart Home Hub',
-                            desc: 'Central control for all smart devices, voice assistant compatible',
-                            price: 4999,
-                            discount: 20,
-                            image: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-                            category: 'Home',
-                            rating: 4.7
-                        },
-                        {
-                            id: '4',
-                            name: 'Portable Alarm System',
-                            desc: 'Compact, battery-powered, loud 120dB siren',
-                            price: 1299,
-                            discount: 0,
-                            image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-                            category: 'Security',
-                            rating: 4.3
-                        },
-                        {
-                            id: '5',
-                            name: 'Smart Watch Security Edition',
-                            desc: 'GPS tracking, SOS button, health monitoring',
-                            price: 5999,
-                            discount: 25,
-                            image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-                            category: 'Electronics',
-                            rating: 4.6
-                        },
-                        {
-                            id: '6',
-                            name: 'Anti-Theft Backpack',
-                            desc: 'RFID blocking, cut-proof material, USB charging port',
-                            price: 1999,
-                            discount: 15,
-                            image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-                            category: 'Fashion',
-                            rating: 4.4
-                        },
-                        {
-                            id: '7',
-                            name: 'Motion Sensor Lights',
-                            desc: 'Solar powered, weather resistant, automatic detection',
-                            price: 899,
-                            discount: 5,
-                            image: 'https://images.unsplash.com/photo-1498049794561-7780e7231661?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-                            category: 'Home',
-                            rating: 4.2
-                        },
-                        {
-                            id: '8',
-                            name: 'Child Safety Tracker',
-                            desc: 'Real-time location, geofencing, long battery life',
-                            price: 1799,
-                            discount: 0,
-                            image: 'https://images.unsplash.com/photo-1570824104453-508955ab713e?ixlib=rb-1.2.1&auto=format&fit=crop&w=400&q=80',
-                            category: 'Toys',
-                            rating: 4.7
-                        }
-                    ];
-
+                    const snapshot = await getDocs(getCollectionRef('products'));
+                    app.products = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     app.renderProductGrid(app.products);
                 } catch (e) {
-                    console.error(e);
-                    grid.innerHTML = '<div class="col-span-4 text-center text-gray-400 py-10 font-medium">Failed to load products.</div>';
+                    grid.innerHTML = '<div class="col-span-4 text-center text-gray-400 py-10">Failed to load products.</div>';
                 }
             },
 
             renderProductGrid: (products) => {
                 const grid = document.getElementById('product-grid');
-                grid.innerHTML = '';
-
                 if (products.length === 0) {
-                    grid.innerHTML = `
-                        <div class="col-span-4 flex flex-col items-center justify-center py-24 text-gray-300">
-                            <i data-lucide="search-x" class="w-20 h-20 mb-4 opacity-50"></i>
-                            <p class="text-slate-500 font-bold text-lg">No products found.</p>
-                        </div>`;
-                    app.updateIcons();
-                    return;
+                    grid.innerHTML = '<div class="col-span-4 text-center py-24 text-gray-300"><i data-lucide="package-open" class="w-20 h-20 mx-auto mb-4 opacity-50"></i><p class="text-slate-500 font-bold">No products found.</p></div>';
+                } else {
+                    grid.innerHTML = products.map(p => app.createProductCardHTML(p, app.wishlist.includes(p.id))).join('');
                 }
-
-                products.forEach(p => {
-                    const isLiked = app.wishlist.includes(p.id);
-                    grid.innerHTML += app.createProductCardHTML(p, isLiked);
-                });
-                app.updateIcons();
+                if (window.lucide) window.lucide.createIcons();
             },
 
             loadProductDetails: (pid) => {
                 const p = app.products.find(x => x.id === pid);
                 if (!p) return;
-
                 app.currentProductDetailId = pid;
                 document.getElementById('detail-img').src = p.image || 'https://placehold.co/400x300';
                 document.getElementById('detail-name').innerText = p.name;
                 document.getElementById('detail-desc').innerText = p.desc;
-                document.getElementById('detail-cat').innerText = p.category || 'General';
-                document.getElementById('detail-rating').innerText = (p.rating || 4.5);
-
-                const discount = p.discount ? parseInt(p.discount) : 0;
+                document.getElementById('detail-cat').innerText = p.category;
+                document.getElementById('detail-rating').innerText = p.rating || 4.5;
+                
+                const discount = p.discount || 0;
                 const price = parseInt(p.price);
                 const finalPrice = discount > 0 ? Math.round(price - (price * discount / 100)) : price;
-
                 document.getElementById('detail-price').innerText = '₹' + finalPrice;
+                
                 const oldPriceEl = document.getElementById('detail-old-price');
                 const badge = document.getElementById('detail-badge');
-
                 if (discount > 0) {
                     oldPriceEl.innerText = '₹' + price;
                     oldPriceEl.classList.remove('hide');
@@ -1883,34 +1885,24 @@
                     oldPriceEl.classList.add('hide');
                     badge.classList.add('hide');
                 }
-
-                // Update Wishlist Icon state
+                
                 const isLiked = app.wishlist.includes(pid);
                 const heartIcon = document.getElementById('detail-wishlist-icon');
-                if (isLiked) {
-                    heartIcon.classList.add('fill-current', 'text-danger');
-                } else {
-                    heartIcon.classList.remove('fill-current', 'text-danger');
-                }
-
+                heartIcon.classList[isLiked ? 'add' : 'remove']('fill-current', 'text-danger');
+                
                 app.router('product-details');
             },
 
-            // --- WISHLIST ---
+            // Wishlist
             loadWishlist: () => {
                 const grid = document.getElementById('wishlist-grid');
-                grid.innerHTML = '';
                 const wishedProducts = app.products.filter(p => app.wishlist.includes(p.id));
-
                 if (wishedProducts.length === 0) {
                     grid.innerHTML = '<div class="col-span-full text-center py-20 text-textMuted">Your wishlist is empty</div>';
-                    return;
+                } else {
+                    grid.innerHTML = wishedProducts.map(p => app.createProductCardHTML(p, true)).join('');
                 }
-                wishedProducts.forEach(p => {
-                    const isLiked = app.wishlist.includes(p.id);
-                    grid.innerHTML += app.createProductCardHTML(p, isLiked);
-                });
-                app.updateIcons();
+                if (window.lucide) window.lucide.createIcons();
             },
 
             toggleWishlist: (pid) => {
@@ -1920,99 +1912,53 @@
                 } else {
                     app.wishlist.push(pid);
                     app.toast("Added to Wishlist", "success");
-
-                    // Add ping animation
-                    const btn = document.activeElement;
-                    if (btn) {
-                        btn.style.animation = 'heartPing 0.4s';
-                        setTimeout(() => btn.style.animation = '', 400);
-                    }
                 }
                 localStorage.setItem('wishlist', JSON.stringify(app.wishlist));
-
+                
                 if (!document.getElementById('view-home').classList.contains('hide')) {
                     app.renderProductGrid(app.products);
-                } else if (!document.getElementById('view-product-details').classList.contains('hide')) {
-                    app.loadProductDetails(pid);
                 } else if (!document.getElementById('view-wishlist').classList.contains('hide')) {
                     app.loadWishlist();
                 }
             },
 
-            buyNow: (pid) => {
-                app.addToCart(pid);
-                app.goToCheckout();
-            },
-
-            // --- CART LOGIC ---
+            // Cart
             addToCart: (pid) => {
                 const product = app.products.find(p => p.id === pid);
                 if (!product) return;
-
-                const discount = product.discount ? parseInt(product.discount) : 0;
-                const finalPrice = discount > 0 ?
-                    Math.round(product.price - (product.price * discount / 100)) :
-                    product.price;
-
+                const discount = product.discount || 0;
+                const finalPrice = discount > 0 ? Math.round(product.price - (product.price * discount / 100)) : product.price;
                 const existing = app.cart.find(item => item.id === pid);
-                if (existing) {
-                    existing.qty++;
-                } else {
-                    app.cart.push({
-                        ...product,
-                        qty: 1,
-                        price: finalPrice,
-                        originalPrice: product.price
-                    });
-                }
-
-                // Animation
-                const btn = document.getElementById('fab-cart-btn');
-                if (btn) {
-                    btn.style.animation = 'none';
-                    setTimeout(() => btn.style.animation = 'cartBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)', 10);
-                }
-
+                if (existing) existing.qty++;
+                else app.cart.push({ ...product, qty: 1, price: finalPrice, originalPrice: product.price });
                 app.updateCartUI();
                 app.toast(`${product.name} added to cart`, "success");
             },
 
             toggleCart: () => {
                 const sidebar = document.getElementById('cart-sidebar');
-                if (sidebar.classList.contains('translate-x-full')) {
-                    sidebar.classList.remove('translate-x-full');
-                } else {
-                    sidebar.classList.add('translate-x-full');
-                }
+                sidebar.classList.toggle('translate-x-full');
             },
 
             updateCartUI: () => {
                 const container = document.getElementById('cart-items');
-                const mobileBadge = document.getElementById('cart-count-mobile');
                 const totalEl = document.getElementById('cart-total');
+                const mobileBadge = document.getElementById('cart-count-mobile');
                 const subtotalEl = document.getElementById('checkout-subtotal');
                 const checkoutTotalEl = document.getElementById('checkout-total');
                 const checkoutItems = document.getElementById('checkout-items');
-
-                container.innerHTML = '';
-                if (checkoutItems) checkoutItems.innerHTML = '';
 
                 let total = 0;
                 let count = 0;
 
                 if (app.cart.length === 0) {
-                    container.innerHTML = `
-                        <div class="flex flex-col items-center justify-center h-64 text-slate-300">
-                            <i data-lucide="shopping-bag" class="w-16 h-16 mb-4 opacity-50"></i>
-                            <p class="text-sm font-medium">Your cart is empty.</p>
-                        </div>`;
+                    container.innerHTML = '<div class="flex flex-col items-center justify-center h-64 text-slate-300"><i data-lucide="shopping-bag" class="w-16 h-16 mb-4 opacity-50"></i><p class="text-sm font-medium">Your cart is empty.</p></div>';
+                    checkoutItems.innerHTML = '';
                 } else {
-                    app.cart.forEach((item, index) => {
+                    container.innerHTML = app.cart.map((item, index) => {
                         total += item.price * item.qty;
                         count += item.qty;
-
-                        // Sidebar Item
-                        container.innerHTML += `
+                        return `
                             <div class="clay-card p-4">
                                 <div class="flex justify-between items-center">
                                     <div class="flex-1">
@@ -2020,43 +1966,44 @@
                                         <div class="text-xs text-accent font-bold">₹${item.price} x ${item.qty}</div>
                                     </div>
                                     <div class="flex items-center space-x-3 clay-card-inner p-1.5">
-                                        <button onclick="app.changeQty(${index}, -1)" class="text-textMuted hover:text-danger w-6 h-6 flex items-center justify-center transition"><i data-lucide="minus" class="lucide-xs"></i></button>
-                                        <span class="text-xs font-bold w-4 text-center text-textMain">${item.qty}</span>
-                                        <button onclick="app.changeQty(${index}, 1)" class="text-textMuted hover:text-success w-6 h-6 flex items-center justify-center transition"><i data-lucide="plus" class="lucide-xs"></i></button>
+                                        <button onclick="app.changeQty(${index}, -1)" class="text-textMuted hover:text-danger w-6 h-6"><i data-lucide="minus" class="lucide-xs"></i></button>
+                                        <span class="text-xs font-bold w-4 text-center">${item.qty}</span>
+                                        <button onclick="app.changeQty(${index}, 1)" class="text-textMuted hover:text-success w-6 h-6"><i data-lucide="plus" class="lucide-xs"></i></button>
                                     </div>
                                 </div>
                             </div>
                         `;
+                    }).join('');
 
-                        // Checkout Item
-                        if (checkoutItems) {
-                            checkoutItems.innerHTML += `
-                                <div class="flex justify-between border-b border-textMuted/20 pb-4 mb-4 last:border-0 last:pb-0 last:mb-0">
-                                    <div>
-                                        <span class="text-textMain font-bold block text-sm">${item.name}</span>
-                                        <span class="text-textMuted text-xs">Qty: ${item.qty}</span>
-                                    </div>
-                                    <span class="font-extrabold text-textMain">₹${item.price * item.qty}</span>
-                                </div>
-                            `;
-                        }
-                    });
+                    checkoutItems.innerHTML = app.cart.map(item => `
+                        <div class="flex justify-between border-b border-textMuted/20 pb-4 mb-4">
+                            <div>
+                                <span class="text-textMain font-bold block text-sm">${item.name}</span>
+                                <span class="text-textMuted text-xs">Qty: ${item.qty}</span>
+                            </div>
+                            <span class="font-extrabold text-textMain">₹${item.price * item.qty}</span>
+                        </div>
+                    `).join('');
                 }
 
+                totalEl.innerText = '₹' + total;
                 if (mobileBadge) mobileBadge.innerText = count;
-                if (totalEl) totalEl.innerText = '₹' + total;
                 if (subtotalEl) subtotalEl.innerText = '₹' + total;
                 if (checkoutTotalEl) checkoutTotalEl.innerText = '₹' + total;
                 app.cartTotalValue = total;
-
                 localStorage.setItem('cart', JSON.stringify(app.cart));
-                app.updateIcons();
+                if (window.lucide) window.lucide.createIcons();
             },
 
             changeQty: (index, delta) => {
                 app.cart[index].qty += delta;
                 if (app.cart[index].qty <= 0) app.cart.splice(index, 1);
                 app.updateCartUI();
+            },
+
+            buyNow: (pid) => {
+                app.addToCart(pid);
+                app.goToCheckout();
             },
 
             goToCheckout: () => {
@@ -2069,40 +2016,10 @@
                 }
                 app.toggleCart();
                 app.router('checkout');
-            },
-
-            loadCheckoutPage: () => {
-                const checkoutItems = document.getElementById('checkout-items');
-                const subtotalEl = document.getElementById('checkout-subtotal');
-                const totalEl = document.getElementById('checkout-total');
-                
-                if (checkoutItems) {
-                    checkoutItems.innerHTML = '';
-                    
-                    if (app.cart.length === 0) {
-                        checkoutItems.innerHTML = '<div class="text-center py-4 text-textMuted">Your cart is empty</div>';
-                    } else {
-                        app.cart.forEach(item => {
-                            checkoutItems.innerHTML += `
-                                <div class="flex justify-between border-b border-textMuted/20 pb-4 mb-4 last:border-0 last:pb-0 last:mb-0">
-                                    <div>
-                                        <span class="text-textMain font-bold block text-sm">${item.name}</span>
-                                        <span class="text-textMuted text-xs">Qty: ${item.qty}</span>
-                                    </div>
-                                    <span class="font-extrabold text-textMain">₹${item.price * item.qty}</span>
-                                </div>
-                            `;
-                        });
-                    }
-                }
-                
-                if (subtotalEl) subtotalEl.innerText = '₹' + app.cartTotalValue;
-                if (totalEl) totalEl.innerText = '₹' + app.cartTotalValue;
-                
                 app.loadSavedAddresses();
             },
 
-            // --- ADDRESS MANAGEMENT ---
+            // Address Management
             saveAddress: async () => {
                 const newAddr = {
                     name: document.getElementById('addr-name').value,
@@ -2113,21 +2030,15 @@
                     pin: document.getElementById('addr-pin').value,
                     type: 'Home'
                 };
-                
-                if (!newAddr.name || !newAddr.mobile || !newAddr.line || !newAddr.area || !newAddr.city || !newAddr.pin) {
-                    app.toast("Please fill all address fields", "error");
-                    return;
-                }
-                
-                // In demo mode, just save to localStorage
                 try {
-                    let addresses = JSON.parse(localStorage.getItem('userAddresses') || '[]');
-                    addresses.push(newAddr);
-                    localStorage.setItem('userAddresses', JSON.stringify(addresses));
-                    
+                    const userRef = getUserRef(app.currentUser.uid);
+                    const userSnap = await getDoc(userRef);
+                    const currentList = userSnap.data().addressList || [];
+                    currentList.push(newAddr);
+                    await updateDoc(userRef, { addressList: currentList });
                     document.getElementById('new-address-form').reset();
                     document.getElementById('new-address-form').classList.add('hide');
-                    app.toast("Address saved successfully!", "success");
+                    app.toast("Address saved", "success");
                     app.loadSavedAddresses();
                 } catch (e) {
                     app.toast("Failed to save address", "error");
@@ -2137,251 +2048,629 @@
             deleteAddress: async (idx) => {
                 if (!confirm("Remove this address?")) return;
                 try {
-                    let addresses = JSON.parse(localStorage.getItem('userAddresses') || '[]');
-                    addresses.splice(idx, 1);
-                    localStorage.setItem('userAddresses', JSON.stringify(addresses));
+                    const ref = getUserRef(app.currentUser.uid);
+                    const snap = await getDoc(ref);
+                    const list = snap.data().addressList || [];
+                    list.splice(idx, 1);
+                    await updateDoc(ref, { addressList: list });
                     app.loadSavedAddresses();
                     if (!document.getElementById('view-profile').classList.contains('hide')) app.loadProfile();
-                    app.toast("Address Removed", "info");
                 } catch (e) { app.toast("Error removing", "error"); }
             },
 
-            loadSavedAddresses: () => {
+            loadSavedAddresses: async () => {
+                const userDoc = await getDoc(getUserRef(app.currentUser.uid));
+                const data = userDoc.data();
                 const addrContainer = document.getElementById('saved-addresses');
-                if (!addrContainer) return;
-
                 addrContainer.innerHTML = '';
 
-                // Load from localStorage for demo
-                const addresses = JSON.parse(localStorage.getItem('userAddresses') || '[]');
-
-                if (addresses.length > 0) {
-                    addresses.forEach((addr, idx) => {
+                if (data.addressList && data.addressList.length > 0) {
+                    data.addressList.forEach((addr, idx) => {
                         addrContainer.innerHTML += `
-                            <label class="block clay-card p-5 cursor-pointer hover:shadow-clay-card-lg transition-all has-[:checked]:border-2 has-[:checked]:border-accent relative group">
+                            <label class="block clay-card p-5 cursor-pointer has-[:checked]:border-2 has-[:checked]:border-accent relative group">
                                 <div class="flex items-start">
-                                    <input type="radio" name="selected-address" value="${idx}" ${idx === 0 ? 'checked' : ''} class="mt-1 text-accent focus:ring-accent w-4 h-4">
+                                    <input type="radio" name="selected-address" value="${idx}" ${idx === 0 ? 'checked' : ''} class="mt-1 text-accent w-4 h-4">
                                     <div class="ml-4">
-                                        <div class="font-bold text-textMain text-sm">${addr.name} <span class="text-[10px] font-bold text-textMuted ml-2 clay-tag uppercase tracking-wide">${addr.type || 'Home'}</span></div>
+                                        <div class="font-bold text-textMain text-sm">${addr.name}</div>
                                         <div class="text-sm text-textMuted mt-1">${addr.line}, ${addr.area}</div>
                                         <div class="text-sm text-textMuted">${addr.city} - ${addr.pin}</div>
-                                        <div class="text-xs text-textMuted mt-2 flex items-center font-medium"><i data-lucide="phone" class="lucide-xs mr-1"></i> ${addr.mobile}</div>
+                                        <div class="text-xs text-textMuted mt-2 flex items-center"><i data-lucide="phone" class="lucide-xs mr-1"></i> ${addr.mobile}</div>
                                     </div>
                                 </div>
-                                <button onclick="event.preventDefault(); app.deleteAddress(${idx})" class="absolute top-2 right-2 text-textMuted hover:text-danger p-1 opacity-0 group-hover:opacity-100 transition">
+                                <button onclick="event.preventDefault(); app.deleteAddress(${idx})" class="absolute top-2 right-2 text-textMuted hover:text-danger p-1 opacity-0 group-hover:opacity-100">
                                     <i data-lucide="trash-2" class="lucide-sm"></i>
                                 </button>
                             </label>
                         `;
                     });
                 } else {
-                    addrContainer.innerHTML = '<div class="text-sm text-textMuted p-6 clay-card-inner text-center font-medium">No saved addresses found. Please add one.</div>';
+                    addrContainer.innerHTML = '<div class="text-sm text-textMuted p-6 clay-card-inner text-center">No saved addresses found.</div>';
                     document.getElementById('new-address-form').classList.remove('hide');
                 }
-                app.updateIcons();
+                if (window.lucide) window.lucide.createIcons();
             },
 
-            // --- ORDER MANAGEMENT ---
+            // Orders
             placeOrder: async () => {
-                if (app.cart.length === 0) {
-                    app.toast("Your cart is empty", "error");
-                    return;
-                }
-
                 const selectedAddrInput = document.querySelector('input[name="selected-address"]:checked');
-                const addresses = JSON.parse(localStorage.getItem('userAddresses') || '[]');
+                const userDoc = await getDoc(getUserRef(app.currentUser.uid));
+                const addresses = userDoc.data().addressList || [];
 
                 if (!selectedAddrInput && addresses.length === 0) {
-                    return app.toast("Please select or add a shipping address.", "info");
+                    return app.toast("Please select an address.", "info");
                 }
-
-                let addressToUse;
-                if (selectedAddrInput) {
-                    addressToUse = addresses[selectedAddrInput.value];
-                } else {
-                    if (addresses.length > 0) addressToUse = addresses[0];
-                    else return app.toast("Address error.", "error");
-                }
+                let addressToUse = selectedAddrInput ? addresses[selectedAddrInput.value] : addresses[0];
+                if (!addressToUse) return app.toast("Address error.", "error");
 
                 app.toggleLoader(true);
-                
-                // Simulate order processing
-                setTimeout(() => {
-                    try {
-                        // Generate order ID
-                        const orderId = 'ORD' + Date.now().toString().slice(-8);
-                        
-                        // Create order object
-                        const order = {
-                            id: orderId,
-                            date: new Date().toISOString(),
-                            items: [...app.cart],
-                            total: app.cartTotalValue,
-                            status: 'Processing',
-                            paymentMethod: document.querySelector('input[name="payment"]:checked').value,
-                            shippingAddress: addressToUse,
-                            customerName: app.currentUser?.displayName || 'Guest',
-                            customerEmail: app.currentUser?.email || 'guest@example.com'
-                        };
-
-                        // Save order to localStorage
-                        let orders = JSON.parse(localStorage.getItem('userOrders') || '[]');
-                        orders.push(order);
-                        localStorage.setItem('userOrders', JSON.stringify(orders));
-
-                        // Clear cart
-                        app.cart = [];
-                        app.updateCartUI();
-                        localStorage.setItem('cart', JSON.stringify(app.cart));
-
-                        // Show success
-                        app.router('success');
-                        app.toast("Order placed successfully!", "success");
-                    } catch (e) {
-                        app.toast("Order failed: " + e.message, "error");
-                    } finally {
-                        app.toggleLoader(false);
-                    }
-                }, 1500);
+                try {
+                    const orderData = {
+                        customerId: app.currentUser.uid,
+                        customerEmail: app.currentUser.email,
+                        customerName: addressToUse.name,
+                        items: app.cart,
+                        total: app.cartTotalValue,
+                        address: addressToUse,
+                        paymentMethod: document.querySelector('input[name="payment"]:checked').value,
+                        status: 'Pending Verification',
+                        trackingSteps: [{ status: 'Order Placed', time: new Date().toISOString() }],
+                        createdAt: serverTimestamp()
+                    };
+                    await addDoc(getCollectionRef('orders'), orderData);
+                    app.cart = [];
+                    app.updateCartUI();
+                    app.router('success');
+                } catch (e) {
+                    app.toast("Order failed: " + e.message, "error");
+                } finally {
+                    app.toggleLoader(false);
+                }
             },
 
-            loadCustomerOrders: () => {
+            loadCustomerOrders: async () => {
                 if (!app.currentUser) {
-                    app.toast("Please login to view orders", "info");
+                    app.toast("Login to view orders", "info");
                     return app.router('login');
                 }
-                
+                app.toggleLoader(true);
                 const list = document.getElementById('orders-list');
                 list.innerHTML = '';
 
-                // Load from localStorage
-                const orders = JSON.parse(localStorage.getItem('userOrders') || '[]');
+                try {
+                    const q = getCollectionRef('orders');
+                    const snap = await getDocs(q);
+                    const myOrders = snap.docs
+                        .filter(d => d.data().customerId === app.currentUser.uid)
+                        .map(d => ({ id: d.id, ...d.data() }))
+                        .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
-                if (orders.length === 0) {
-                    list.innerHTML = `
-                        <div class="text-center py-20 clay-card">
-                            <i data-lucide="package-open" class="mx-auto w-16 h-16 text-textMuted/30 mb-4"></i>
-                            <p class="text-textMuted font-bold">No orders yet.</p>
-                        </div>`;
-                    return;
-                }
-
-                orders.forEach(order => {
-                    const steps = ['Order Placed', 'Verified', 'Packed', 'Shipped', 'Delivered'];
-                    let stepIdx = 0; // Default to first step
-                    
-                    // Determine step based on status
-                    switch(order.status) {
-                        case 'Processing': stepIdx = 0; break;
-                        case 'Verified': stepIdx = 1; break;
-                        case 'Packed': stepIdx = 2; break;
-                        case 'Shipped': stepIdx = 3; break;
-                        case 'Delivered': stepIdx = 4; break;
-                        default: stepIdx = 0;
+                    if (myOrders.length === 0) {
+                        list.innerHTML = `<div class="text-center py-20 clay-card"><i data-lucide="package-open" class="mx-auto w-16 h-16 text-textMuted/30 mb-4"></i><p class="text-textMuted font-bold">No orders yet.</p></div>`;
                     }
 
-                    let trackerHTML = `<div class="flex justify-between items-center mt-8 mb-2 text-xs relative px-4">
-                        <div class="absolute top-1.5 left-0 w-full h-1 clay-card-inner -z-10 rounded-full"></div>
-                        <div class="absolute top-1.5 left-0 h-1 bg-accent -z-10 transition-all rounded-full" style="width: ${((stepIdx)/(steps.length-1))*100}%"></div>`;
-                    
-                    steps.forEach((s, idx) => {
-                        const active = idx <= stepIdx;
-                        trackerHTML += `
-                            <div class="flex flex-col items-center z-10">
-                                <div class="w-4 h-4 rounded-full border-2 ${active ? 'bg-accent border-accent' : 'clay-card-inner border-textMuted/20'} mb-2"></div>
-                                <span class="${active ? 'text-accent font-bold' : 'text-textMuted'} text-[10px] uppercase tracking-wider">${s}</span>
+                    myOrders.forEach(o => {
+                        const steps = ['Order Placed', 'Verified', 'Packed', 'Shipped', 'Delivered'];
+                        let stepIdx = steps.indexOf(o.status);
+                        if (stepIdx === -1) stepIdx = 0;
+
+                        const orderTime = o.createdAt ? o.createdAt.toDate().getTime() : 0;
+                        const canCancel = (Date.now() - orderTime) < (24 * 60 * 60 * 1000) && o.status !== 'Cancelled' && o.status !== 'Delivered';
+
+                        list.innerHTML += `
+                            <div class="clay-card p-8">
+                                <div class="flex flex-col md:flex-row justify-between font-bold mb-6 pb-6 border-b border-textMuted/20 items-start md:items-center gap-4">
+                                    <div class="flex items-center text-textMain clay-card-inner px-3 py-1.5"><i data-lucide="package" class="mr-2 lucide-sm text-accent"></i> Order #${o.id.substr(0, 8)}</div>
+                                    <span class="clay-tag text-[10px] uppercase font-bold tracking-widest">${o.status}</span>
+                                </div>
+                                <div class="space-y-4 mb-8">
+                                    ${o.items.map(i => `
+                                        <div class="flex justify-between text-sm text-textMuted clay-card-inner p-3">
+                                            <span class="flex items-center font-medium"><span class="w-1.5 h-1.5 bg-textMuted/30 rounded-full mr-3"></span> ${i.name} <span class="text-textMuted/60 ml-2 text-xs">x${i.qty}</span></span>
+                                            <span class="font-bold text-textMain">₹${i.price * i.qty}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <div class="flex justify-between text-base font-extrabold pt-4 border-t border-dashed border-textMuted/20 text-textMain">
+                                    <span>Total Amount</span>
+                                    <span class="text-xl">₹${o.total}</span>
+                                </div>
+                                
+                                <div class="mt-6 pt-4 border-t border-dashed border-textMuted/20 flex gap-2">
+                                    <button onclick="app.openCustomerChat('${o.id}')" class="flex-grow text-xs font-bold text-textMuted hover:text-white clay-btn clay-btn-secondary py-2.5">
+                                        <i data-lucide="message-circle" class="lucide-xs mr-1.5"></i> Support
+                                    </button>
+                                    ${canCancel ? `<button onclick="app.cancelOrder('${o.id}')" class="flex-grow text-xs font-bold text-danger hover:text-white clay-btn clay-btn-secondary py-2.5">Cancel Order</button>` : ''}
+                                </div>
                             </div>
                         `;
                     });
-                    trackerHTML += `</div>`;
+                } catch (e) {
+                    app.toast("Error loading orders", "error");
+                } finally {
+                    app.toggleLoader(false);
+                    if (window.lucide) window.lucide.createIcons();
+                }
+            },
 
-                    list.innerHTML += `
-                        <div class="clay-card p-8 hover:shadow-clay-card-lg transition-shadow">
-                            <div class="flex flex-col md:flex-row justify-between font-bold mb-6 pb-6 border-b border-textMuted/20 items-start md:items-center gap-4">
-                                <div class="flex items-center text-textMain clay-card-inner px-3 py-1.5">
-                                    <i data-lucide="package" class="mr-2 lucide-sm text-accent"></i> Order #${order.id.substr(0,8)}
+            cancelOrder: async (oid) => {
+                if (!confirm("Are you sure you want to cancel this order?")) return;
+                app.toggleLoader(true);
+                try {
+                    await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'orders', oid), { status: 'Cancelled' });
+                    app.toast("Order Cancelled", "info");
+                    app.loadCustomerOrders();
+                } catch (e) { app.toast("Error cancelling", "error"); }
+                finally { app.toggleLoader(false); }
+            },
+
+            // Profile
+            loadProfile: async () => {
+                if (!app.currentUser) return app.router('login');
+                const userRef = getUserRef(app.currentUser.uid);
+                const docSnap = await getDoc(userRef);
+                const data = docSnap.data();
+
+                document.getElementById('profile-name').innerText = data.name || 'User';
+                document.getElementById('profile-email').innerText = data.email;
+                document.getElementById('profile-role').innerText = (data.role || 'customer').toUpperCase();
+
+                const list = document.getElementById('profile-address-list');
+                list.innerHTML = '';
+                if (data.addressList && data.addressList.length > 0) {
+                    list.innerHTML = data.addressList.map((addr, idx) => `
+                        <div class="clay-card p-6 text-sm hover:shadow-clay-card-lg transition group relative">
+                            <div class="absolute top-0 right-0 p-4">
+                                <button onclick="app.deleteAddress(${idx})" class="text-textMuted hover:text-danger p-1 opacity-0 group-hover:opacity-100">
+                                    <i data-lucide="trash-2" class="lucide-sm"></i>
+                                </button>
+                            </div>
+                            <div class="font-bold text-textMain mb-2 flex items-center text-base"><i data-lucide="home" class="lucide-sm mr-2 text-textMuted"></i> ${addr.name}</div>
+                            <div class="text-textMuted ml-7 leading-relaxed">${addr.line}, ${addr.area}</div>
+                            <div class="text-textMuted ml-7">${addr.city} - ${addr.pin}</div>
+                            <div class="text-xs text-textMuted mt-3 ml-7 flex items-center"><i data-lucide="phone" class="lucide-xs mr-2"></i> ${addr.mobile}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    list.innerHTML = '<p class="text-textMuted text-sm italic col-span-2 text-center py-4">No saved addresses found.</p>';
+                }
+                if (window.lucide) window.lucide.createIcons();
+            },
+
+            // Chat
+            openCustomerChat: async (orderId) => {
+                app.currentTicketId = orderId;
+                document.getElementById('customer-chat-id').innerText = `Ticket #${orderId.substr(0, 6)}`;
+                app.router('customer-chat');
+
+                const chatRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'supportChats', orderId);
+                const chatSnap = await getDoc(chatRef);
+                if (!chatSnap.exists()) {
+                    await setDoc(chatRef, {
+                        customerId: app.currentUser.uid,
+                        orderId: orderId,
+                        messages: [{ sender: 'System', text: 'Ticket Created. An agent will be with you shortly.', time: new Date().toISOString() }]
+                    });
+                }
+
+                app.chatUnsubscribe = onSnapshot(chatRef, (doc) => {
+                    if (doc.exists()) {
+                        const msgs = doc.data().messages || [];
+                        const container = document.getElementById('customer-chat-messages');
+                        container.innerHTML = msgs.map(m => `
+                            <div class="flex ${m.sender === 'Customer' ? 'justify-end' : 'justify-start'}">
+                                <div class="${m.sender === 'Customer' ? 'bg-accent text-white rounded-br-none' : 'clay-card rounded-bl-none'} px-5 py-3 rounded-2xl max-w-xs text-sm">
+                                    ${m.sender !== 'Customer' && m.sender !== 'System' ? `<div class="text-[10px] font-bold text-accent mb-1">${m.sender}</div>` : ''}
+                                    ${m.text}
                                 </div>
-                                <span class="clay-tag text-[10px] uppercase font-bold tracking-widest">${order.status}</span>
                             </div>
-                            <div class="space-y-4 mb-8">
-                                ${order.items.map(i => `
-                                    <div class="flex justify-between text-sm text-textMuted clay-card-inner p-3">
-                                        <span class="flex items-center font-medium">
-                                            <span class="w-1.5 h-1.5 bg-textMuted/30 rounded-full mr-3"></span> 
-                                            ${i.name} 
-                                            <span class="text-textMuted/60 ml-2 text-xs">x${i.qty}</span>
-                                        </span>
-                                        <span class="font-bold text-textMain">₹${i.price * i.qty}</span>
-                                    </div>
-                                `).join('')}
+                        `).join('');
+                        container.scrollTop = container.scrollHeight;
+                    }
+                });
+            },
+
+            sendCustomerMessage: async (e) => {
+                e.preventDefault();
+                const input = document.getElementById('customer-chat-input');
+                const text = input.value;
+                if (!text) return;
+
+                const chatRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'supportChats', app.currentTicketId);
+                const chatSnap = await getDoc(chatRef);
+                const messages = chatSnap.data().messages;
+                messages.push({ sender: 'Customer', text: text, time: new Date().toISOString() });
+                await updateDoc(chatRef, { messages });
+                input.value = '';
+            },
+
+            // Seller Applications
+            submitSellerApplication: async (e) => {
+                e.preventDefault();
+                app.toggleLoader(true);
+                const form = e.target;
+                const data = {
+                    uid: app.currentUser.uid,
+                    name: form.name.value,
+                    email: form.email.value,
+                    mobile: form.mobile.value,
+                    company: form.company.value,
+                    address: form.address.value,
+                    dob: form.dob.value,
+                    status: 'Pending',
+                    createdAt: serverTimestamp()
+                };
+                try {
+                    await addDoc(getCollectionRef('sellerRequests'), data);
+                    app.toast("Application Submitted!", "success");
+                    app.router('home');
+                } catch (err) {
+                    app.toast("Error submitting: " + err.message, "error");
+                } finally {
+                    app.toggleLoader(false);
+                }
+            },
+
+            // Seller Dashboard
+            loadSellerDashboard: async () => {
+                const pList = document.getElementById('seller-products-list');
+                const oList = document.getElementById('seller-orders-list');
+                pList.innerHTML = '';
+                oList.innerHTML = '';
+                let productCount = 0;
+                let pendingOrderCount = 0;
+                app.adminOrders = [];
+
+                // Products
+                const myProducts = app.products.filter(p => p.sellerId === app.currentUser.uid);
+                productCount = myProducts.length;
+
+                myProducts.forEach(p => {
+                    pList.innerHTML += `
+                        <div class="flex justify-between items-center border-b border-textMuted/20 py-4 last:border-0 hover:shadow-clay-card-lg px-4 rounded-xl">
+                            <div class="flex items-center space-x-4">
+                                <img src="${p.image}" class="w-14 h-14 rounded-xl object-contain clay-card p-1">
+                                <div>
+                                    <div class="font-bold text-sm text-textMain">${p.name}</div>
+                                    <div class="text-xs text-textMuted font-bold">₹${p.price} ${p.discount ? `(-${p.discount}%)` : ''}</div>
+                                </div>
                             </div>
-                            <div class="flex justify-between text-base font-extrabold pt-4 border-t border-dashed border-textMuted/20 text-textMain">
-                                <span>Total Amount</span>
-                                <span class="text-xl">₹${order.total}</span>
+                            <div class="flex space-x-2">
+                                <button onclick="app.openEditProductModal('${p.id}')" class="text-textMuted hover:text-accent p-2.5 rounded-xl"><i data-lucide="edit-2" class="lucide-sm"></i></button>
+                                <button onclick="app.deleteProduct('${p.id}')" class="text-textMuted hover:text-danger p-2.5 rounded-xl"><i data-lucide="trash-2" class="lucide-sm"></i></button>
                             </div>
-                            ${order.status !== 'Cancelled' ? trackerHTML : '<div class="mt-6 text-center text-danger font-bold clay-card-inner p-3 text-xs uppercase flex justify-center items-center"><i data-lucide="x-circle" class="lucide-sm mr-2"></i> Order Cancelled</div>'}
                         </div>
                     `;
                 });
 
-                app.updateIcons();
-            },
-
-            // --- PROFILE ---
-            loadProfile: async () => {
-                if (!app.currentUser) return app.router('login');
-                
-                document.getElementById('profile-name').innerText = app.currentUser.displayName || 'User Name';
-                document.getElementById('profile-email').innerText = app.currentUser.email || 'user@email.com';
-                document.getElementById('profile-role').innerText = 'CUSTOMER';
-
-                const list = document.getElementById('profile-address-list');
-                list.innerHTML = '';
-
-                // Load from localStorage
-                const addresses = JSON.parse(localStorage.getItem('userAddresses') || '[]');
-
-                if (addresses.length > 0) {
-                    addresses.forEach((addr, idx) => {
-                        list.innerHTML += `
-                            <div class="clay-card p-6 text-sm hover:shadow-clay-card-lg transition group relative overflow-hidden">
-                                <div class="absolute top-0 right-0 p-4">
-                                    <button onclick="app.deleteAddress(${idx})" class="text-textMuted hover:text-danger p-1 opacity-0 group-hover:opacity-100 transition">
-                                        <i data-lucide="trash-2" class="lucide-sm"></i>
-                                    </button>
+                // Orders
+                const snap = await getDocs(getCollectionRef('orders'));
+                snap.forEach(d => {
+                    const o = d.data();
+                    const oid = d.id;
+                    app.adminOrders.push({ id: oid, ...o });
+                    if (o.status !== 'Delivered' && o.status !== 'Cancelled' && o.status !== 'Pending Verification') {
+                        pendingOrderCount++;
+                        oList.innerHTML += `
+                            <div class="clay-card p-5 mb-3 hover:shadow-clay-card-lg">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div>
+                                        <div class="font-bold text-textMain text-sm flex items-center mb-1"><i data-lucide="package" class="lucide-xs mr-2 text-textMuted"></i> #${oid.substr(0, 8)}</div>
+                                        <div class="text-xs text-textMuted">${new Date(o.createdAt?.seconds * 1000).toLocaleDateString()}</div>
+                                    </div>
+                                    <div class="text-sm font-extrabold text-accent clay-card-inner px-2 py-1">₹${o.total}</div>
                                 </div>
-                                <div class="font-bold text-textMain mb-2 flex items-center text-base">
-                                    <i data-lucide="home" class="lucide-sm mr-2 text-textMuted"></i> 
-                                    ${addr.name} 
-                                    <span class="ml-3 text-[10px] clay-tag text-textMuted font-bold">${addr.type}</span>
-                                </div>
-                                <div class="text-textMuted ml-7 leading-relaxed">${addr.line}, ${addr.area}</div>
-                                <div class="text-textMuted ml-7">${addr.city} - ${addr.pin}</div>
-                                <div class="text-xs text-textMuted mt-3 ml-7 flex items-center font-medium">
-                                    <i data-lucide="phone" class="lucide-xs mr-2"></i> ${addr.mobile}
+                                <div class="flex justify-between items-center mt-4 pt-4 border-t border-textMuted/20">
+                                    <span class="text-xs text-textMuted">${o.customerName}</span>
+                                    <select onchange="app.updateOrderStatus('${oid}', this.value)" class="clay-input p-1.5 text-xs cursor-pointer font-bold text-textMain">
+                                        <option value="">Status...</option>
+                                        <option value="Packed" ${o.status === 'Packed' ? 'selected' : ''}>Packed</option>
+                                        <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+                                        <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                                    </select>
                                 </div>
                             </div>
                         `;
-                    });
-                } else {
-                    list.innerHTML = '<p class="text-textMuted text-sm italic col-span-2 text-center py-4">No saved addresses found.</p>';
-                }
-                app.updateIcons();
+                    }
+                });
+
+                document.getElementById('seller-stat-products').innerText = productCount;
+                document.getElementById('seller-stat-orders').innerText = pendingOrderCount;
+                if (window.lucide) window.lucide.createIcons();
             },
 
-            // --- UTILS ---
+            openAddProductModal: () => {
+                document.getElementById('modal-title').innerText = "Add New Product";
+                document.querySelector('input[name="p_id"]').value = "";
+                document.getElementById('add-product-modal').classList.remove('hide');
+                document.querySelector('form[onsubmit="app.sellerSaveProduct(event)"]').reset();
+            },
+
+            openEditProductModal: (pid) => {
+                const p = app.products.find(x => x.id === pid);
+                if (!p) return;
+                document.getElementById('modal-title').innerText = "Edit Product";
+                const form = document.querySelector('form[onsubmit="app.sellerSaveProduct(event)"]');
+                form.p_id.value = pid;
+                form.p_name.value = p.name;
+                form.p_desc.value = p.desc;
+                form.p_price.value = p.price;
+                form.p_discount.value = p.discount || 0;
+                form.p_cat.value = p.category || 'Electronics';
+                form.p_img.value = p.image;
+                form.p_rating.value = p.rating || 5.0;
+                document.getElementById('add-product-modal').classList.remove('hide');
+            },
+
+            sellerSaveProduct: async (e) => {
+                e.preventDefault();
+                app.toggleLoader(true);
+                const f = e.target;
+                const pid = f.p_id.value;
+                const data = {
+                    name: f.p_name.value,
+                    desc: f.p_desc.value,
+                    price: Number(f.p_price.value),
+                    discount: Number(f.p_discount.value) || 0,
+                    image: f.p_img.value || 'https://placehold.co/400x400?text=Item',
+                    category: f.p_cat.value,
+                    rating: Number(f.p_rating.value) || 5.0,
+                    sellerId: app.currentUser.uid
+                };
+
+                try {
+                    if (pid) {
+                        await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'products', pid), data);
+                        app.toast("Product Updated!", "success");
+                    } else {
+                        await addDoc(getCollectionRef('products'), data);
+                        app.toast("Product Added!", "success");
+                    }
+                    document.getElementById('add-product-modal').classList.add('hide');
+                    app.loadProducts().then(() => app.loadSellerDashboard());
+                } catch (err) {
+                    app.toast("Error: " + err.message, "error");
+                } finally {
+                    app.toggleLoader(false);
+                }
+            },
+
+            deleteProduct: async (pid) => {
+                if (!confirm("Are you sure you want to delete this product?")) return;
+                try {
+                    await deleteDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'products', pid));
+                    app.toast("Product Deleted", "info");
+                    app.loadProducts().then(() => app.loadSellerDashboard());
+                } catch (e) {
+                    app.toast("Delete failed: " + e.message, "error");
+                }
+            },
+
+            updateOrderStatus: async (oid, status) => {
+                if (!status) return;
+                try {
+                    const ref = doc(db, 'artifacts', APP_ID, 'public', 'data', 'orders', oid);
+                    const snap = await getDoc(ref);
+                    const steps = snap.data().trackingSteps || [];
+                    steps.push({ status: status, time: new Date().toISOString() });
+                    await updateDoc(ref, { status: status, trackingSteps: steps });
+                    app.toast(`Order marked as ${status}`, "success");
+                    app.loadSellerDashboard();
+                } catch (e) {
+                    app.toast("Update failed", "error");
+                }
+            },
+
+            fillMockProduct: (form) => {
+                form.p_name.value = "Smart Security Camera " + Math.floor(Math.random() * 100);
+                form.p_desc.value = "4K resolution, night vision, AI motion detection";
+                form.p_price.value = 5499;
+                form.p_discount.value = 15;
+                form.p_img.value = "https://placehold.co/400x300?text=Camera";
+            },
+
+            // Admin Dashboard
+            loadAdminDashboard: async () => {
+                const ordersSnap = await getDocs(getCollectionRef('orders'));
+                let total = 0;
+                let count = 0;
+                const payQueue = document.getElementById('admin-payment-queue');
+                payQueue.innerHTML = '';
+                app.adminOrders = [];
+
+                ordersSnap.forEach(d => {
+                    const o = d.data();
+                    const oid = d.id;
+                    app.adminOrders.push({ id: oid, ...o });
+                    total += o.total;
+                    count++;
+                    if (o.status === 'Pending Verification') {
+                        payQueue.innerHTML += `
+                            <div class="flex justify-between items-center clay-card p-5 hover:shadow-clay-card-lg">
+                                <div>
+                                    <div class="font-bold text-textMain text-sm">Order #${oid.substr(0, 8)}</div>
+                                    <div class="text-xs text-textMuted mt-1">Amount: <span class="font-bold text-textMain">₹${o.total}</span></div>
+                                </div>
+                                <button onclick="app.adminVerifyPayment('${d.id}')" class="clay-btn clay-btn-primary text-xs px-5 py-2.5 font-bold flex items-center"><i data-lucide="check" class="lucide-xs mr-2"></i> Approve</button>
+                            </div>
+                         `;
+                    }
+                });
+
+                if (payQueue.innerHTML === '') payQueue.innerHTML = '<div class="text-textMuted text-sm clay-card-inner p-6 text-center">No pending payments.</div>';
+                document.getElementById('admin-total-sales').innerText = '₹' + total;
+                document.getElementById('admin-order-count').innerText = count;
+
+                const reqSnap = await getDocs(getCollectionRef('sellerRequests'));
+                const reqContainer = document.getElementById('admin-seller-requests');
+                reqContainer.innerHTML = '';
+
+                reqSnap.forEach(d => {
+                    const req = d.data();
+                    if (req.status === 'Pending') {
+                        reqContainer.innerHTML += `
+                            <div class="clay-card p-5 flex justify-between items-start mb-2 hover:shadow-clay-card-lg">
+                                <div>
+                                    <div class="font-bold text-textMain text-sm">${req.company}</div>
+                                    <div class="text-xs text-textMuted mt-1">${req.name} (${req.email})</div>
+                                </div>
+                                <button onclick="app.approveSeller('${d.id}', '${req.uid}')" class="clay-btn clay-btn-primary text-xs px-4 py-2 font-bold">Approve</button>
+                            </div>
+                        `;
+                    }
+                });
+                if (reqContainer.innerHTML === '') reqContainer.innerHTML = '<div class="text-textMuted text-sm text-center py-6 clay-card-inner">No pending requests.</div>';
+                if (window.lucide) window.lucide.createIcons();
+            },
+
+            adminVerifyPayment: async (oid) => {
+                try {
+                    const ref = doc(db, 'artifacts', APP_ID, 'public', 'data', 'orders', oid);
+                    const snap = await getDoc(ref);
+                    const steps = snap.data().trackingSteps || [];
+                    steps.push({ status: 'Verified', time: new Date().toISOString() });
+                    await updateDoc(ref, { status: 'Verified', trackingSteps: steps });
+                    app.toast("Payment Verified", "success");
+                    app.loadAdminDashboard();
+                } catch (e) {
+                    app.toast("Error verifying", "error");
+                }
+            },
+
+            approveSeller: async (reqId, uid) => {
+                if (!confirm("Approve this seller?")) return;
+                try {
+                    await updateDoc(doc(db, 'artifacts', APP_ID, 'public', 'data', 'sellerRequests', reqId), { status: 'Approved' });
+                    await updateDoc(getUserRef(uid), { role: 'seller' });
+                    app.toast("Seller Approved!", "success");
+                    app.loadAdminDashboard();
+                } catch (e) {
+                    app.toast("Error approving seller", "error");
+                }
+            },
+
+            createServiceAccount: async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('service-email-input').value;
+                const password = document.getElementById('service-password-input').value;
+                app.toggleLoader(true);
+                try {
+                    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+                    await setDoc(getUserRef(userCred.user.uid), {
+                        uid: userCred.user.uid,
+                        email: email,
+                        role: 'service',
+                        name: 'Service Agent',
+                        addressList: []
+                    });
+                    app.toast(`Service Account Created for ${email}`, "success");
+                    document.getElementById('service-email-input').value = '';
+                    document.getElementById('service-password-input').value = '';
+                } catch (error) {
+                    app.toast("Error creating account: " + error.message, "error");
+                } finally {
+                    app.toggleLoader(false);
+                }
+            },
+
+            createSellerManual: async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('manual-seller-email').value;
+                const name = document.getElementById('manual-seller-name').value;
+                app.toggleLoader(true);
+                try {
+                    const password = Math.random().toString(36).slice(-8);
+                    const userCred = await createUserWithEmailAndPassword(auth, email, password);
+                    await setDoc(getUserRef(userCred.user.uid), {
+                        uid: userCred.user.uid,
+                        email: email,
+                        role: 'seller',
+                        name: name,
+                        addressList: []
+                    });
+                    app.toast(`Seller Account Created for ${email} with password: ${password}`, "success");
+                    document.getElementById('manual-seller-email').value = '';
+                    document.getElementById('manual-seller-name').value = '';
+                } catch (error) {
+                    app.toast("Error creating account: " + error.message, "error");
+                } finally {
+                    app.toggleLoader(false);
+                }
+            },
+
+            // Service Dashboard
+            loadServiceDashboard: async () => {
+                const list = document.getElementById('support-tickets-list');
+                list.innerHTML = '';
+                try {
+                    const snap = await getDocs(getCollectionRef('supportChats'));
+                    snap.forEach(d => {
+                        const t = d.data();
+                        const lastMsg = t.messages[t.messages.length - 1];
+                        list.innerHTML += `
+                             <div onclick="app.openServiceChat('${d.id}')" class="p-4 hover:shadow-clay-card-lg cursor-pointer border-b border-textMuted/20 rounded-xl">
+                                <div class="flex justify-between mb-1">
+                                    <span class="font-bold text-xs text-textMain">Order #${t.orderId.substr(0, 6)}</span>
+                                </div>
+                                <div class="text-xs text-textMuted truncate">${lastMsg ? lastMsg.text : 'New Ticket'}</div>
+                             </div>
+                        `;
+                    });
+                    if (list.innerHTML === '') list.innerHTML = '<div class="text-textMuted p-6 text-sm text-center">No active tickets</div>';
+                    if (window.lucide) window.lucide.createIcons();
+                } catch (e) {
+                    console.error(e);
+                }
+            },
+
+            openServiceChat: async (ticketId) => {
+                app.currentTicketId = ticketId;
+                document.getElementById('service-chat-header').innerHTML = `<span>Ticket #${ticketId.substr(0, 8)}</span>`;
+                document.getElementById('service-chat-input').disabled = false;
+                document.getElementById('service-chat-send-btn').disabled = false;
+
+                const chatRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'supportChats', ticketId);
+                if (app.chatUnsubscribe) app.chatUnsubscribe();
+                app.chatUnsubscribe = onSnapshot(chatRef, (doc) => {
+                    if (doc.exists()) {
+                        const msgs = doc.data().messages || [];
+                        const container = document.getElementById('service-chat-messages');
+                        container.innerHTML = msgs.map(m => `
+                            <div class="flex ${m.sender !== 'Customer' && m.sender !== 'System' ? 'justify-end' : 'justify-start'}">
+                                <div class="${m.sender !== 'Customer' && m.sender !== 'System' ? 'bg-accent text-white rounded-br-none' : 'clay-card rounded-bl-none'} px-5 py-3 rounded-2xl max-w-xs text-sm mb-2">
+                                    <div class="text-[10px] opacity-70 mb-1 font-bold">${m.sender}</div>
+                                    ${m.text}
+                                </div>
+                            </div>
+                        `).join('');
+                        container.scrollTop = container.scrollHeight;
+                    }
+                });
+            },
+
+            sendServiceMessage: async (e) => {
+                e.preventDefault();
+                const input = document.getElementById('service-chat-input');
+                const text = input.value;
+                if (!text) return;
+                const chatRef = doc(db, 'artifacts', APP_ID, 'public', 'data', 'supportChats', app.currentTicketId);
+                const chatSnap = await getDoc(chatRef);
+                const messages = chatSnap.data().messages;
+                messages.push({ sender: 'Service Team', text: text, time: new Date().toISOString() });
+                await updateDoc(chatRef, { messages });
+                input.value = '';
+            },
+
+            // Utilities
             toggleLoader: (show) => {
                 const el = document.getElementById('global-loader');
-                if (show) el.classList.remove('hide');
-                else el.classList.add('hide');
+                el.classList[show ? 'remove' : 'add']('hide');
             }
         };
 
-        // --- INIT LISTENER ---
+        // Auth State Listener
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 app.currentUser = user;
-
                 if (user.email === ADMIN_EMAIL) {
                     app.userRole = 'admin';
                 } else {
@@ -2390,18 +2679,15 @@
                         app.userRole = userDoc.data().role || 'customer';
                     }
                 }
-
                 app.updateAuthUI();
-
                 if (app.products.length === 0) app.loadProducts();
-
             } else {
                 app.currentUser = null;
                 app.userRole = 'guest';
                 app.updateAuthUI();
                 app.loadProducts();
             }
-            app.updateIcons();
+            if (window.lucide) window.lucide.createIcons();
         });
 
         // Initial Load
