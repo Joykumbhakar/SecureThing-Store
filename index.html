@@ -348,46 +348,7 @@
             box-shadow: 4px 4px 8px var(--tw-shadow-clay-dark), -4px -4px 8px var(--tw-shadow-clay-light);
             border: 1px solid rgba(255, 255, 255, 0.2);
         }
-/* Banner Horizontal Scroller */
-        .banner-horizontal-container {
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
 
-        .banner-horizontal-container::-webkit-scrollbar {
-            display: none;
-        }
-
-        .banner-horizontal-slide {
-            flex: 0 0 280px;
-            scroll-snap-align: start;
-        }
-
-        .banner-dots {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 20px;
-        }
-
-        .banner-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: rgba(127, 90, 240, 0.3);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .banner-dot.active {
-            width: 24px;
-            background: #7F5AF0;
-            border-radius: 12px;
-        }
         .nav-link-desktop {
             @apply px-4 py-2 text-sm font-bold text-textMain hover:text-accent transition-colors relative after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2 after:w-0 after:h-0.5 after:bg-accent after:transition-all after:duration-300 hover:after:w-4/5;
         }
@@ -460,6 +421,70 @@
             justify-content: center;
             border: 2px solid #583FBC;
         }
+
+        /* Custom Utility to hide scrollbar but allow scrolling */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Banner Aspect Ratio Logic */
+        .banner-container {
+            width: 100%;
+            height: auto;
+            /* Stacks vertically on mobile */
+        }
+
+        @media (min-width: 768px) {
+            .banner-container {
+                /* Forces 3:1 ratio on Desktop (e.g., 1200px width / 400px height) */
+                aspect-ratio: 3 / 1;
+                height: auto;
+            }
+        }
+
+        /* Floating Animation for the Product */
+        .floating-icon {
+            animation: clayFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes clayFloat {
+
+            0%,
+            100% {
+                transform: translateY(0px) scale(1);
+            }
+
+            50% {
+                transform: translateY(-12px) scale(1.02);
+            }
+        }
+
+        /* Ensure Bengali font is used for Bengali text areas */
+        .font-bengali {
+            font-family: 'Noto Sans Bengali', sans-serif;
+        }
+
+        /* Floating Animation */
+        .floating-icon {
+            animation: clayFloat 4s ease-in-out infinite;
+        }
+
+        @keyframes clayFloat {
+
+            0%,
+            100% {
+                transform: translateY(0px) scale(1);
+            }
+
+            50% {
+                transform: translateY(-8px) scale(1.02);
+            }
+        }
     </style>
 </head>
 
@@ -517,8 +542,7 @@
         <div id="header-search-bar" class="px-6 pb-2 hide">
             <div class="relative">
                 <input type="text" id="global-search-input"
-                    onkeydown="if(event.key === 'Enter') app.performSearch(this.value)"
-                    placeholder="Search products..."
+                    onkeydown="if(event.key === 'Enter') app.performSearch(this.value)" placeholder="Search products..."
                     class="clay-input w-full py-4 pl-12 pr-12 text-sm font-bold shadow-clay-inner">
                 <i data-lucide="search" class="absolute left-4 top-4 text-primary w-5 h-5"></i>
                 <button onclick="app.clearSearch()" class="absolute right-4 top-4 text-slate-400 hover:text-danger"><i
@@ -537,119 +561,178 @@
 
         <!-- VIEW: HOME -->
         <section id="view-home" class="view-section">
-           <div class="lg:w-1/3 lg:shrink-0">
-                <div class="clay-card-inner p-0 h-full flex flex-col justify-center overflow-hidden">
 
-                    <!-- Header -->
-                    <div class="p-6 pb-4">
-                        <h3 class="font-bold text-textMain text-lg flex items-center gap-2">
-                            <i data-lucide="sparkles" class="w-5 h-5 text-accent"></i>
-                            Special Offers
-                        </h3>
+            <a href="https://cybercafejoy.netlify.app" target="_blank"
+                class="block w-full max-w-5xl mx-auto group no-underline select-none font-bengali">
+
+                <div
+                    class="w-full aspect-[3/1] rounded-[2rem] shadow-clay-card relative overflow-hidden flex flex-row items-center justify-between p-[4%] bg-gradient-to-br from-violet-200 via-purple-100 to-cyan-100 transition-transform duration-300 hover:scale-[1.01]">
+
+                    <div
+                        class="absolute top-0 right-0 w-[70%] h-full bg-gradient-to-l from-white/40 to-transparent skew-x-12 opacity-70 pointer-events-none">
+                    </div>
+                    <div
+                        class="absolute -bottom-20 -left-20 w-[40%] h-[40%] bg-accent/20 rounded-full blur-2xl pointer-events-none mix-blend-overlay">
                     </div>
 
-                    <!-- Scroller Container -->
-                    <!-- Added overflow-x-auto, snap-x, snap-mandatory for robust scrolling -->
-                    <div class="banner-horizontal-container flex overflow-x-auto snap-x snap-mandatory scroll-smooth gap-4 pb-4 px-6 no-scrollbar"
-                        id="banner-horizontal-scroller">
+                    <div class="flex-1 flex flex-col justify-center items-start z-10 h-full space-y-[2%]">
 
-                        <!-- Slide 1: Security -->
-                        <!-- Changed inline style to Tailwind classes: w-full shrink-0 snap-center -->
-                        <div class="banner-horizontal-slide w-full shrink-0 snap-center relative group cursor-pointer"
-                            onclick="app.filterCategory('Security')">
-                            <div class="clay-card overflow-hidden aspect-[3/1] w-full rounded-2xl shadow-sm">
-                                <img src="banner1.png"
-                                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                    alt="Security Sale">
-                                <!-- Overlay Text -->
-                                <div
-                                    class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
-                                    <span class="text-white font-bold text-lg block leading-none">Security</span>
-                                    <span class="text-white/80 text-xs font-medium">Up to 50% Off</span>
+                        <div
+                            class="inline-flex items-center gap-1.5 px-[3%] py-[1%] rounded-full shadow-clay-inner bg-white/40 backdrop-blur-sm">
+                            <span class="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-success animate-pulse"></span>
+                            <span
+                                class="text-[6px] sm:text-[8px] md:text-xs font-bold text-textMain uppercase tracking-widest whitespace-nowrap">সকাল
+                                ১০টা - রাত ৯টা</span>
+                        </div>
+
+                        <h2
+                            class="text-lg sm:text-2xl md:text-4xl lg:text-5xl font-extrabold text-textMain leading-tight drop-shadow-sm">
+                            সুডিহী <span class="text-accent">ডিজিটাল কেন্দ্র</span>
+                        </h2>
+
+                        <div class="flex flex-wrap gap-1 md:gap-2">
+                            <p
+                                class="text-textMain font-semibold text-[7px] sm:text-[9px] md:text-xs bg-white/60 px-2 py-0.5 rounded-md shadow-sm flex items-center gap-1">
+                                <i data-lucide="file-text" class="w-2 h-2 md:w-3 md:h-3"></i> ফর্ম ফিলাপ
+                            </p>
+                            <p
+                                class="text-textMain font-semibold text-[7px] sm:text-[9px] md:text-xs bg-white/60 px-2 py-0.5 rounded-md shadow-sm flex items-center gap-1">
+                                <i data-lucide="globe" class="w-2 h-2 md:w-3 md:h-3"></i> Website Dev
+                            </p>
+                            <p
+                                class="text-textMain font-semibold text-[7px] sm:text-[9px] md:text-xs bg-white/60 px-2 py-0.5 rounded-md shadow-sm flex items-center gap-1">
+                                <i data-lucide="credit-card" class="w-2 h-2 md:w-3 md:h-3"></i> Aadhaar/Pan
+                            </p>
+                        </div>
+
+                        <button
+                            class="mt-[2%] bg-accent text-white rounded-xl py-[2%] px-[6%] text-[8px] sm:text-xs md:text-sm font-bold flex items-center gap-2 shadow-clay-btn hover:bg-accentHover hover:shadow-shadow-glow transition-all whitespace-nowrap">
+                            ভিজিট করুন <i data-lucide="external-link" class="w-3 h-3 md:w-4 md:h-4"></i>
+                        </button>
+                    </div>
+
+                    <div class="h-[85%] aspect-square relative flex items-center justify-center flex-shrink-0 ml-2">
+
+                        <div
+                            class="w-full h-full rounded-full shadow-clay-inner flex items-center justify-center p-[15%] relative bg-white/30 backdrop-blur-md border border-white/20">
+
+                            <img src="https://cybercafejoy.netlify.app/logo.png" alt="Sudihi Digital Logo"
+                                class="w-full h-full object-contain drop-shadow-xl floating-icon z-10 rounded-full"
+                                onerror="this.src='https://cdn-icons-png.flaticon.com/512/2083/2083256.png'">
+
+                            <div
+                                class="absolute -bottom-[5%] -left-[15%] shadow-clay-card-sm bg-white/80 backdrop-blur-md px-[6%] py-[4%] rounded-xl border border-white/50 flex flex-row items-center gap-2 rotate-[-5deg] z-20 whitespace-nowrap">
+                                <div class="p-1 rounded-full bg-green-100 text-green-600">
+                                    <i data-lucide="phone-call" class="w-3 h-3 md:w-5 md:h-5"></i>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span
+                                        class="text-[6px] md:text-[8px] text-textMuted font-bold uppercase leading-none">Call
+                                        Now</span>
+                                    <span
+                                        class="text-[8px] md:text-xs font-extrabold text-textMain leading-none">9749505101</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Slide 2: Electronics -->
-                        <div class="banner-horizontal-slide w-full shrink-0 snap-center relative group cursor-pointer"
-                            onclick="app.filterCategory('Electronics')">
-                            <div class="clay-card overflow-hidden aspect-[3/1] w-full rounded-2xl shadow-sm">
-                                <img src="banner2.png"
-                                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                    alt="Electronics Sale">
-                                <div
-                                    class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
-                                    <span class="text-white font-bold text-lg block leading-none">Gadgets</span>
-                                    <span class="text-white/80 text-xs font-medium">New Arrivals</span>
-                                </div>
+                        <i data-lucide="wifi"
+                            class="absolute top-2 right-2 text-accent/30 w-[15%] h-[15%] animate-pulse"></i>
+                        <i data-lucide="mouse-pointer-click"
+                            class="absolute bottom-10 right-0 text-cyan-500/30 w-[12%] h-[12%]"></i>
+                    </div>
+                </div>
+            </a>
+            <!-- Right Side: Horizontal Image Banner Scroller -->
+            <div class="w-full max-w-4xl mx-auto">
+
+                <div class="relative group rounded-2xl overflow-hidden shadow-lg bg-white">
+
+                    <div id="banner-track"
+                        class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar">
+
+                        <div class="w-full shrink-0 snap-center relative aspect-[3/1] cursor-pointer"
+                            onclick="console.log('Clicked Security')">
+                            <img src="banner1.png"
+                                class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                                alt="Security Sale">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent p-6 flex flex-col justify-end">
+                                <span class="text-white font-bold text-xl md:text-2xl">Security</span>
+                                <span class="text-white/80 text-sm md:text-base">Up to 50% Off</span>
                             </div>
                         </div>
 
-                        <!-- Slide 3: Smart Home -->
-                        <div class="banner-horizontal-slide w-full shrink-0 snap-center relative group cursor-pointer"
-                            onclick="app.filterCategory('Home')">
-                            <div class="clay-card overflow-hidden aspect-[3/1] w-full rounded-2xl shadow-sm">
-                                <img src="banner3.png"
-                                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                    alt="Smart Home Sale">
-                                <div
-                                    class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
-                                    <span class="text-white font-bold text-lg block leading-none">Smart Home</span>
-                                    <span class="text-white/80 text-xs font-medium">Automation Kits</span>
-                                </div>
+                        <div class="w-full shrink-0 snap-center relative aspect-[3/1] cursor-pointer"
+                            onclick="console.log('Clicked Electronics')">
+                            <img src="banner2.png"
+                                class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                                alt="Electronics Sale">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent p-6 flex flex-col justify-end">
+                                <span class="text-white font-bold text-xl md:text-2xl">Gadgets</span>
+                                <span class="text-white/80 text-sm md:text-base">New Arrivals</span>
                             </div>
                         </div>
 
-                        <!-- Slide 4: Fashion -->
-                        <div class="banner-horizontal-slide w-full shrink-0 snap-center relative group cursor-pointer"
-                            onclick="app.filterCategory('Fashion')">
-                            <div class="clay-card overflow-hidden aspect-[3/1] w-full rounded-2xl shadow-sm">
-                                <img src="banner4.png"
-                                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                    alt="Fashion Sale">
-                                <div
-                                    class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
-                                    <span class="text-white font-bold text-lg block leading-none">Fashion</span>
-                                    <span class="text-white/80 text-xs font-medium">Trending Now</span>
-                                </div>
+                        <div class="w-full shrink-0 snap-center relative aspect-[3/1] cursor-pointer"
+                            onclick="console.log('Clicked Home')">
+                            <img src="banner3.png"
+                                class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                                alt="Smart Home Sale">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent p-6 flex flex-col justify-end">
+                                <span class="text-white font-bold text-xl md:text-2xl">Smart Home</span>
+                                <span class="text-white/80 text-sm md:text-base">Automation Kits</span>
                             </div>
                         </div>
 
-                        <!-- Slide 5: Toys -->
-                        <div class="banner-horizontal-slide w-full shrink-0 snap-center relative group cursor-pointer"
-                            onclick="app.filterCategory('Toys')">
-                            <div class="clay-card overflow-hidden aspect-[3/1] w-full rounded-2xl shadow-sm">
-                                <img src="banner5.png"
-                                    class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                    alt="Toys Sale">
-                                <div
-                                    class="absolute bottom-0 left-0 w-full p-4 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
-                                    <span class="text-white font-bold text-lg block leading-none">Kids Zone</span>
-                                    <span class="text-white/80 text-xs font-medium">Fun & Games</span>
-                                </div>
+                        <div class="w-full shrink-0 snap-center relative aspect-[3/1] cursor-pointer"
+                            onclick="console.log('Clicked Fashion')">
+                            <img src="banner4.png"
+                                class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                                alt="Fashion Sale">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent p-6 flex flex-col justify-end">
+                                <span class="text-white font-bold text-xl md:text-2xl">Fashion</span>
+                                <span class="text-white/80 text-sm md:text-base">Trending Now</span>
+                            </div>
+                        </div>
+
+                        <div class="w-full shrink-0 snap-center relative aspect-[3/1] cursor-pointer"
+                            onclick="console.log('Clicked Toys')">
+                            <img src="banner5.png"
+                                class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
+                                alt="Toys Sale">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent p-6 flex flex-col justify-end">
+                                <span class="text-white font-bold text-xl md:text-2xl">Kids Zone</span>
+                                <span class="text-white/80 text-sm md:text-base">Fun & Games</span>
                             </div>
                         </div>
 
                     </div>
 
-                    <!-- Controls Container -->
-                    <div class="pb-6">
-                        <!-- Dots Indicator -->
-                        <div class="banner-dots" id="banner-dots">
-                            <div class="banner-dot active" onclick="scrollToBanner(0)"></div>
-                            <div class="banner-dot" onclick="scrollToBanner(1)"></div>
-                            <div class="banner-dot" onclick="scrollToBanner(2)"></div>
-                            <div class="banner-dot" onclick="scrollToBanner(3)"></div>
-                            <div class="banner-dot" onclick="scrollToBanner(4)"></div>
+                    <div class="absolute bottom-4 w-full flex justify-center pointer-events-none">
+                        <div class="flex gap-2 p-2 bg-black/20 backdrop-blur-sm rounded-full pointer-events-auto">
+                            <button onclick="scrollToSlide(0)"
+                                class="dot w-8 h-2 rounded-full bg-white transition-all duration-300"></button>
+                            <button onclick="scrollToSlide(1)"
+                                class="dot w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-all duration-300"></button>
+                            <button onclick="scrollToSlide(2)"
+                                class="dot w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-all duration-300"></button>
+                            <button onclick="scrollToSlide(3)"
+                                class="dot w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-all duration-300"></button>
+                            <button onclick="scrollToSlide(4)"
+                                class="dot w-2 h-2 rounded-full bg-white/50 hover:bg-white transition-all duration-300"></button>
                         </div>
-
                     </div>
+
                 </div>
             </div>
 
             <!-- Categories Filter -->
             <div class="clay-card mb-8 sticky top-20 z-30">
-                <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-6 p-6">
+                <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-6">
                     <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
                         <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar w-full sm:w-auto" id="category-chips">
                             <button onclick="app.filterCategory('all')"
@@ -672,7 +755,60 @@
             </div>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="categories-grid"></div>
         </section>
+        <section id="view-category-products" class="view-section hide">
 
+            <div class="sticky top-20 z-30 mb-6 transition-all duration-300">
+
+                <button onclick="app.router('categories')"
+                    class="mb-4 flex items-center text-textMuted hover:text-accent transition-colors text-sm font-bold bg-clayBg/80 backdrop-blur-sm p-2 rounded-lg w-fit">
+                    <i data-lucide="arrow-left" class="mr-2 lucide-sm"></i> Back to Categories
+                </button>
+
+                <div class="clay-card p-4">
+                    <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
+
+                        <div class="flex items-center gap-3 w-full md:w-auto">
+                            <div
+                                class="clay-card-inner w-10 h-10 rounded-xl flex items-center justify-center text-accent shrink-0">
+                                <i id="cat-page-icon" data-lucide="box" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h2 id="cat-page-title" class="text-xl font-extrabold text-textMain leading-none">
+                                    Category</h2>
+                                <p id="cat-page-desc"
+                                    class="text-[10px] text-textMuted font-bold uppercase tracking-widest mt-1">
+                                    Collection</p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2 w-full md:w-auto">
+                            <div class="relative flex-grow md:w-64">
+                                <input type="text" id="cat-page-search" onkeyup="app.renderCategoryView()"
+                                    placeholder="Search this category..."
+                                    class="clay-input w-full py-2.5 pl-9 pr-4 text-sm font-bold shadow-clay-inner">
+                                <i data-lucide="search" class="absolute left-3 top-3 text-textMuted w-4 h-4"></i>
+                            </div>
+
+                            <div class="relative min-w-[140px]">
+                                <select id="cat-page-sort" onchange="app.renderCategoryView()"
+                                    class="clay-input w-full appearance-none py-2.5 pl-3 pr-8 text-xs font-bold cursor-pointer bg-transparent">
+                                    <option value="newest">🔥 Newest</option>
+                                    <option value="price-low">Price: Low to High</option>
+                                    <option value="price-high">Price: High to Low</option>
+                                    <option value="rating">⭐ Top Rated</option>
+                                </select>
+                                <i data-lucide="chevron-down"
+                                    class="absolute right-3 top-3 text-textMuted w-3 h-3 pointer-events-none"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="category-specific-grid"
+                class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 pb-32">
+            </div>
+        </section>
         <!-- VIEW: WISHLIST -->
         <section id="view-wishlist" class="view-section hide">
             <div class="mb-8 flex items-center gap-3">
@@ -938,8 +1074,8 @@
                 <p class="text-textMuted mb-10 leading-relaxed">Thank you for your purchase. Your order has been
                     securely placed and is being processed.</p>
                 <div class="flex flex-col gap-4">
-                    <button onclick="app.router('orders')"
-                        class="clay-btn clay-btn-primary w-full py-4 font-bold">Track Your Order</button>
+                    <button onclick="app.router('orders')" class="clay-btn clay-btn-primary w-full py-4 font-bold">Track
+                        Your Order</button>
                     <button onclick="app.router('home')"
                         class="clay-btn clay-btn-secondary w-full py-4 font-bold">Continue Shopping</button>
                 </div>
@@ -1528,7 +1664,62 @@
         const APP_ID = 'secure-thing-store';
         const getCollectionRef = (name) => collection(db, 'artifacts', APP_ID, 'public', 'data', name);
         const getUserRef = (uid) => doc(db, 'artifacts', APP_ID, 'public', 'data', 'users', uid);
+        const track = document.getElementById('banner-track');
+        const dots = document.querySelectorAll('.dot');
+        const container = document.getElementById('carousel-container');
+        let autoPlayInterval;
+        const autoPlayDelay = 3500; // 3.5 seconds
 
+        // 1. Core Scroll Function
+        function scrollToSlide(index) {
+            const slideWidth = track.clientWidth;
+            track.scrollTo({ left: slideWidth * index, behavior: 'smooth' });
+        }
+
+        // 2. Manual Interaction (Stops autoplay temporarily, then restarts)
+        function manualScroll(index) {
+            stopAutoPlay();
+            scrollToSlide(index);
+            startAutoPlay();
+        }
+
+        // 3. Update Dots based on Scroll Position
+        function updateDots() {
+            const index = Math.round(track.scrollLeft / track.clientWidth);
+
+            dots.forEach((dot, i) => {
+                if (i === index) {
+                    dot.classList.add('w-8', 'bg-white');
+                    dot.classList.remove('w-2', 'bg-white/50');
+                } else {
+                    dot.classList.remove('w-8', 'bg-white');
+                    dot.classList.add('w-2', 'bg-white/50');
+                }
+            });
+        }
+
+        // 4. Auto Play Logic
+        function startAutoPlay() {
+            // Clear any existing interval to prevent duplicates
+            if (autoPlayInterval) clearInterval(autoPlayInterval);
+
+            autoPlayInterval = setInterval(() => {
+                const index = Math.round(track.scrollLeft / track.clientWidth);
+                const totalSlides = dots.length;
+                let nextIndex = index + 1;
+
+                // Loop back to start if at the end
+                if (nextIndex >= totalSlides) {
+                    nextIndex = 0;
+                }
+
+                scrollToSlide(nextIndex);
+            }, autoPlayDelay);
+        }
+
+        function stopAutoPlay() {
+            clearInterval(autoPlayInterval);
+        }
         // Application State
         window.app = {
             currentUser: null,
@@ -1583,7 +1774,7 @@
                 document.querySelectorAll('.view-section').forEach(el => el.classList.add('hide'));
                 const view = document.getElementById(`view-${viewId}`);
                 if (view) view.classList.remove('hide');
-                
+
                 if (viewId === 'home') {
                     await app.loadProducts();
                     app.loadHomeCategories();
@@ -1636,17 +1827,17 @@
                 const navService = document.getElementById('nav-service');
                 const navSeller = document.getElementById('nav-seller');
                 const navAdmin = document.getElementById('nav-admin');
-                
+
                 navService.classList.add('hide');
                 navSeller.classList.add('hide');
                 navAdmin.classList.add('hide');
-                
+
                 if (app.currentUser) {
                     container.innerHTML = `<div class="flex items-center space-x-2">
                         <span class="text-xs font-bold text-textMain clay-tag uppercase">${app.userRole}</span>
                         <button onclick="app.logout()" class="clay-btn clay-btn-secondary px-4 py-2 text-xs font-bold">Logout</button>
                     </div>`;
-                    
+
                     if (app.userRole === 'service') navService.classList.remove('hide');
                     if (app.userRole === 'seller') navSeller.classList.remove('hide');
                     if (app.userRole === 'admin') navAdmin.classList.remove('hide');
@@ -1773,18 +1964,102 @@
                 });
                 con.innerHTML = html;
             },
+            // Track the current category ID globally so the search/sort function knows what to filter
+            currentCategoryId: null,
 
+            // 1. Render Categories Grid (Same as before)
             loadCategories: () => {
                 const grid = document.getElementById('categories-grid');
                 if (!grid) return;
-                grid.innerHTML = app.categories.map(cat => `
-                    <div onclick="app.filterCategory('${cat.id}')" class="clay-card p-4 flex flex-col items-center justify-center text-center cursor-pointer h-36 hover:shadow-clay-card-lg">
-                        <div class="clay-card-inner w-14 h-14 rounded-2xl flex items-center justify-center ${cat.color} mb-3">
-                            <i data-lucide="${cat.icon}" class="w-7 h-7"></i>
-                        </div>
-                        <span class="font-bold text-textMain text-sm">${cat.name}</span>
+                grid.innerHTML = '';
+                app.categories.forEach(cat => {
+                    grid.innerHTML += `
+                <div onclick="app.openCategoryPage('${cat.id}')" 
+                    class="clay-card p-4 flex flex-col items-center justify-center text-center cursor-pointer h-36 active:scale-95 transition-transform hover:shadow-clay-card-lg group">
+                    <div class="clay-card-inner w-14 h-14 rounded-2xl flex items-center justify-center ${cat.color} mb-3 shadow-inner group-hover:scale-110 transition-transform">
+                        <i data-lucide="${cat.icon}" class="w-7 h-7"></i>
                     </div>
-                `).join('');
+                    <span class="font-bold text-textMain text-sm">${cat.name}</span>
+                </div>
+            `;
+                });
+                app.updateIcons();
+            },
+
+            // 2. Setup the Page (Reset inputs)
+            openCategoryPage: (catId) => {
+                const cat = app.categories.find(c => c.id === catId);
+                if (!cat) return;
+
+                // Set global state
+                app.currentCategoryId = catId;
+
+                // Switch View
+                app.router('category-products');
+
+                // Update Header UI
+                document.getElementById('cat-page-title').innerText = cat.name;
+                document.getElementById('cat-page-desc').innerText = `${cat.name} Collection`;
+                const iconEl = document.getElementById('cat-page-icon');
+                iconEl.setAttribute('data-lucide', cat.icon);
+                // Reset styles for icon container if needed based on cat.color
+
+                // RESET INPUTS (Important for a fresh view)
+                document.getElementById('cat-page-search').value = '';
+                document.getElementById('cat-page-sort').value = 'newest';
+
+                // Initial Render
+                app.renderCategoryView();
+                window.scrollTo(0, 0);
+            },
+
+            // 3. THE LOGIC ENGINE: Handles Filtering, Searching, and Sorting
+            renderCategoryView: () => {
+                const container = document.getElementById('category-specific-grid');
+                const searchTerm = document.getElementById('cat-page-search').value.toLowerCase();
+                const sortMode = document.getElementById('cat-page-sort').value;
+
+                // A. Filter by Category ID
+                let filtered = app.products.filter(p => p.category === app.currentCategoryId);
+
+                // B. Filter by Search Term
+                if (searchTerm) {
+                    filtered = filtered.filter(p =>
+                        p.name.toLowerCase().includes(searchTerm) ||
+                        (p.desc && p.desc.toLowerCase().includes(searchTerm))
+                    );
+                }
+
+                // C. Sort Results
+                if (sortMode === 'price-low') {
+                    filtered.sort((a, b) => parseInt(a.price) - parseInt(b.price));
+                } else if (sortMode === 'price-high') {
+                    filtered.sort((a, b) => parseInt(b.price) - parseInt(a.price));
+                } else if (sortMode === 'rating') {
+                    filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+                }
+                // 'newest' uses default order or add logic if you have createdAt
+
+                // D. Render HTML
+                container.innerHTML = '';
+                if (filtered.length === 0) {
+                    container.innerHTML = `
+                <div class="col-span-full flex flex-col items-center justify-center py-20 text-textMuted opacity-60">
+                    <i data-lucide="search-x" class="w-16 h-16 mb-4"></i>
+                    <p class="font-bold">No products match your search.</p>
+                </div>
+            `;
+                } else {
+                    filtered.forEach(p => {
+                        const isLiked = app.wishlist.includes(p.id);
+                        // Assuming createProductCardHTML is defined in your code
+                        container.innerHTML += app.createProductCardHTML(p, isLiked);
+                    });
+                }
+                app.updateIcons();
+            },
+
+            updateIcons: () => {
                 if (window.lucide) window.lucide.createIcons();
             },
 
@@ -1868,12 +2143,12 @@
                 document.getElementById('detail-desc').innerText = p.desc;
                 document.getElementById('detail-cat').innerText = p.category;
                 document.getElementById('detail-rating').innerText = p.rating || 4.5;
-                
+
                 const discount = p.discount || 0;
                 const price = parseInt(p.price);
                 const finalPrice = discount > 0 ? Math.round(price - (price * discount / 100)) : price;
                 document.getElementById('detail-price').innerText = '₹' + finalPrice;
-                
+
                 const oldPriceEl = document.getElementById('detail-old-price');
                 const badge = document.getElementById('detail-badge');
                 if (discount > 0) {
@@ -1885,11 +2160,11 @@
                     oldPriceEl.classList.add('hide');
                     badge.classList.add('hide');
                 }
-                
+
                 const isLiked = app.wishlist.includes(pid);
                 const heartIcon = document.getElementById('detail-wishlist-icon');
                 heartIcon.classList[isLiked ? 'add' : 'remove']('fill-current', 'text-danger');
-                
+
                 app.router('product-details');
             },
 
@@ -1914,7 +2189,7 @@
                     app.toast("Added to Wishlist", "success");
                 }
                 localStorage.setItem('wishlist', JSON.stringify(app.wishlist));
-                
+
                 if (!document.getElementById('view-home').classList.contains('hide')) {
                     app.renderProductGrid(app.products);
                 } else if (!document.getElementById('view-wishlist').classList.contains('hide')) {
@@ -2693,7 +2968,19 @@
         // Initial Load
         app.init();
         app.router('home');
+        // Update dots when scrolling happens (manual or auto)
+        track.addEventListener('scroll', updateDots);
 
+        // Pause on Hover (Desktop)
+        container.addEventListener('mouseenter', stopAutoPlay);
+        container.addEventListener('mouseleave', startAutoPlay);
+
+        // Pause on Touch (Mobile)
+        container.addEventListener('touchstart', stopAutoPlay);
+        container.addEventListener('touchend', startAutoPlay);
+
+        // Start animation on load
+        startAutoPlay();
     </script>
 </body>
 
