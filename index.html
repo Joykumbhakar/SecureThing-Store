@@ -217,23 +217,34 @@
 
         /* Apple Liquid Glass Effect */
         .glass-btn {
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: saturate(180%) blur(20px);
-            -webkit-backdrop-filter: saturate(180%) blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 8px 16px rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: saturate(200%) blur(24px);
+            -webkit-backdrop-filter: saturate(200%) blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             border-radius: 20px;
             color: #007AFF;
-            font-weight: 800;
+            font-weight: 700;
             padding: 10px 20px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
         }
+        
+        .glass-btn-active {
+            background: rgba(0, 122, 255, 0.85);
+            color: white;
+            border-color: rgba(0, 122, 255, 0.9);
+            box-shadow: 0 4px 12px rgba(0, 122, 255, 0.2);
+        }
 
         .glass-btn:active {
-            background: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.6);
+        }
+        
+        .glass-btn-active:active {
+            background: rgba(0, 122, 255, 1);
         }
 
         .clay-input {
@@ -398,7 +409,7 @@
             <!-- Right Side: Horizontal Image Banner Scroller -->
             <div class="w-full max-w-4xl mx-auto mt-4" id="carousel-container">
 
-                <div class="relative group rounded-2xl overflow-hidden bg-white">
+                <div class="relative group rounded-2xl overflow-hidden bg-white shadow-soft">
 
                     <div id="banner-track" class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar">
 
@@ -447,7 +458,7 @@
                 <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-6 p-4">
                     <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
                         <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar w-full sm:w-auto" id="category-chips">
-                            <button onclick="app.filterCategory('all')" class="glass-btn px-5 py-2 text-sm font-bold">All</button>
+                            <!-- Filled dynamically via JS -->
                         </div>
                     </div>
                 </div>
@@ -1151,7 +1162,7 @@
 
     <!-- Cart Sidebar -->
     <div id="cart-sidebar"
-        class="fixed inset-y-0 right-0 w-96 bg-white shadow-2xl transform translate-x-full z-[60] flex flex-col">
+        class="fixed inset-y-0 right-0 w-96 bg-white shadow-2xl transform translate-x-full z-[60] flex flex-col transition-transform duration-300">
         <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-white">
             <h3 class="font-bold text-xl text-textMain flex items-center"><i data-lucide="shopping-cart"
                     class="mr-3 text-accent"></i> Your Cart</h3>
@@ -1466,7 +1477,7 @@
                 );
                 const grid = document.getElementById('product-grid');
                 if (filtered.length === 0) {
-                    grid.innerHTML = `<div class="col-span-4 text-center py-24"><i data-lucide="search-x" class="w-20 h-20 mx-auto mb-4 opacity-50"></i><p class="text-slate-500 font-bold">No products found</p></div>`;
+                    grid.innerHTML = `<div class="col-span-4 text-center py-24"><i data-lucide="search-x" class="w-20 h-20 mx-auto mb-4 text-textMuted/50"></i><p class="text-textMuted font-bold">No products found</p></div>`;
                 } else {
                     grid.innerHTML = filtered.map(p => app.createProductCardHTML(p, app.wishlist.includes(p.id))).join('');
                 }
@@ -1608,10 +1619,10 @@
             loadHomeCategories: () => {
                 const con = document.getElementById('category-chips');
                 if (!con) return;
-                let html = `<button onclick="app.filterCategory('all')" class="${app.activeCategory === 'all' ? 'clay-btn clay-btn-primary px-5 py-2 text-sm font-bold' : 'glass-btn px-5 py-2 text-sm font-bold'}">All</button>`;
+                let html = `<button onclick="app.filterCategory('all')" class="${app.activeCategory === 'all' ? 'glass-btn-active' : 'glass-btn'} px-5 py-2 text-sm font-bold">All</button>`;
                 app.categories.forEach(cat => {
                     const isActive = app.activeCategory === cat.id;
-                    html += `<button onclick="app.filterCategory('${cat.id}')" class="${isActive ? 'clay-btn clay-btn-primary px-5 py-2 text-sm font-bold' : 'glass-btn px-5 py-2 text-sm font-bold'}">${cat.name}</button>`;
+                    html += `<button onclick="app.filterCategory('${cat.id}')" class="${isActive ? 'glass-btn-active' : 'glass-btn'} px-5 py-2 text-sm font-bold">${cat.name}</button>`;
                 });
                 con.innerHTML = html;
             },
@@ -1713,7 +1724,7 @@
                 return `
                     <div class="clay-card flex flex-col relative overflow-hidden h-full" onclick="app.loadProductDetails('${p.id}')">
                         <div class="relative bg-white/60 aspect-[1/1] p-3 flex items-center justify-center overflow-hidden rounded-t-[20px]">
-                            ${discount > 0 ? `<span class="absolute top-2 left-2 bg-[#F56E91] text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-md">-${discount}%</span>` : ''}
+                            ${discount > 0 ? `<span class="absolute top-2 left-2 bg-[#FF3B30] text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-md">-${discount}%</span>` : ''}
                             <button onclick="event.stopPropagation(); app.toggleWishlist('${p.id}')" class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/80 flex items-center justify-center ${isLiked ? 'text-danger' : 'text-slate-400'}">
                                 <i data-lucide="heart" class="w-3.5 h-3.5 ${isLiked ? 'fill-current' : ''}"></i>
                             </button>
@@ -1798,7 +1809,11 @@
 
                 const isLiked = app.wishlist.includes(pid);
                 const heartIcon = document.getElementById('detail-wishlist-icon');
-                heartIcon.classList[isLiked ? 'add' : 'remove']('fill-current', 'text-danger');
+                if (isLiked) {
+                    heartIcon.classList.add('fill-current', 'text-danger');
+                } else {
+                    heartIcon.classList.remove('fill-current', 'text-danger');
+                }
 
                 app.router('product-details');
             },
@@ -1807,7 +1822,7 @@
                 const grid = document.getElementById('wishlist-grid');
                 const wishedProducts = app.products.filter(p => app.wishlist.includes(p.id));
                 if (wishedProducts.length === 0) {
-                    grid.innerHTML = '<div class="col-span-full text-center py-20 text-textMuted">Your wishlist is empty</div>';
+                    grid.innerHTML = '<div class="col-span-full flex flex-col items-center justify-center py-20 text-textMuted"><i data-lucide="heart-off" class="w-16 h-16 mb-4 opacity-50"></i><p class="font-bold">Your wishlist is empty.</p></div>';
                 } else {
                     grid.innerHTML = wishedProducts.map(p => app.createProductCardHTML(p, true)).join('');
                 }
@@ -1830,6 +1845,13 @@
                     app.loadWishlist();
                 } else if (!document.getElementById('view-category-products').classList.contains('hide')) {
                     app.renderCategoryView();
+                } else if (!document.getElementById('view-product-details').classList.contains('hide')) {
+                    const heartIcon = document.getElementById('detail-wishlist-icon');
+                    if (app.wishlist.includes(pid)) {
+                        heartIcon.classList.add('fill-current', 'text-danger');
+                    } else {
+                        heartIcon.classList.remove('fill-current', 'text-danger');
+                    }
                 }
             },
 
@@ -1862,7 +1884,7 @@
                 let count = 0;
 
                 if (app.cart.length === 0) {
-                    container.innerHTML = '<div class="flex flex-col items-center justify-center h-64 text-slate-300"><i data-lucide="shopping-bag" class="w-16 h-16 mb-4 opacity-50"></i><p class="text-sm font-medium">Your cart is empty.</p></div>';
+                    container.innerHTML = '<div class="flex flex-col items-center justify-center h-64 text-textMuted"><i data-lucide="shopping-bag" class="w-16 h-16 mb-4 opacity-50"></i><p class="text-sm font-bold">Your cart is empty.</p></div>';
                     checkoutItems.innerHTML = '';
                 } else {
                     container.innerHTML = app.cart.map((item, index) => {
@@ -1870,15 +1892,16 @@
                         count += item.qty;
                         return `
                             <div class="clay-card p-4">
+                                <div class="flex justify-between items-center mb-2">
+                                    <div class="font-bold text-sm truncate text-textMain">${item.name}</div>
+                                    <button onclick="app.removeCartItem(${index})" class="text-textMuted hover:text-danger w-6 h-6 flex items-center justify-center"><i data-lucide="trash-2" class="lucide-sm"></i></button>
+                                </div>
                                 <div class="flex justify-between items-center">
-                                    <div class="flex-1">
-                                        <div class="font-bold text-sm truncate text-textMain mb-1">${item.name}</div>
-                                        <div class="text-xs text-accent font-bold">₹${item.price} x ${item.qty}</div>
-                                    </div>
+                                    <div class="text-xs text-accent font-bold">₹${item.price} x ${item.qty}</div>
                                     <div class="flex items-center space-x-3 clay-card-inner p-1.5 rounded-xl ml-2 shrink-0">
-                                        <button onclick="app.changeQty(${index}, -1)" class="text-textMuted w-6 h-6 flex items-center justify-center"><i data-lucide="minus" class="lucide-xs"></i></button>
+                                        <button onclick="app.changeQty(${index}, -1)" class="text-textMuted hover:text-danger w-6 h-6 flex items-center justify-center"><i data-lucide="minus" class="lucide-xs"></i></button>
                                         <span class="text-xs font-bold w-4 text-center">${item.qty}</span>
-                                        <button onclick="app.changeQty(${index}, 1)" class="text-textMuted w-6 h-6 flex items-center justify-center"><i data-lucide="plus" class="lucide-xs"></i></button>
+                                        <button onclick="app.changeQty(${index}, 1)" class="text-textMuted hover:text-success w-6 h-6 flex items-center justify-center"><i data-lucide="plus" class="lucide-xs"></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -1910,6 +1933,11 @@
                 if (app.cart[index].qty <= 0) app.cart.splice(index, 1);
                 app.updateCartUI();
             },
+            
+            removeCartItem: (index) => {
+                app.cart.splice(index, 1);
+                app.updateCartUI();
+            },
 
             buyNow: (pid) => {
                 app.addToCart(pid);
@@ -1921,10 +1949,14 @@
                 if (!app.currentUser) {
                     app.toast("Please login to checkout", "info");
                     app.router('login');
-                    app.toggleCart();
+                    if(!document.getElementById('cart-sidebar').classList.contains('translate-x-full')) {
+                        app.toggleCart();
+                    }
                     return;
                 }
-                app.toggleCart();
+                if(!document.getElementById('cart-sidebar').classList.contains('translate-x-full')) {
+                    app.toggleCart();
+                }
                 app.router('checkout');
                 app.loadSavedAddresses();
             },
@@ -2054,7 +2086,7 @@
                         .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
 
                     if (myOrders.length === 0) {
-                        list.innerHTML = `<div class="text-center py-20 clay-card"><i data-lucide="package-open" class="mx-auto w-16 h-16 text-textMuted/30 mb-4"></i><p class="text-textMuted font-bold">No orders yet.</p></div>`;
+                        list.innerHTML = `<div class="text-center py-20 flex flex-col items-center justify-center clay-card"><i data-lucide="package-open" class="mx-auto w-16 h-16 text-textMuted/30 mb-4"></i><p class="text-textMuted font-bold">No orders yet.</p></div>`;
                     }
 
                     myOrders.forEach(o => {
