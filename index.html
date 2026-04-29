@@ -441,26 +441,9 @@
 
         @media (min-width: 768px) {
             .banner-container {
-                /* Forces 3:1 ratio on Desktop (e.g., 1200px width / 400px height) */
+                /* Forces 3:1 ratio on Desktop */
                 aspect-ratio: 3 / 1;
                 height: auto;
-            }
-        }
-
-        /* Floating Animation for the Product */
-        .floating-icon {
-            animation: clayFloat 4s ease-in-out infinite;
-        }
-
-        @keyframes clayFloat {
-
-            0%,
-            100% {
-                transform: translateY(0px) scale(1);
-            }
-
-            50% {
-                transform: translateY(-12px) scale(1.02);
             }
         }
 
@@ -643,7 +626,7 @@
                 </div>
             </a>
             <!-- Right Side: Horizontal Image Banner Scroller -->
-            <div class="w-full max-w-4xl mx-auto">
+            <div class="w-full max-w-4xl mx-auto mt-4" id="carousel-container">
 
                 <div class="relative group rounded-2xl overflow-hidden shadow-lg bg-white">
 
@@ -652,7 +635,7 @@
 
                         <div class="w-full shrink-0 snap-center relative aspect-[3/1] cursor-pointer"
                             onclick="console.log('Clicked Security')">
-                            <img src="banner1.png"
+                            <img src="https://placehold.co/1200x400/583FBC/FFFFFF?text=Security+Sale"
                                 class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                                 alt="Security Sale">
                             <div
@@ -664,7 +647,7 @@
 
                         <div class="w-full shrink-0 snap-center relative aspect-[3/1] cursor-pointer"
                             onclick="console.log('Clicked Electronics')">
-                            <img src="banner2.png"
+                            <img src="https://placehold.co/1200x400/10B981/FFFFFF?text=Electronics+Sale"
                                 class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                                 alt="Electronics Sale">
                             <div
@@ -676,7 +659,7 @@
 
                         <div class="w-full shrink-0 snap-center relative aspect-[3/1] cursor-pointer"
                             onclick="console.log('Clicked Home')">
-                            <img src="banner3.png"
+                            <img src="https://placehold.co/1200x400/F59E0B/FFFFFF?text=Smart+Home"
                                 class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                                 alt="Smart Home Sale">
                             <div
@@ -688,7 +671,7 @@
 
                         <div class="w-full shrink-0 snap-center relative aspect-[3/1] cursor-pointer"
                             onclick="console.log('Clicked Fashion')">
-                            <img src="banner4.png"
+                            <img src="https://placehold.co/1200x400/EF4444/FFFFFF?text=Fashion"
                                 class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                                 alt="Fashion Sale">
                             <div
@@ -700,7 +683,7 @@
 
                         <div class="w-full shrink-0 snap-center relative aspect-[3/1] cursor-pointer"
                             onclick="console.log('Clicked Toys')">
-                            <img src="banner5.png"
+                            <img src="https://placehold.co/1200x400/3B82F6/FFFFFF?text=Kids+Zone"
                                 class="w-full h-full object-cover transition-transform duration-700 hover:scale-105"
                                 alt="Toys Sale">
                             <div
@@ -731,8 +714,8 @@
             </div>
 
             <!-- Categories Filter -->
-            <div class="clay-card mb-8 sticky top-20 z-30">
-                <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-6">
+            <div class="clay-card mb-8 sticky top-20 z-30 mt-6">
+                <div class="flex flex-col md:flex-row justify-between items-end md:items-center gap-6 p-4">
                     <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto items-center">
                         <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar w-full sm:w-auto" id="category-chips">
                             <button onclick="app.filterCategory('all')"
@@ -755,10 +738,9 @@
             </div>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="categories-grid"></div>
         </section>
+        
         <section id="view-category-products" class="view-section hide">
-
             <div class="sticky top-20 z-30 mb-6 transition-all duration-300">
-
                 <button onclick="app.router('categories')"
                     class="mb-4 flex items-center text-textMuted hover:text-accent transition-colors text-sm font-bold bg-clayBg/80 backdrop-blur-sm p-2 rounded-lg w-fit">
                     <i data-lucide="arrow-left" class="mr-2 lucide-sm"></i> Back to Categories
@@ -766,7 +748,6 @@
 
                 <div class="clay-card p-4">
                     <div class="flex flex-col md:flex-row gap-4 justify-between items-center">
-
                         <div class="flex items-center gap-3 w-full md:w-auto">
                             <div
                                 class="clay-card-inner w-10 h-10 rounded-xl flex items-center justify-center text-accent shrink-0">
@@ -809,6 +790,7 @@
                 class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 pb-32">
             </div>
         </section>
+
         <!-- VIEW: WISHLIST -->
         <section id="view-wishlist" class="view-section hide">
             <div class="mb-8 flex items-center gap-3">
@@ -1666,25 +1648,25 @@
         const getUserRef = (uid) => doc(db, 'artifacts', APP_ID, 'public', 'data', 'users', uid);
         const track = document.getElementById('banner-track');
         const dots = document.querySelectorAll('.dot');
-        const container = document.getElementById('carousel-container');
+        const container = track ? track.parentElement : null;
         let autoPlayInterval;
-        const autoPlayDelay = 3500; // 3.5 seconds
+        const autoPlayDelay = 3500; 
 
-        // 1. Core Scroll Function
-        function scrollToSlide(index) {
+        // Scroll Functions for Carousel
+        window.scrollToSlide = function(index) {
+            if(!track) return;
             const slideWidth = track.clientWidth;
             track.scrollTo({ left: slideWidth * index, behavior: 'smooth' });
         }
 
-        // 2. Manual Interaction (Stops autoplay temporarily, then restarts)
-        function manualScroll(index) {
+        window.manualScroll = function(index) {
             stopAutoPlay();
             scrollToSlide(index);
             startAutoPlay();
         }
 
-        // 3. Update Dots based on Scroll Position
         function updateDots() {
+            if(!track || !dots.length) return;
             const index = Math.round(track.scrollLeft / track.clientWidth);
 
             dots.forEach((dot, i) => {
@@ -1698,21 +1680,13 @@
             });
         }
 
-        // 4. Auto Play Logic
         function startAutoPlay() {
-            // Clear any existing interval to prevent duplicates
+            if(!track || !dots.length) return;
             if (autoPlayInterval) clearInterval(autoPlayInterval);
-
             autoPlayInterval = setInterval(() => {
                 const index = Math.round(track.scrollLeft / track.clientWidth);
-                const totalSlides = dots.length;
                 let nextIndex = index + 1;
-
-                // Loop back to start if at the end
-                if (nextIndex >= totalSlides) {
-                    nextIndex = 0;
-                }
-
+                if (nextIndex >= dots.length) nextIndex = 0;
                 scrollToSlide(nextIndex);
             }, autoPlayDelay);
         }
@@ -1720,6 +1694,7 @@
         function stopAutoPlay() {
             clearInterval(autoPlayInterval);
         }
+
         // Application State
         window.app = {
             currentUser: null,
@@ -1741,7 +1716,6 @@
                 { id: 'Toys', name: 'Toys', icon: 'gamepad-2', color: 'bg-purple-100 text-purple-600' }
             ],
 
-            // Initialize
             init: () => {
                 const savedCart = localStorage.getItem('cart');
                 if (savedCart) app.cart = JSON.parse(savedCart);
@@ -1751,16 +1725,15 @@
                 if (window.lucide) window.lucide.createIcons();
             },
 
-            // Toast Notifications
             toast: (msg, type = 'info') => {
-                const container = document.getElementById('toast-container');
+                const toastContainer = document.getElementById('toast-container');
                 const toast = document.createElement('div');
                 toast.className = `toast ${type}`;
                 let iconName = 'info';
                 if (type === 'success') iconName = 'check-circle';
                 if (type === 'error') iconName = 'alert-circle';
                 toast.innerHTML = `<i data-lucide="${iconName}"></i><span class="font-bold text-sm text-slate-800">${msg}</span>`;
-                container.appendChild(toast);
+                toastContainer.appendChild(toast);
                 if (window.lucide) window.lucide.createIcons();
                 setTimeout(() => {
                     toast.style.animation = 'slideOut 0.3s ease-in forwards';
@@ -1768,7 +1741,6 @@
                 }, 3000);
             },
 
-            // Router
             router: async (viewId) => {
                 if (app.chatUnsubscribe) { app.chatUnsubscribe(); app.chatUnsubscribe = null; }
                 document.querySelectorAll('.view-section').forEach(el => el.classList.add('hide'));
@@ -1799,7 +1771,6 @@
                 });
             },
 
-            // Search
             toggleHeaderSearch: () => document.getElementById('header-search-bar').classList.toggle('hide'),
             clearSearch: () => {
                 document.getElementById('global-search-input').value = '';
@@ -1821,7 +1792,6 @@
                 if (window.lucide) window.lucide.createIcons();
             },
 
-            // Authentication
             updateAuthUI: () => {
                 const container = document.getElementById('auth-section-desktop');
                 const navService = document.getElementById('nav-service');
@@ -1953,7 +1923,6 @@
                 if (window.lucide) window.lucide.createIcons();
             },
 
-            // Categories
             loadHomeCategories: () => {
                 const con = document.getElementById('category-chips');
                 if (!con) return;
@@ -1964,10 +1933,9 @@
                 });
                 con.innerHTML = html;
             },
-            // Track the current category ID globally so the search/sort function knows what to filter
+
             currentCategoryId: null,
 
-            // 1. Render Categories Grid (Same as before)
             loadCategories: () => {
                 const grid = document.getElementById('categories-grid');
                 if (!grid) return;
@@ -1986,43 +1954,30 @@
                 app.updateIcons();
             },
 
-            // 2. Setup the Page (Reset inputs)
             openCategoryPage: (catId) => {
                 const cat = app.categories.find(c => c.id === catId);
                 if (!cat) return;
-
-                // Set global state
                 app.currentCategoryId = catId;
-
-                // Switch View
                 app.router('category-products');
-
-                // Update Header UI
                 document.getElementById('cat-page-title').innerText = cat.name;
                 document.getElementById('cat-page-desc').innerText = `${cat.name} Collection`;
                 const iconEl = document.getElementById('cat-page-icon');
                 iconEl.setAttribute('data-lucide', cat.icon);
-                // Reset styles for icon container if needed based on cat.color
 
-                // RESET INPUTS (Important for a fresh view)
                 document.getElementById('cat-page-search').value = '';
                 document.getElementById('cat-page-sort').value = 'newest';
 
-                // Initial Render
                 app.renderCategoryView();
                 window.scrollTo(0, 0);
             },
 
-            // 3. THE LOGIC ENGINE: Handles Filtering, Searching, and Sorting
             renderCategoryView: () => {
                 const container = document.getElementById('category-specific-grid');
                 const searchTerm = document.getElementById('cat-page-search').value.toLowerCase();
                 const sortMode = document.getElementById('cat-page-sort').value;
 
-                // A. Filter by Category ID
                 let filtered = app.products.filter(p => p.category === app.currentCategoryId);
 
-                // B. Filter by Search Term
                 if (searchTerm) {
                     filtered = filtered.filter(p =>
                         p.name.toLowerCase().includes(searchTerm) ||
@@ -2030,7 +1985,6 @@
                     );
                 }
 
-                // C. Sort Results
                 if (sortMode === 'price-low') {
                     filtered.sort((a, b) => parseInt(a.price) - parseInt(b.price));
                 } else if (sortMode === 'price-high') {
@@ -2038,9 +1992,7 @@
                 } else if (sortMode === 'rating') {
                     filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
                 }
-                // 'newest' uses default order or add logic if you have createdAt
 
-                // D. Render HTML
                 container.innerHTML = '';
                 if (filtered.length === 0) {
                     container.innerHTML = `
@@ -2052,7 +2004,6 @@
                 } else {
                     filtered.forEach(p => {
                         const isLiked = app.wishlist.includes(p.id);
-                        // Assuming createProductCardHTML is defined in your code
                         container.innerHTML += app.createProductCardHTML(p, isLiked);
                     });
                 }
@@ -2070,7 +2021,6 @@
                 app.renderProductGrid(filtered);
             },
 
-            // Products
             createProductCardHTML: (p, isLiked) => {
                 const discount = p.discount || 0;
                 const price = parseInt(p.price);
@@ -2079,7 +2029,7 @@
                     <div class="clay-card group flex flex-col relative overflow-hidden h-full" onclick="app.loadProductDetails('${p.id}')">
                         <div class="relative bg-white/60 aspect-[1/1] p-3 flex items-center justify-center overflow-hidden rounded-t-[20px]">
                             ${discount > 0 ? `<span class="absolute top-2 left-2 bg-[#F56E91] text-white text-[9px] font-extrabold px-1.5 py-0.5 rounded-md">-${discount}%</span>` : ''}
-                            <button onclick="event.stopPropagation(); app.toggleWishlist('${p.id}')" class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/80 flex items-center justify-center ${isLiked ? 'text-danger' : 'text-slate-400'}">
+                            <button onclick="event.stopPropagation(); app.toggleWishlist('${p.id}')" class="absolute top-2 right-2 w-7 h-7 rounded-full bg-white/80 flex items-center justify-center ${isLiked ? 'text-danger' : 'text-slate-400'} z-10">
                                 <i data-lucide="heart" class="w-3.5 h-3.5 ${isLiked ? 'fill-current' : ''}"></i>
                             </button>
                             <img src="${p.image || 'https://placehold.co/400x400?text=Product'}" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/400x400?text=No+Image'">
@@ -2163,12 +2113,15 @@
 
                 const isLiked = app.wishlist.includes(pid);
                 const heartIcon = document.getElementById('detail-wishlist-icon');
-                heartIcon.classList[isLiked ? 'add' : 'remove']('fill-current', 'text-danger');
+                if(isLiked) {
+                    heartIcon.classList.add('fill-current', 'text-danger');
+                } else {
+                    heartIcon.classList.remove('fill-current', 'text-danger');
+                }
 
                 app.router('product-details');
             },
 
-            // Wishlist
             loadWishlist: () => {
                 const grid = document.getElementById('wishlist-grid');
                 const wishedProducts = app.products.filter(p => app.wishlist.includes(p.id));
@@ -2194,10 +2147,11 @@
                     app.renderProductGrid(app.products);
                 } else if (!document.getElementById('view-wishlist').classList.contains('hide')) {
                     app.loadWishlist();
+                } else if (!document.getElementById('view-category-products').classList.contains('hide')) {
+                    app.renderCategoryView();
                 }
             },
 
-            // Cart
             addToCart: (pid) => {
                 const product = app.products.find(p => p.id === pid);
                 if (!product) return;
@@ -2240,10 +2194,10 @@
                                         <div class="font-bold text-sm truncate text-textMain mb-1">${item.name}</div>
                                         <div class="text-xs text-accent font-bold">₹${item.price} x ${item.qty}</div>
                                     </div>
-                                    <div class="flex items-center space-x-3 clay-card-inner p-1.5">
-                                        <button onclick="app.changeQty(${index}, -1)" class="text-textMuted hover:text-danger w-6 h-6"><i data-lucide="minus" class="lucide-xs"></i></button>
+                                    <div class="flex items-center space-x-3 clay-card-inner p-1.5 rounded-xl ml-2 shrink-0">
+                                        <button onclick="app.changeQty(${index}, -1)" class="text-textMuted hover:text-danger w-6 h-6 flex items-center justify-center"><i data-lucide="minus" class="lucide-xs"></i></button>
                                         <span class="text-xs font-bold w-4 text-center">${item.qty}</span>
-                                        <button onclick="app.changeQty(${index}, 1)" class="text-textMuted hover:text-success w-6 h-6"><i data-lucide="plus" class="lucide-xs"></i></button>
+                                        <button onclick="app.changeQty(${index}, 1)" class="text-textMuted hover:text-success w-6 h-6 flex items-center justify-center"><i data-lucide="plus" class="lucide-xs"></i></button>
                                     </div>
                                 </div>
                             </div>
@@ -2294,7 +2248,6 @@
                 app.loadSavedAddresses();
             },
 
-            // Address Management
             saveAddress: async () => {
                 const newAddr = {
                     name: document.getElementById('addr-name').value,
@@ -2328,7 +2281,8 @@
                     const list = snap.data().addressList || [];
                     list.splice(idx, 1);
                     await updateDoc(ref, { addressList: list });
-                    app.loadSavedAddresses();
+                    
+                    if (!document.getElementById('view-checkout').classList.contains('hide')) app.loadSavedAddresses();
                     if (!document.getElementById('view-profile').classList.contains('hide')) app.loadProfile();
                 } catch (e) { app.toast("Error removing", "error"); }
             },
@@ -2365,7 +2319,6 @@
                 if (window.lucide) window.lucide.createIcons();
             },
 
-            // Orders
             placeOrder: async () => {
                 const selectedAddrInput = document.querySelector('input[name="selected-address"]:checked');
                 const userDoc = await getDoc(getUserRef(app.currentUser.uid));
@@ -2426,22 +2379,64 @@
                     myOrders.forEach(o => {
                         const steps = ['Order Placed', 'Verified', 'Packed', 'Shipped', 'Delivered'];
                         let stepIdx = steps.indexOf(o.status);
-                        if (stepIdx === -1) stepIdx = 0;
+                        if (stepIdx === -1 && o.status !== 'Cancelled') stepIdx = 0; // Default to first step if pending verification
+                        if (o.status === 'Cancelled') stepIdx = -1;
+
+                        const progressPercent = stepIdx >= 0 ? (stepIdx / (steps.length - 1)) * 100 : 0;
 
                         const orderTime = o.createdAt ? o.createdAt.toDate().getTime() : 0;
                         const canCancel = (Date.now() - orderTime) < (24 * 60 * 60 * 1000) && o.status !== 'Cancelled' && o.status !== 'Delivered';
 
-                        list.innerHTML += `
-                            <div class="clay-card p-8">
-                                <div class="flex flex-col md:flex-row justify-between font-bold mb-6 pb-6 border-b border-textMuted/20 items-start md:items-center gap-4">
-                                    <div class="flex items-center text-textMain clay-card-inner px-3 py-1.5"><i data-lucide="package" class="mr-2 lucide-sm text-accent"></i> Order #${o.id.substr(0, 8)}</div>
-                                    <span class="clay-tag text-[10px] uppercase font-bold tracking-widest">${o.status}</span>
+                        let trackingHTML = '';
+                        if (o.status !== 'Cancelled') {
+                            trackingHTML = `
+                                <div class="mt-8 mb-12 px-2 md:px-6">
+                                    <div class="relative w-full h-2 md:h-2.5 bg-slate-200 rounded-full flex items-center shadow-inner">
+                                        <div class="absolute left-0 h-full rounded-full bg-gradient-to-r from-accent to-accentHover transition-all duration-1000 ease-out" style="width: ${progressPercent}%;"></div>
+
+                                        <div class="absolute top-1/2 -translate-y-1/2 z-20 transition-all duration-1000 ease-out" style="left: calc(${progressPercent}% - 14px);">
+                                             <div class="w-7 h-7 md:w-8 md:h-8 bg-white border-2 ${stepIdx === 4 ? 'border-success text-success' : 'border-accent text-accent'} rounded-full flex items-center justify-center shadow-clay-float">
+                                                <i data-lucide="${stepIdx === 4 ? 'package-check' : 'truck'}" class="w-3.5 h-3.5 md:w-4 md:h-4 ${stepIdx > 0 && stepIdx < 4 ? 'animate-bounce' : ''}"></i>
+                                            </div>
+                                        </div>
+
+                                        <div class="absolute inset-0 w-full h-full flex justify-between items-center z-10 pointer-events-none px-[1px]">
+                                            ${steps.map((step, i) => `
+                                                <div class="relative flex flex-col items-center justify-center">
+                                                    <div class="w-2.5 h-2.5 md:w-4 md:h-4 rounded-full ${i <= stepIdx ? (i === 4 ? 'bg-success' : 'bg-accent') : 'bg-slate-300'} border-[2px] md:border-[3px] border-white shadow-sm transition-colors duration-500"></div>
+                                                    <span class="absolute top-5 md:top-6 text-[8px] md:text-[10px] font-extrabold uppercase tracking-wide whitespace-nowrap ${i <= stepIdx ? (i === 4 ? 'text-success' : 'text-accent') : 'text-textMuted'}">
+                                                        ${step}
+                                                    </span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
                                 </div>
+                            `;
+                        } else {
+                            trackingHTML = `
+                                <div class="mt-6 mb-8 px-2 md:px-6">
+                                    <div class="bg-danger/10 border border-danger/20 text-danger p-4 rounded-2xl flex items-center justify-center font-bold text-sm shadow-inner">
+                                        <i data-lucide="x-circle" class="mr-2 w-5 h-5"></i> Order Cancelled
+                                    </div>
+                                </div>
+                            `;
+                        }
+
+                        list.innerHTML += `
+                            <div class="clay-card p-5 md:p-8">
+                                <div class="flex flex-col md:flex-row justify-between font-bold mb-6 pb-6 border-b border-textMuted/20 items-start md:items-center gap-4">
+                                    <div class="flex items-center text-textMain clay-card-inner px-3 py-1.5 rounded-xl text-sm"><i data-lucide="package" class="mr-2 lucide-sm text-accent"></i> Order #${o.id.substr(0, 8)}</div>
+                                    <span class="clay-tag text-[10px] uppercase font-bold tracking-widest ${o.status === 'Cancelled' ? 'text-danger bg-danger/10' : (o.status === 'Delivered' ? 'text-success bg-success/10' : '')}">${o.status}</span>
+                                </div>
+                                
+                                ${trackingHTML}
+
                                 <div class="space-y-4 mb-8">
                                     ${o.items.map(i => `
-                                        <div class="flex justify-between text-sm text-textMuted clay-card-inner p-3">
-                                            <span class="flex items-center font-medium"><span class="w-1.5 h-1.5 bg-textMuted/30 rounded-full mr-3"></span> ${i.name} <span class="text-textMuted/60 ml-2 text-xs">x${i.qty}</span></span>
-                                            <span class="font-bold text-textMain">₹${i.price * i.qty}</span>
+                                        <div class="flex justify-between items-center text-sm text-textMuted clay-card-inner p-3 rounded-xl">
+                                            <span class="flex items-center font-medium truncate"><span class="w-1.5 h-1.5 bg-textMuted/30 rounded-full mr-3 shrink-0"></span> <span class="truncate">${i.name}</span> <span class="text-textMuted/60 ml-2 text-xs font-bold bg-white/50 px-1.5 rounded">x${i.qty}</span></span>
+                                            <span class="font-bold text-textMain shrink-0 ml-4">₹${i.price * i.qty}</span>
                                         </div>
                                     `).join('')}
                                 </div>
@@ -2451,10 +2446,10 @@
                                 </div>
                                 
                                 <div class="mt-6 pt-4 border-t border-dashed border-textMuted/20 flex gap-2">
-                                    <button onclick="app.openCustomerChat('${o.id}')" class="flex-grow text-xs font-bold text-textMuted hover:text-white clay-btn clay-btn-secondary py-2.5">
+                                    <button onclick="app.openCustomerChat('${o.id}')" class="flex-grow text-xs font-bold text-textMuted hover:text-white clay-btn clay-btn-secondary py-2.5 flex items-center justify-center">
                                         <i data-lucide="message-circle" class="lucide-xs mr-1.5"></i> Support
                                     </button>
-                                    ${canCancel ? `<button onclick="app.cancelOrder('${o.id}')" class="flex-grow text-xs font-bold text-danger hover:text-white clay-btn clay-btn-secondary py-2.5">Cancel Order</button>` : ''}
+                                    ${canCancel ? `<button onclick="app.cancelOrder('${o.id}')" class="flex-grow text-xs font-bold text-danger hover:text-white clay-btn clay-btn-secondary py-2.5 flex items-center justify-center"><i data-lucide="x" class="lucide-xs mr-1.5"></i> Cancel</button>` : ''}
                                 </div>
                             </div>
                         `;
@@ -2478,7 +2473,6 @@
                 finally { app.toggleLoader(false); }
             },
 
-            // Profile
             loadProfile: async () => {
                 if (!app.currentUser) return app.router('login');
                 const userRef = getUserRef(app.currentUser.uid);
@@ -2495,7 +2489,7 @@
                     list.innerHTML = data.addressList.map((addr, idx) => `
                         <div class="clay-card p-6 text-sm hover:shadow-clay-card-lg transition group relative">
                             <div class="absolute top-0 right-0 p-4">
-                                <button onclick="app.deleteAddress(${idx})" class="text-textMuted hover:text-danger p-1 opacity-0 group-hover:opacity-100">
+                                <button onclick="app.deleteAddress(${idx})" class="text-textMuted hover:text-danger p-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <i data-lucide="trash-2" class="lucide-sm"></i>
                                 </button>
                             </div>
@@ -2511,7 +2505,6 @@
                 if (window.lucide) window.lucide.createIcons();
             },
 
-            // Chat
             openCustomerChat: async (orderId) => {
                 app.currentTicketId = orderId;
                 document.getElementById('customer-chat-id').innerText = `Ticket #${orderId.substr(0, 6)}`;
@@ -2533,7 +2526,7 @@
                         const container = document.getElementById('customer-chat-messages');
                         container.innerHTML = msgs.map(m => `
                             <div class="flex ${m.sender === 'Customer' ? 'justify-end' : 'justify-start'}">
-                                <div class="${m.sender === 'Customer' ? 'bg-accent text-white rounded-br-none' : 'clay-card rounded-bl-none'} px-5 py-3 rounded-2xl max-w-xs text-sm">
+                                <div class="${m.sender === 'Customer' ? 'bg-accent text-white rounded-br-none' : 'clay-card rounded-bl-none'} px-5 py-3 rounded-2xl max-w-xs text-sm shadow-sm">
                                     ${m.sender !== 'Customer' && m.sender !== 'System' ? `<div class="text-[10px] font-bold text-accent mb-1">${m.sender}</div>` : ''}
                                     ${m.text}
                                 </div>
@@ -2558,7 +2551,6 @@
                 input.value = '';
             },
 
-            // Seller Applications
             submitSellerApplication: async (e) => {
                 e.preventDefault();
                 app.toggleLoader(true);
@@ -2585,7 +2577,6 @@
                 }
             },
 
-            // Seller Dashboard
             loadSellerDashboard: async () => {
                 const pList = document.getElementById('seller-products-list');
                 const oList = document.getElementById('seller-orders-list');
@@ -2595,13 +2586,12 @@
                 let pendingOrderCount = 0;
                 app.adminOrders = [];
 
-                // Products
                 const myProducts = app.products.filter(p => p.sellerId === app.currentUser.uid);
                 productCount = myProducts.length;
 
                 myProducts.forEach(p => {
                     pList.innerHTML += `
-                        <div class="flex justify-between items-center border-b border-textMuted/20 py-4 last:border-0 hover:shadow-clay-card-lg px-4 rounded-xl">
+                        <div class="flex justify-between items-center border-b border-textMuted/20 py-4 last:border-0 hover:shadow-clay-card-lg px-4 rounded-xl transition-all">
                             <div class="flex items-center space-x-4">
                                 <img src="${p.image}" class="w-14 h-14 rounded-xl object-contain clay-card p-1">
                                 <div>
@@ -2610,14 +2600,13 @@
                                 </div>
                             </div>
                             <div class="flex space-x-2">
-                                <button onclick="app.openEditProductModal('${p.id}')" class="text-textMuted hover:text-accent p-2.5 rounded-xl"><i data-lucide="edit-2" class="lucide-sm"></i></button>
-                                <button onclick="app.deleteProduct('${p.id}')" class="text-textMuted hover:text-danger p-2.5 rounded-xl"><i data-lucide="trash-2" class="lucide-sm"></i></button>
+                                <button onclick="app.openEditProductModal('${p.id}')" class="text-textMuted hover:text-accent p-2.5 rounded-xl transition-colors"><i data-lucide="edit-2" class="lucide-sm"></i></button>
+                                <button onclick="app.deleteProduct('${p.id}')" class="text-textMuted hover:text-danger p-2.5 rounded-xl transition-colors"><i data-lucide="trash-2" class="lucide-sm"></i></button>
                             </div>
                         </div>
                     `;
                 });
 
-                // Orders
                 const snap = await getDocs(getCollectionRef('orders'));
                 snap.forEach(d => {
                     const o = d.data();
@@ -2626,13 +2615,13 @@
                     if (o.status !== 'Delivered' && o.status !== 'Cancelled' && o.status !== 'Pending Verification') {
                         pendingOrderCount++;
                         oList.innerHTML += `
-                            <div class="clay-card p-5 mb-3 hover:shadow-clay-card-lg">
+                            <div class="clay-card p-5 mb-3 hover:shadow-clay-card-lg transition-all">
                                 <div class="flex justify-between items-start mb-4">
                                     <div>
                                         <div class="font-bold text-textMain text-sm flex items-center mb-1"><i data-lucide="package" class="lucide-xs mr-2 text-textMuted"></i> #${oid.substr(0, 8)}</div>
                                         <div class="text-xs text-textMuted">${new Date(o.createdAt?.seconds * 1000).toLocaleDateString()}</div>
                                     </div>
-                                    <div class="text-sm font-extrabold text-accent clay-card-inner px-2 py-1">₹${o.total}</div>
+                                    <div class="text-sm font-extrabold text-accent clay-card-inner px-2 py-1 rounded-lg">₹${o.total}</div>
                                 </div>
                                 <div class="flex justify-between items-center mt-4 pt-4 border-t border-textMuted/20">
                                     <span class="text-xs text-textMuted">${o.customerName}</span>
@@ -2740,10 +2729,9 @@
                 form.p_desc.value = "4K resolution, night vision, AI motion detection";
                 form.p_price.value = 5499;
                 form.p_discount.value = 15;
-                form.p_img.value = "https://placehold.co/400x300?text=Camera";
+                form.p_img.value = "https://placehold.co/400x300/10B981/FFFFFF?text=Camera";
             },
 
-            // Admin Dashboard
             loadAdminDashboard: async () => {
                 const ordersSnap = await getDocs(getCollectionRef('orders'));
                 let total = 0;
@@ -2760,7 +2748,7 @@
                     count++;
                     if (o.status === 'Pending Verification') {
                         payQueue.innerHTML += `
-                            <div class="flex justify-between items-center clay-card p-5 hover:shadow-clay-card-lg">
+                            <div class="flex justify-between items-center clay-card p-5 hover:shadow-clay-card-lg transition-all">
                                 <div>
                                     <div class="font-bold text-textMain text-sm">Order #${oid.substr(0, 8)}</div>
                                     <div class="text-xs text-textMuted mt-1">Amount: <span class="font-bold text-textMain">₹${o.total}</span></div>
@@ -2771,7 +2759,7 @@
                     }
                 });
 
-                if (payQueue.innerHTML === '') payQueue.innerHTML = '<div class="text-textMuted text-sm clay-card-inner p-6 text-center">No pending payments.</div>';
+                if (payQueue.innerHTML === '') payQueue.innerHTML = '<div class="text-textMuted text-sm clay-card-inner p-6 text-center rounded-xl">No pending payments.</div>';
                 document.getElementById('admin-total-sales').innerText = '₹' + total;
                 document.getElementById('admin-order-count').innerText = count;
 
@@ -2783,7 +2771,7 @@
                     const req = d.data();
                     if (req.status === 'Pending') {
                         reqContainer.innerHTML += `
-                            <div class="clay-card p-5 flex justify-between items-start mb-2 hover:shadow-clay-card-lg">
+                            <div class="clay-card p-5 flex justify-between items-start mb-2 hover:shadow-clay-card-lg transition-all">
                                 <div>
                                     <div class="font-bold text-textMain text-sm">${req.company}</div>
                                     <div class="text-xs text-textMuted mt-1">${req.name} (${req.email})</div>
@@ -2793,7 +2781,7 @@
                         `;
                     }
                 });
-                if (reqContainer.innerHTML === '') reqContainer.innerHTML = '<div class="text-textMuted text-sm text-center py-6 clay-card-inner">No pending requests.</div>';
+                if (reqContainer.innerHTML === '') reqContainer.innerHTML = '<div class="text-textMuted text-sm text-center py-6 clay-card-inner rounded-xl">No pending requests.</div>';
                 if (window.lucide) window.lucide.createIcons();
             },
 
@@ -2872,7 +2860,6 @@
                 }
             },
 
-            // Service Dashboard
             loadServiceDashboard: async () => {
                 const list = document.getElementById('support-tickets-list');
                 list.innerHTML = '';
@@ -2882,7 +2869,7 @@
                         const t = d.data();
                         const lastMsg = t.messages[t.messages.length - 1];
                         list.innerHTML += `
-                             <div onclick="app.openServiceChat('${d.id}')" class="p-4 hover:shadow-clay-card-lg cursor-pointer border-b border-textMuted/20 rounded-xl">
+                             <div onclick="app.openServiceChat('${d.id}')" class="p-4 hover:shadow-clay-card-lg cursor-pointer border-b border-textMuted/20 rounded-xl transition-all bg-white/40">
                                 <div class="flex justify-between mb-1">
                                     <span class="font-bold text-xs text-textMain">Order #${t.orderId.substr(0, 6)}</span>
                                 </div>
@@ -2899,7 +2886,7 @@
 
             openServiceChat: async (ticketId) => {
                 app.currentTicketId = ticketId;
-                document.getElementById('service-chat-header').innerHTML = `<span>Ticket #${ticketId.substr(0, 8)}</span>`;
+                document.getElementById('service-chat-header').innerHTML = `<span class="flex items-center gap-2"><i data-lucide="ticket" class="lucide-sm"></i> Ticket #${ticketId.substr(0, 8)}</span>`;
                 document.getElementById('service-chat-input').disabled = false;
                 document.getElementById('service-chat-send-btn').disabled = false;
 
@@ -2911,7 +2898,7 @@
                         const container = document.getElementById('service-chat-messages');
                         container.innerHTML = msgs.map(m => `
                             <div class="flex ${m.sender !== 'Customer' && m.sender !== 'System' ? 'justify-end' : 'justify-start'}">
-                                <div class="${m.sender !== 'Customer' && m.sender !== 'System' ? 'bg-accent text-white rounded-br-none' : 'clay-card rounded-bl-none'} px-5 py-3 rounded-2xl max-w-xs text-sm mb-2">
+                                <div class="${m.sender !== 'Customer' && m.sender !== 'System' ? 'bg-accent text-white rounded-br-none' : 'clay-card rounded-bl-none'} px-5 py-3 rounded-2xl max-w-xs text-sm mb-2 shadow-sm">
                                     <div class="text-[10px] opacity-70 mb-1 font-bold">${m.sender}</div>
                                     ${m.text}
                                 </div>
@@ -2920,6 +2907,7 @@
                         container.scrollTop = container.scrollHeight;
                     }
                 });
+                if(window.lucide) window.lucide.createIcons();
             },
 
             sendServiceMessage: async (e) => {
@@ -2935,7 +2923,6 @@
                 input.value = '';
             },
 
-            // Utilities
             toggleLoader: (show) => {
                 const el = document.getElementById('global-loader');
                 el.classList[show ? 'remove' : 'add']('hide');
@@ -2968,19 +2955,18 @@
         // Initial Load
         app.init();
         app.router('home');
-        // Update dots when scrolling happens (manual or auto)
-        track.addEventListener('scroll', updateDots);
+        
+        // Touch/Hover Events for the carousel auto-play
+        if (container) {
+            container.addEventListener('mouseenter', stopAutoPlay);
+            container.addEventListener('mouseleave', startAutoPlay);
+            container.addEventListener('touchstart', stopAutoPlay);
+            container.addEventListener('touchend', startAutoPlay);
+        }
+        if (track) {
+            track.addEventListener('scroll', updateDots);
+        }
 
-        // Pause on Hover (Desktop)
-        container.addEventListener('mouseenter', stopAutoPlay);
-        container.addEventListener('mouseleave', startAutoPlay);
-
-        // Pause on Touch (Mobile)
-        container.addEventListener('touchstart', stopAutoPlay);
-        container.addEventListener('touchend', startAutoPlay);
-
-        // Start animation on load
-        startAutoPlay();
     </script>
 </body>
 
